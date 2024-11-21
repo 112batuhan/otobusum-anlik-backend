@@ -23,6 +23,8 @@ async fn main() {
         .map(|route| route.route_short_name)
         .collect();
 
+    // I didn't go for concurrent requests because it might cause rate limit or blacklist issues
+    // We only need to do it once so it's fine to wait for few seconds for every buss
     println!("loaded {} bus routes", bus_route_names.len());
     for name in bus_route_names {
         if hatkodu_exist(&db_conn, &name).await.unwrap() {
