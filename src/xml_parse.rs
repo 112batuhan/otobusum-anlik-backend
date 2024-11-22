@@ -1,16 +1,16 @@
 use serde::{de::DeserializeOwned, Deserialize};
 
-pub trait UnwrapSoap<T: DeserializeOwned, R: DeserializeOwned>: DeserializeOwned {
+pub trait UnwrapSoap<R: DeserializeOwned>: DeserializeOwned {
     fn get_relevant_data(self) -> R;
 }
 
 #[derive(Debug, Deserialize)]
-pub struct DurakDetayEnvelope {
+pub struct DurakDetay {
     #[serde(rename = "Body")]
     pub body: DurakDetayBody,
 }
 
-impl UnwrapSoap<DurakDetayEnvelope, Vec<BusRouteStop>> for DurakDetayEnvelope {
+impl UnwrapSoap<Vec<BusRouteStop>> for DurakDetay {
     fn get_relevant_data(self) -> Vec<BusRouteStop> {
         self.body.response.result.dataset.tables.unwrap_or_default()
     }
@@ -68,12 +68,12 @@ pub struct BusRouteStop {
 
 #[derive(Debug, Deserialize)]
 #[serde(rename = "Envelope")]
-pub struct HatServisiEnvelope {
+pub struct HatServisi {
     #[serde(rename = "Body")]
     pub body: HatServisiBody,
 }
 
-impl UnwrapSoap<HatServisiEnvelope, Option<RouteMetadata>> for HatServisiEnvelope {
+impl UnwrapSoap<Option<RouteMetadata>> for HatServisi {
     fn get_relevant_data(self) -> Option<RouteMetadata> {
         self.body.response.result.dataset.tables
     }

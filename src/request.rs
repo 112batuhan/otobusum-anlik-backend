@@ -2,10 +2,7 @@ use anyhow::{Ok, Result};
 use reqwest::header::{HeaderMap, HeaderName, CONTENT_TYPE};
 use serde::de::DeserializeOwned;
 
-use crate::{
-    csv_parse::read_csv_from_string,
-    xml_parse::{BusRouteStop, DurakDetayEnvelope, UnwrapSoap},
-};
+use crate::{csv_parse::read_csv_from_string, xml_parse::UnwrapSoap};
 
 pub fn get_body(key: &str, soap_method: &str, content: &str) -> String {
     format!(
@@ -25,7 +22,7 @@ pub fn get_body(key: &str, soap_method: &str, content: &str) -> String {
         content = content
     )
 }
-pub async fn request_soap<T: UnwrapSoap<T, R>, R: DeserializeOwned>(
+pub async fn request_soap<T: UnwrapSoap<R>, R: DeserializeOwned>(
     client: reqwest::Client,
     soap_method: &str,
     hat_kodu: &str,
