@@ -37,7 +37,7 @@ pub async fn insert_bus_route_stop(pool: &PgPool, bus_route_stop: BusRouteStop) 
     Ok(())
 }
 
-pub async fn hatkodu_exist(pool: &PgPool, hatkodu: &str) -> Result<bool, sqlx::Error> {
+pub async fn hatkodu_exist(pool: &PgPool, hatkodu: &str) -> Result<bool> {
     let result = sqlx::query_scalar!(
         r#"
             SELECT COUNT(*)
@@ -50,4 +50,19 @@ pub async fn hatkodu_exist(pool: &PgPool, hatkodu: &str) -> Result<bool, sqlx::E
     .await?;
 
     Ok(result.is_some_and(|count| count > 0))
+}
+
+pub async fn delete_by_hatkodu(pool: &PgPool, hatkodu: &str) -> Result<u64> {
+    let rows_affected = sqlx::query!(
+        r#"
+            DELETE FROM bus_route_stops
+            WHERE hatkodu = $1
+            "#,
+        hatkodu
+    )
+    .execute(pool)
+    .await?
+    .rows_affected();
+
+    Ok(rows_affected)
 }
