@@ -13,7 +13,29 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     restart: unless-stopped
+    networks:
+      - iett_server 
+
+  server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    ports:
+      - "${PORT}:${PORT}"
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      PORT: $PORT
+    networks:
+      - iett_server 
+    depends_on:
+      - postgres
 
 volumes:
   postgres_data:
+
+networks:
+  iett_server:
+
 

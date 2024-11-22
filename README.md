@@ -5,4 +5,3 @@
 ####GET `/busses-in-stop/{stop_id}`
 
 ####Return type is just a json array with bus names.
-
