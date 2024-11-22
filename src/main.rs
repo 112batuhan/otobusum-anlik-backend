@@ -1,44 +1,45 @@
-pub mod csv_parse;
-pub mod database;
-pub mod request;
-pub mod xml_parse;
+use std::sync::Arc;
 
-use std::collections::HashSet;
+use anyhow::Result;
+use axum::{
+    debug_handler,
+    extract::{Path, State},
+    routing::get,
+    Json, Router,
+};
+use iett_stops_with_busses::{
+    database::{fetch_hatkodu_by_durakkodu, get_db_connection},
+    AppError,
+};
+use sqlx::PgPool;
 
-use csv_parse::Route;
-use database::{get_db_connection, hatkodu_exist, insert_bus_route_stop};
-use request::{request_csv, request_soap};
-use xml_parse::{BusRouteStop, DurakDetay};
+pub struct AppState {
+    db: PgPool,
+}
 
 #[tokio::main]
 async fn main() {
     dotenvy::dotenv().ok();
 
-    let client = reqwest::Client::new();
-    let db_conn = get_db_connection().await.unwrap();
+    let db_conn = get_db_connection()
+        .await
+        .expect("Failed to initialize DB connection");
+    let state = Arc::new(AppState { db: db_conn });
 
-    let routes_url = "https://data.ibb.gov.tr/datastore/dump/46dbe388-c8c2-45c4-ac72-c06953de56a2";
-    let routes: Vec<Route> = request_csv(client.clone(), routes_url).await.unwrap();
-    let bus_route_names: HashSet<String> = routes
-        .into_iter()
-        .map(|route| route.route_short_name)
-        .collect();
+    tracing_subscriber::fmt::init();
 
-    // I didn't go for concurrent requests because it might cause rate limit or blacklist issues
-    // We only need to do it once so it's fine to wait for few seconds for every buss
-    println!("loaded {} bus routes", bus_route_names.len());
-    for name in bus_route_names {
-        if hatkodu_exist(&db_conn, &name).await.unwrap() {
-            println!("{} exists, skipping", name);
-            continue;
-        }
-        let bus_route_stops =
-            request_soap::<DurakDetay, Vec<BusRouteStop>>(client.clone(), "DurakDetay_GYY", &name)
-                .await
-                .unwrap();
-        println!("requested {} from api", name);
-        for stop in bus_route_stops {
-            insert_bus_route_stop(&db_conn, stop).await.unwrap();
-        }
-    }
+    let app = Router::new()
+        .route("/busses-in-stop/:stop_id", get(get_busses_in_stop))
+        .with_state(state);
+
+    let listener = tokio::net::TcpListener::bind("0.0.0.0:8000").await.unwrap();
+    axum::serve(listener, app).await.unwrap();
+}
+
+async fn get_busses_in_stop(
+    Path(stop_id): Path<u32>,
+    State(state): State<Arc<AppState>>,
+) -> Result<Json<Vec<String>>, AppError> {
+    let stops = fetch_hatkodu_by_durakkodu(&state.db, stop_id).await?;
+    Ok(Json(stops))
 }

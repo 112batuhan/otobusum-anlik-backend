@@ -49,7 +49,7 @@ pub struct BusRouteStop {
     #[serde(rename = "SIRANO")]
     pub sirano: u32,
     #[serde(rename = "DURAKKODU")]
-    pub durakkodu: String,
+    pub durakkodu: u32,
     #[serde(rename = "DURAKADI")]
     pub durakadi: String,
     #[serde(rename = "XKOORDINATI")]
@@ -73,8 +73,8 @@ pub struct HatServisi {
     pub body: HatServisiBody,
 }
 
-impl UnwrapSoap<Option<RouteMetadata>> for HatServisi {
-    fn get_relevant_data(self) -> Option<RouteMetadata> {
+impl UnwrapSoap<Option<BusRouteMetadata>> for HatServisi {
+    fn get_relevant_data(self) -> Option<BusRouteMetadata> {
         self.body.response.result.dataset.tables
     }
 }
@@ -100,11 +100,11 @@ pub struct HatServisiResult {
 #[derive(Debug, Deserialize)]
 pub struct HatServisiNewDataSet {
     #[serde(rename = "Table")]
-    pub tables: Option<RouteMetadata>,
+    pub tables: Option<BusRouteMetadata>,
 }
 
 #[derive(Debug, Deserialize)]
-pub struct RouteMetadata {
+pub struct BusRouteMetadata {
     #[serde(rename = "HAT_KODU")]
     pub hat_kodu: String,
     #[serde(rename = "HAT_ADI")]

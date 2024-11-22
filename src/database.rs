@@ -23,7 +23,7 @@ pub async fn insert_bus_route_stop(pool: &PgPool, bus_route_stop: BusRouteStop) 
         .bind(&bus_route_stop.hatkodu)
         .bind(&bus_route_stop.yon)
         .bind(bus_route_stop.sirano as i32)
-        .bind(&bus_route_stop.durakkodu)
+        .bind(bus_route_stop.durakkodu as i32)
         .bind(&bus_route_stop.durakadi)
         .bind(bus_route_stop.xkoordinati)
         .bind(bus_route_stop.ykoordinati)
@@ -52,8 +52,8 @@ pub async fn hatkodu_exist(pool: &PgPool, hatkodu: &str) -> Result<bool> {
     Ok(result.is_some_and(|count| count > 0))
 }
 
-pub async fn delete_by_hatkodu(pool: &PgPool, hatkodu: &str) -> Result<u64> {
-    let rows_affected = sqlx::query!(
+pub async fn delete_by_hatkodu(pool: &PgPool, hatkodu: &str) -> Result<()> {
+    sqlx::query!(
         r#"
             DELETE FROM bus_route_stops
             WHERE hatkodu = $1
@@ -61,8 +61,41 @@ pub async fn delete_by_hatkodu(pool: &PgPool, hatkodu: &str) -> Result<u64> {
         hatkodu
     )
     .execute(pool)
-    .await?
-    .rows_affected();
+    .await?;
 
-    Ok(rows_affected)
+    Ok(())
+}
+
+pub async fn fetch_unique_hatkodus(pool: &PgPool) -> Result<Vec<String>> {
+    let hatkodus = sqlx::query!(
+        r#"
+            SELECT DISTINCT hatkodu
+            FROM bus_route_stops
+            "#
+    )
+    .fetch_all(pool)
+    .await?
+    .into_iter()
+    .map(|record| record.hatkodu)
+    .collect();
+
+    Ok(hatkodus)
+}
+
+pub async fn fetch_hatkodu_by_durakkodu(pool: &PgPool, durakkodu: u32) -> Result<Vec<String>> {
+    let hatkodus = sqlx::query!(
+        r#"
+            SELECT hatkodu
+            FROM bus_route_stops
+            WHERE durakkodu = $1
+            "#,
+        durakkodu as i32
+    )
+    .fetch_all(pool)
+    .await?
+    .into_iter()
+    .map(|record| record.hatkodu)
+    .collect();
+
+    Ok(hatkodus)
 }

@@ -3,7 +3,7 @@ CREATE TABLE bus_route_stops (
     hatkodu TEXT NOT NULL,
     yon TEXT NOT NULL,
     sirano INTEGER NOT NULL,
-    durakkodu TEXT NOT NULL,
+    durakkodu INTEGER NOT NULL,
     durakadi TEXT NOT NULL,
     xkoordinati DOUBLE PRECISION NOT NULL,
     ykoordinati DOUBLE PRECISION NOT NULL,
