@@ -12,6 +12,7 @@ use iett_stops_with_busses::{
 };
 use sqlx::PgPool;
 use tower_http::{compression::CompressionLayer, cors::CorsLayer, trace::TraceLayer};
+use tracing::info;
 use tracing_subscriber::fmt::format::FmtSpan;
 
 pub struct AppState {
@@ -45,7 +46,11 @@ async fn main() {
         .layer(TraceLayer::new_for_http())
         .with_state(state);
 
-    let listener = tokio::net::TcpListener::bind("0.0.0.0:8000").await.unwrap();
+    let port = std::env::var("PORT").unwrap_or("8000".to_string());
+    let listener = tokio::net::TcpListener::bind(format!("0.0.0.0:{}", &port))
+        .await
+        .unwrap();
+    info!("listening on {}", listener.local_addr().unwrap());
     axum::serve(listener, app).await.unwrap();
 }
 
