@@ -1,0 +1,29 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        SELECT\n            xkoordinati as x, ykoordinati as y\n        FROM\n            bus_route_stops\n        WHERE\n            hatkodu = $1 AND yon = $2\n        ORDER BY sirano ASC\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "x",
+        "type_info": "Float8"
+      },
+      {
+        "ordinal": 1,
+        "name": "y",
+        "type_info": "Float8"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Text",
+        "Text"
+      ]
+    },
+    "nullable": [
+      false,
+      false
+    ]
+  },
+  "hash": "d13c725f5fa0c8be7fd7c3ff48ac098614cccfaecd1d07a692095f7ec4c52619"
+}

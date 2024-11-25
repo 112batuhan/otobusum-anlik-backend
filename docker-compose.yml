@@ -11,10 +11,10 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
     volumes:
-      - postgres_iett:/var/lib/postgresql/data
+      - postgres:/var/lib/postgresql/data
     restart: unless-stopped
     networks:
-      - iett_server 
+      - server 
 
   server:
     build:
@@ -28,10 +28,9 @@ services:
       DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
       PORT: $PORT
     networks:
-      - iett_server
+      - server 
     depends_on:
       - postgres
-
 
   graphhopper:
     build:
@@ -40,21 +39,23 @@ services:
     ports:
       - "8989:8989"
     volumes:
-      - graphhopper_iett:/data
+      - graphhopper:/data
     environment:
       - JAVA_OPTS=-Xmx2g -Xms2g
       - GRAPH_CACHE_DIR=/data/graph-cache
       - OSM_FILE=/data/map.osm.pbf
       - CONFIG_FILE=/data/config.yml
     restart: unless-stopped
+    networks:
+      - server
 
 
 volumes:
-  postgres_iett:
-  graphhopper_iett:
+  postgres:
+  graphhopper:
   
 
 networks:
-  iett_server:
+  server:
 
 
