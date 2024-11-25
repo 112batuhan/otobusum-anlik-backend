@@ -1,7 +1,6 @@
 use anyhow::{Ok, Result};
 use reqwest::header::{HeaderMap, HeaderName, CONTENT_TYPE};
-use serde::{de::DeserializeOwned, Serialize};
-use serde_json::json;
+use serde::{de::DeserializeOwned, Deserialize, Serialize};
 
 use crate::{csv_parse::read_csv_from_string, database::Coordinates, xml_parse::UnwrapSoap};
 
@@ -61,20 +60,54 @@ pub async fn request_csv<T: DeserializeOwned>(
 #[derive(Serialize)]
 struct GraphhopperPostBody {
     points: Vec<Vec<f64>>,
+    profile: String,
+    instructions: bool,
+    points_encoded: bool,
+}
+
+#[derive(Deserialize)]
+pub struct Points {
+    pub coordinates: Vec<Vec<f64>>,
+}
+
+#[derive(Deserialize)]
+pub struct Path {
+    pub points: Points,
+}
+
+#[derive(Deserialize)]
+pub struct GraphhopperResponseBody {
+    pub paths: Vec<Path>,
 }
 
 /// https://github.com/graphhopper/graphhopper/blob/master/docs/web/api-doc.md
 pub async fn request_graphhopper_routes(
     client: reqwest::Client,
     coordinates: Vec<Coordinates>,
-) -> Result<String> {
+) -> Result<Vec<Coordinates>> {
     let points = coordinates
         .into_iter()
-        .map(|coord| vec![coord.y, coord.x])
+        .map(|coord| vec![coord.x, coord.y])
         .collect();
-    let body = GraphhopperPostBody { points };
+    let body = GraphhopperPostBody {
+        points,
+        profile: "car".to_string(),
+        instructions: false,
+        points_encoded: false,
+    };
 
     let url = "http://localhost:8989/route";
-    let return_string = client.post(url).json(&body).send().await?.text().await?;
-    Ok(return_string)
+    let response_body: GraphhopperResponseBody =
+        client.post(url).json(&body).send().await?.json().await?;
+
+    let coordinates = response_body.paths[0]
+        .points
+        .coordinates
+        .iter()
+        .map(|coordinate_vec| Coordinates {
+            x: coordinate_vec[0],
+            y: coordinate_vec[1],
+        })
+        .collect();
+    Ok(coordinates)
 }

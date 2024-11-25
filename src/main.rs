@@ -2,20 +2,21 @@ use std::sync::Arc;
 
 use anyhow::Result;
 use axum::{
+    debug_handler,
     extract::{Path, State},
     routing::get,
     Json, Router,
 };
 use otobusum_anlik_backend::{
     database::{
-        fetch_hatkodu_by_durakkodu, fetch_stop_info_by_durakkodu, get_db_connection,
-        BusRouteStopResponse,
+        fetch_hatkodu_by_durakkodu, fetch_route_plan, fetch_stop_info_by_durakkodu,
+        get_db_connection, BusRouteStopResponse, Coordinates,
     },
-    AppError,
+    AppError, BusRouteWithCoordinates,
 };
 use serde::Serialize;
 use sqlx::PgPool;
-use tokio::{join, try_join};
+use tokio::try_join;
 use tower_http::{compression::CompressionLayer, cors::CorsLayer, trace::TraceLayer};
 use tracing::info;
 use tracing_subscriber::fmt::format::FmtSpan;
@@ -39,6 +40,7 @@ async fn main() {
     let state = Arc::new(AppState { db: db_conn });
 
     let app = Router::new()
+        .route("/route/:route_code/:direction", get(get_route_data))
         .route("/stop/:stop_id", get(get_stop_data))
         .layer(CorsLayer::very_permissive())
         .layer(
@@ -76,4 +78,18 @@ async fn get_stop_data(
     )?;
 
     Ok(Json(BusesInStopResponse { stop_info, buses }))
+}
+
+#[debug_handler]
+async fn get_route_data(
+    Path((route_code, direction)): Path<(String, String)>,
+    State(state): State<Arc<AppState>>,
+) -> Result<Json<BusRouteWithCoordinates>, AppError> {
+    let coordinates = fetch_route_plan(&state.db, &route_code, &direction).await?;
+    let coordinates: Vec<Coordinates> = serde_json::from_str(&coordinates)?;
+    Ok(Json(BusRouteWithCoordinates {
+        route_code,
+        direction,
+        coordinates,
+    }))
 }

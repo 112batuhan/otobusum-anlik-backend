@@ -124,6 +124,7 @@ pub async fn fetch_stop_info_by_durakkodu(
     stop_info.context("Missing bus stop in Database")
 }
 
+#[derive(Debug, Serialize, Deserialize)]
 pub struct Coordinates {
     pub x: f64,
     pub y: f64,
@@ -154,12 +155,13 @@ pub async fn fetch_stop_coordinates(
     Ok(coordinates)
 }
 
+#[derive(Debug)]
 pub struct BusStopRow {
-    route_code: String,
-    direction: String,
-    x: f64,
-    y: f64,
-    stop_order: i32,
+    pub route_code: String,
+    pub direction: String,
+    pub x: f64,
+    pub y: f64,
+    pub stop_order: i32,
 }
 
 pub async fn fetch_all_stop_coordinates(pool: &PgPool) -> Result<Vec<BusStopRow>> {
@@ -183,13 +185,43 @@ pub async fn fetch_all_stop_coordinates(pool: &PgPool) -> Result<Vec<BusStopRow>
     Ok(bus_stop_row)
 }
 
-pub struct RouteTravelPlanRow {
-    hatkodu: String,
-    yon: String,
-    /// Direct Json string to store
-    coordinates: String,
+/// TODO: detect duplicate inserts, add unique index or change it
+pub async fn insert_route_plan(
+    pool: &PgPool,
+    hatkodu: &str,
+    yon: &str,
+    coordinate_string: &str,
+) -> Result<()> {
+    let query = r#"
+            INSERT INTO route_travel_plan (
+                hatkodu, yon, points
+            ) VALUES ($1, $2, $3)
+        "#;
+
+    sqlx::query(query)
+        .bind(hatkodu)
+        .bind(yon)
+        .bind(coordinate_string)
+        .execute(pool)
+        .await?;
+
+    Ok(())
 }
 
-pub async fn insert_route_plan(pool: &PgPool, route_travel_plan: RouteTravelPlanRow) -> Result<()> {
-    todo!()
+pub async fn fetch_route_plan(pool: &PgPool, hatkodu: &str, yon: &str) -> Result<String> {
+    let points_string = sqlx::query_scalar!(
+        r#"
+            SELECT points
+            FROM
+                route_travel_plan
+            WHERE
+                hatkodu = $1
+                AND yon = $2
+            "#,
+        hatkodu,
+        yon
+    )
+    .fetch_optional(pool)
+    .await?;
+    points_string.context("Missing bus stop in Database")
 }

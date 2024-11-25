@@ -1,5 +1,7 @@
 use axum::response::{IntoResponse, Response};
+use database::Coordinates;
 use reqwest::StatusCode;
+use serde::Serialize;
 
 pub mod csv_parse;
 pub mod database;
@@ -25,4 +27,11 @@ where
     fn from(err: E) -> Self {
         Self(err.into())
     }
+}
+
+#[derive(Debug, Serialize)]
+pub struct BusRouteWithCoordinates {
+    pub route_code: String,
+    pub direction: String,
+    pub coordinates: Vec<Coordinates>,
 }
