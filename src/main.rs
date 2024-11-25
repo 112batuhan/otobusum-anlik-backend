@@ -7,10 +7,15 @@ use axum::{
     Json, Router,
 };
 use iett_stops_with_busses::{
-    database::{fetch_hatkodu_by_durakkodu, get_db_connection},
+    database::{
+        fetch_hatkodu_by_durakkodu, fetch_stop_info_by_durakkodu, get_db_connection,
+        BusRouteStopResponse,
+    },
     AppError,
 };
+use serde::Serialize;
 use sqlx::PgPool;
+use tokio::{join, try_join};
 use tower_http::{compression::CompressionLayer, cors::CorsLayer, trace::TraceLayer};
 use tracing::info;
 use tracing_subscriber::fmt::format::FmtSpan;
@@ -34,7 +39,7 @@ async fn main() {
     let state = Arc::new(AppState { db: db_conn });
 
     let app = Router::new()
-        .route("/busses-in-stop/:stop_id", get(get_busses_in_stop))
+        .route("/stop/:stop_id", get(get_busses_in_stop))
         .layer(CorsLayer::very_permissive())
         .layer(
             CompressionLayer::new()
@@ -54,10 +59,20 @@ async fn main() {
     axum::serve(listener, app).await.unwrap();
 }
 
+#[derive(Serialize)]
+pub struct BussesInStopResponse {
+    stop_info: BusRouteStopResponse,
+    busses: Vec<String>,
+}
+
 async fn get_busses_in_stop(
     Path(stop_id): Path<u32>,
     State(state): State<Arc<AppState>>,
-) -> Result<Json<Vec<String>>, AppError> {
-    let stops = fetch_hatkodu_by_durakkodu(&state.db, stop_id).await?;
-    Ok(Json(stops))
+) -> Result<Json<BussesInStopResponse>, AppError> {
+    let (busses, stop_info) = try_join!(
+        fetch_hatkodu_by_durakkodu(&state.db, stop_id),
+        fetch_stop_info_by_durakkodu(&state.db, stop_id),
+    )?;
+
+    Ok(Json(BussesInStopResponse { stop_info, busses }))
 }

@@ -1,4 +1,5 @@
-use anyhow::Result;
+use anyhow::{Context, Result};
+use serde::{Deserialize, Serialize};
 use sqlx::PgPool;
 
 use crate::xml_parse::BusRouteStop;
@@ -83,6 +84,44 @@ pub async fn fetch_hatkodu_by_durakkodu(pool: &PgPool, durakkodu: u32) -> Result
     .collect();
 
     Ok(hatkodus)
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct BusRouteStopResponse {
+    durakkodu: i32,
+    durakadi: String,
+    xkoordinati: f64,
+    ykoordinati: f64,
+    duraktipi: String,
+    isletmebolge: Option<String>,
+    isletmealtbolge: String,
+    ilceadi: String,
+}
+pub async fn fetch_stop_info_by_durakkodu(
+    pool: &PgPool,
+    durakkodu: u32,
+) -> Result<BusRouteStopResponse> {
+    let stop_info = sqlx::query_as!(
+        BusRouteStopResponse,
+        r#"
+        SELECT 
+            durakkodu,
+            durakadi,
+            xkoordinati,
+            ykoordinati,
+            duraktipi,
+            isletmebolge,
+            isletmealtbolge,
+            ilceadi
+        FROM bus_route_stops
+        WHERE durakkodu = $1
+        LIMIT 1
+        "#,
+        durakkodu as i32
+    )
+    .fetch_optional(pool)
+    .await?;
+    stop_info.context("Missing bus stop in Database")
 }
 
 pub struct Coordinates {

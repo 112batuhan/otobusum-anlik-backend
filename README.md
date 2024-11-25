@@ -2,8 +2,7 @@ Small backend service for [otobusum-anlik](https://github.com/metkm/otobusum-anl
 
 Rust Axum Postgres stack
 
-### This will have one endpoint so here it is:
+### This will have one endpoint for now so here it is:
+GET `/stop/{stop_id}`
 
-GET `/busses-in-stop/{stop_id}`
-
-Return type is just a json array with bus names.
+I will implement docs soon...
