@@ -1,19 +1,20 @@
 use std::collections::HashSet;
+use std::sync::Arc;
 
 use iett_stops_with_busses::csv_parse::Route;
 use iett_stops_with_busses::database::{
-    delete_by_hatkodu, fetch_unique_hatkodus, get_db_connection, hatkodu_exist,
-    insert_bus_route_stop,
+    delete_by_hatkodu, fetch_unique_hatkodus, get_db_connection, insert_bus_route_stop,
 };
 use iett_stops_with_busses::request::{request_csv, request_soap};
 use iett_stops_with_busses::xml_parse::{BusRouteMetadata, BusRouteStop, DurakDetay, HatServisi};
+use tokio::task::JoinSet;
 
 #[tokio::main]
 async fn main() {
     dotenvy::dotenv().ok();
 
     let client = reqwest::Client::new();
-    let db_conn = get_db_connection().await.unwrap();
+    let db_conn = Arc::new(get_db_connection().await.unwrap());
 
     let routes_url = "https://data.ibb.gov.tr/datastore/dump/46dbe388-c8c2-45c4-ac72-c06953de56a2";
     let routes: Vec<Route> = request_csv(client.clone(), routes_url).await.unwrap();
@@ -25,8 +26,10 @@ async fn main() {
     // I didn't go for concurrent requests because it might cause rate limit or blacklist issues
     // We only need to do it once so it's fine to wait for few seconds for every buss
     println!("loaded {} bus routes", bus_route_names.len());
+
+    let skip_bus_route_names = fetch_unique_hatkodus(&db_conn).await.unwrap();
     for name in bus_route_names {
-        if hatkodu_exist(&db_conn, &name).await.unwrap() {
+        if skip_bus_route_names.contains(&name) {
             println!("{} exists, skipping", name);
             continue;
         }
@@ -35,9 +38,15 @@ async fn main() {
                 .await
                 .unwrap();
         println!("requested {} from api", name);
+        let mut join_set = JoinSet::new();
         for stop in bus_route_stops {
-            insert_bus_route_stop(&db_conn, stop).await.unwrap();
+            let db_conn = db_conn.clone();
+            join_set.spawn(async move {
+                insert_bus_route_stop(&db_conn, stop).await.unwrap();
+            });
         }
+
+        join_set.join_all().await;
     }
 
     let inserted_bus_route_names = fetch_unique_hatkodus(&db_conn).await.unwrap();

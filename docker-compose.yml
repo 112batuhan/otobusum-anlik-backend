@@ -3,7 +3,7 @@ version: '3.9'
 services:
   postgres:
     image: postgres:15
-    container_name: postgres_db
+    container_name: postgres_iett
     ports:
       - "5432:5432"
     environment:
@@ -11,7 +11,7 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - postgres_iett:/var/lib/postgresql/data
     restart: unless-stopped
     networks:
       - iett_server 
@@ -28,12 +28,31 @@ services:
       DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
       PORT: $PORT
     networks:
-      - iett_server 
+      - iett_server
     depends_on:
       - postgres
 
+
+  graphhopper:
+    build:
+      context: .  
+      dockerfile: Dockerfile.graphhopper
+    ports:
+      - "8989:8989"
+    volumes:
+      - graphhopper_iett:/data
+    environment:
+      - JAVA_OPTS=-Xmx2g -Xms2g
+      - GRAPH_CACHE_DIR=/data/graph-cache
+      - OSM_FILE=/data/map.osm.pbf
+      - CONFIG_FILE=/data/config.yml
+    restart: unless-stopped
+
+
 volumes:
-  postgres_data:
+  postgres_iett:
+  graphhopper_iett:
+  
 
 networks:
   iett_server:

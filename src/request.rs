@@ -1,8 +1,9 @@
 use anyhow::{Ok, Result};
 use reqwest::header::{HeaderMap, HeaderName, CONTENT_TYPE};
-use serde::de::DeserializeOwned;
+use serde::{de::DeserializeOwned, Serialize};
+use serde_json::json;
 
-use crate::{csv_parse::read_csv_from_string, xml_parse::UnwrapSoap};
+use crate::{csv_parse::read_csv_from_string, database::Coordinates, xml_parse::UnwrapSoap};
 
 pub fn get_body(key: &str, soap_method: &str, content: &str) -> String {
     format!(
@@ -55,4 +56,25 @@ pub async fn request_csv<T: DeserializeOwned>(
     let res = client.get(url).send().await?;
     let response_string = &res.text().await?;
     Ok(read_csv_from_string(response_string)?)
+}
+
+#[derive(Serialize)]
+struct GraphhopperPostBody {
+    points: Vec<Vec<f64>>,
+}
+
+/// https://github.com/graphhopper/graphhopper/blob/master/docs/web/api-doc.md
+pub async fn request_graphhopper_routes(
+    client: reqwest::Client,
+    coordinates: Vec<Coordinates>,
+) -> Result<String> {
+    let points = coordinates
+        .into_iter()
+        .map(|coord| vec![coord.y, coord.x])
+        .collect();
+    let body = GraphhopperPostBody { points };
+
+    let url = "http://localhost:8989/route";
+    let return_string = client.post(url).json(&body).send().await?.text().await?;
+    Ok(return_string)
 }
