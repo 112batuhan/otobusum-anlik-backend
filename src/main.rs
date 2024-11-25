@@ -6,7 +6,7 @@ use axum::{
     routing::get,
     Json, Router,
 };
-use iett_stops_with_busses::{
+use otobusum_anlik_backend::{
     database::{
         fetch_hatkodu_by_durakkodu, fetch_stop_info_by_durakkodu, get_db_connection,
         BusRouteStopResponse,
@@ -39,7 +39,7 @@ async fn main() {
     let state = Arc::new(AppState { db: db_conn });
 
     let app = Router::new()
-        .route("/stop/:stop_id", get(get_busses_in_stop))
+        .route("/stop/:stop_id", get(get_stop_data))
         .layer(CorsLayer::very_permissive())
         .layer(
             CompressionLayer::new()
@@ -60,19 +60,20 @@ async fn main() {
 }
 
 #[derive(Serialize)]
-pub struct BussesInStopResponse {
+pub struct BusesInStopResponse {
+    #[serde(flatten)]
     stop_info: BusRouteStopResponse,
-    busses: Vec<String>,
+    buses: Vec<String>,
 }
 
-async fn get_busses_in_stop(
+async fn get_stop_data(
     Path(stop_id): Path<u32>,
     State(state): State<Arc<AppState>>,
-) -> Result<Json<BussesInStopResponse>, AppError> {
-    let (busses, stop_info) = try_join!(
+) -> Result<Json<BusesInStopResponse>, AppError> {
+    let (buses, stop_info) = try_join!(
         fetch_hatkodu_by_durakkodu(&state.db, stop_id),
         fetch_stop_info_by_durakkodu(&state.db, stop_id),
     )?;
 
-    Ok(Json(BussesInStopResponse { stop_info, busses }))
+    Ok(Json(BusesInStopResponse { stop_info, buses }))
 }

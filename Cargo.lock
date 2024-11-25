@@ -982,25 +982,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "iett_stops_with_busses"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "axum",
- "csv",
- "dotenvy",
- "reqwest",
- "serde",
- "serde-xml-rs",
- "serde_json",
- "sqlx",
- "tokio",
- "tower-http",
- "tracing",
- "tracing-subscriber",
-]
-
-[[package]]
 name = "indexmap"
 version = "2.6.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1296,6 +1277,25 @@ dependencies = [
  "libc",
  "pkg-config",
  "vcpkg",
+]
+
+[[package]]
+name = "otobusum-anlik-backend"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "axum",
+ "csv",
+ "dotenvy",
+ "reqwest",
+ "serde",
+ "serde-xml-rs",
+ "serde_json",
+ "sqlx",
+ "tokio",
+ "tower-http",
+ "tracing",
+ "tracing-subscriber",
 ]
 
 [[package]]

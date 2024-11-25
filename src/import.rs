@@ -1,12 +1,12 @@
 use std::collections::HashSet;
 use std::sync::Arc;
 
-use iett_stops_with_busses::csv_parse::Route;
-use iett_stops_with_busses::database::{
+use otobusum_anlik_backend::csv_parse::Route;
+use otobusum_anlik_backend::database::{
     delete_by_hatkodu, fetch_unique_hatkodus, get_db_connection, insert_bus_route_stop,
 };
-use iett_stops_with_busses::request::{request_csv, request_soap};
-use iett_stops_with_busses::xml_parse::{BusRouteMetadata, BusRouteStop, DurakDetay, HatServisi};
+use otobusum_anlik_backend::request::{request_csv, request_soap};
+use otobusum_anlik_backend::xml_parse::{BusRouteMetadata, BusRouteStop, DurakDetay, HatServisi};
 use tokio::task::JoinSet;
 
 #[tokio::main]
