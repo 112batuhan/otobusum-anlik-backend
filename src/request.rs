@@ -63,6 +63,7 @@ struct GraphhopperPostBody {
     profile: String,
     instructions: bool,
     points_encoded: bool,
+    curbside_strictness: String,
 }
 
 #[derive(Deserialize)]
@@ -94,6 +95,7 @@ pub async fn request_graphhopper_routes(
         profile: "car".to_string(),
         instructions: false,
         points_encoded: false,
+        curbside_strictness: "soft".to_string(),
     };
 
     let url = "http://localhost:8989/route";

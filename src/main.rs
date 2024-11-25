@@ -2,16 +2,16 @@ use std::sync::Arc;
 
 use anyhow::Result;
 use axum::{
-    debug_handler,
     extract::{Path, State},
     routing::get,
     Json, Router,
 };
 use otobusum_anlik_backend::{
     database::{
-        fetch_hatkodu_by_durakkodu, fetch_route_plan, fetch_stop_info_by_durakkodu,
-        get_db_connection, BusRouteStopResponse, Coordinates,
+        fetch_hatkodu_by_durakkodu, fetch_route_plan, fetch_stop_coordinates,
+        fetch_stop_info_by_durakkodu, get_db_connection, BusRouteStopResponse, Coordinates,
     },
+    request::request_graphhopper_routes,
     AppError, BusRouteWithCoordinates,
 };
 use serde::Serialize;
@@ -23,6 +23,7 @@ use tracing_subscriber::fmt::format::FmtSpan;
 
 pub struct AppState {
     db: PgPool,
+    reqwest: reqwest::Client,
 }
 
 #[tokio::main]
@@ -37,9 +38,16 @@ async fn main() {
     let db_conn = get_db_connection()
         .await
         .expect("Failed to initialize DB connection");
-    let state = Arc::new(AppState { db: db_conn });
+    let state = Arc::new(AppState {
+        db: db_conn,
+        reqwest: reqwest::Client::new(),
+    });
 
     let app = Router::new()
+        .route(
+            "/routetest/:route_code/:direction",
+            get(get_route_data_dynamic),
+        )
         .route("/route/:route_code/:direction", get(get_route_data))
         .route("/stop/:stop_id", get(get_stop_data))
         .layer(CorsLayer::very_permissive())
@@ -80,13 +88,25 @@ async fn get_stop_data(
     Ok(Json(BusesInStopResponse { stop_info, buses }))
 }
 
-#[debug_handler]
 async fn get_route_data(
     Path((route_code, direction)): Path<(String, String)>,
     State(state): State<Arc<AppState>>,
 ) -> Result<Json<BusRouteWithCoordinates>, AppError> {
     let coordinates = fetch_route_plan(&state.db, &route_code, &direction).await?;
     let coordinates: Vec<Coordinates> = serde_json::from_str(&coordinates)?;
+    Ok(Json(BusRouteWithCoordinates {
+        route_code,
+        direction,
+        coordinates,
+    }))
+}
+
+async fn get_route_data_dynamic(
+    Path((route_code, direction)): Path<(String, String)>,
+    State(state): State<Arc<AppState>>,
+) -> Result<Json<BusRouteWithCoordinates>, AppError> {
+    let stop_coordinates = fetch_stop_coordinates(&state.db, &route_code, &direction).await?;
+    let coordinates = request_graphhopper_routes(state.reqwest.clone(), stop_coordinates).await?;
     Ok(Json(BusRouteWithCoordinates {
         route_code,
         direction,

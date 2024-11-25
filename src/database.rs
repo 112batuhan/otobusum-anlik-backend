@@ -130,7 +130,6 @@ pub struct Coordinates {
     pub y: f64,
 }
 
-/// unused for now...
 pub async fn fetch_stop_coordinates(
     pool: &PgPool,
     hatkodu: &str,
