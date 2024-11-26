@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 use crate::models::Coordinates;
 
 #[derive(Serialize, Deserialize)]
-pub struct BusRouteStopResponse {
+pub struct BusStop {
     pub durakkodu: i32,
     pub durakadi: String,
     pub xkoordinati: f64,

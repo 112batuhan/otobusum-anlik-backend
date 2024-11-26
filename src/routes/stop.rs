@@ -10,25 +10,25 @@ use tokio::try_join;
 
 use crate::models::{
     app::{AppError, AppState},
-    bus::BusRouteStopResponse,
+    bus::BusStop
 };
 
 use crate::database::stop::{fetch_line_code_with_stop_code, fetch_stop_with_stop_code};
 
 #[derive(Serialize)]
-pub struct BusesInStopResponse {
-    stop: BusRouteStopResponse,
+pub struct BussesInStopResponse {
+    stop: BusStop,
     buses: Vec<String>,
 }
 
 pub async fn get_stop(
     Path(stop_id): Path<u32>,
     State(state): State<Arc<AppState>>,
-) -> Result<Json<BusesInStopResponse>, AppError> {
+) -> Result<Json<BussesInStopResponse>, AppError> {
     let (buses, stop) = try_join!(
         fetch_line_code_with_stop_code(&state.db, stop_id),
         fetch_stop_with_stop_code(&state.db, stop_id),
     )?;
 
-    Ok(Json(BusesInStopResponse { stop, buses }))
+    Ok(Json(BussesInStopResponse { stop, buses }))
 }

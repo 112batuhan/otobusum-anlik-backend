@@ -1,7 +1,7 @@
 use sqlx::PgPool;
 use anyhow::{Context, Result};
 
-use crate::models::bus::BusRouteStopResponse;
+use crate::models::bus::BusStop;
 
 // pub async fn fetch_stop_coordinates(
 //     pool: &PgPool,
@@ -48,9 +48,9 @@ pub async fn fetch_line_code_with_stop_code(pool: &PgPool, stop_code: u32) -> Re
 pub async fn fetch_stop_with_stop_code(
     pool: &PgPool,
     durakkodu: u32,
-) -> Result<BusRouteStopResponse> {
+) -> Result<BusStop> {
     let stop_info = sqlx::query_as!(
-        BusRouteStopResponse,
+        BusStop,
         r#"
         SELECT 
             durakkodu,
