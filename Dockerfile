@@ -5,7 +5,7 @@ FROM rust:latest as rust-builder
 WORKDIR /usr/src/otobusum-anlik
 COPY . .
 
-ENV SQLX_OFFLINE=true 
+# ENV SQLX_OFFLINE=true 
 RUN cargo build --release
 
 FROM rust:slim

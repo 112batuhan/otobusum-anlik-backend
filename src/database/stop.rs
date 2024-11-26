@@ -47,20 +47,12 @@ pub async fn fetch_line_code_with_stop_code(pool: &PgPool, stop_code: u32) -> Re
 
 pub async fn fetch_stop_with_stop_code(
     pool: &PgPool,
-    durakkodu: u32,
+    durakkodu: i32,
 ) -> Result<BusStop> {
     let stop_info = sqlx::query_as!(
         BusStop,
         r#"
-        SELECT 
-            durakkodu,
-            durakadi,
-            xkoordinati,
-            ykoordinati,
-            duraktipi,
-            isletmebolge,
-            isletmealtbolge,
-            ilceadi
+        SELECT *
         FROM bus_route_stops
         WHERE durakkodu = $1
         LIMIT 1

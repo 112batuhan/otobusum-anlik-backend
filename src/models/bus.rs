@@ -4,8 +4,12 @@ use crate::models::Coordinates;
 
 #[derive(Serialize, Deserialize)]
 pub struct BusStop {
+    pub hatkodu: String,
+    pub id: i32,
     pub durakkodu: i32,
+    pub yon: String,
     pub durakadi: String,
+    pub sirano: u32,
     pub xkoordinati: f64,
     pub ykoordinati: f64,
     pub duraktipi: String,
