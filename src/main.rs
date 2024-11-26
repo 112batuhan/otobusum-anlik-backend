@@ -36,7 +36,7 @@ async fn main() {
     let state = Arc::new(AppState::new(db_conn));
 
     let app = Router::new()
-        .route("/stop/:stop_id", get(routes::stop::get_stop_data))
+        .route("/stop/:stop_id", get(routes::stop::get_stop))
         .layer(CorsLayer::very_permissive())
         .layer(
             CompressionLayer::new()

@@ -27,14 +27,14 @@ use crate::models::bus::BusRouteStopResponse;
 //     Ok(coordinates)
 // }
 
-pub async fn fetch_hatkodu_by_durakkodu(pool: &PgPool, durakkodu: u32) -> Result<Vec<String>> {
+pub async fn fetch_line_code_with_stop_code(pool: &PgPool, stop_code: u32) -> Result<Vec<String>> {
     let hatkodus = sqlx::query!(
         r#"
             SELECT hatkodu
             FROM bus_route_stops
             WHERE durakkodu = $1
             "#,
-        durakkodu as i32
+        stop_code as i32
     )
     .fetch_all(pool)
     .await?
@@ -45,7 +45,7 @@ pub async fn fetch_hatkodu_by_durakkodu(pool: &PgPool, durakkodu: u32) -> Result
     Ok(hatkodus)
 }
 
-pub async fn fetch_stop_info_by_durakkodu(
+pub async fn fetch_stop_with_stop_code(
     pool: &PgPool,
     durakkodu: u32,
 ) -> Result<BusRouteStopResponse> {
