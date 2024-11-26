@@ -10,11 +10,11 @@ path = "src/main.rs"
 
 [[bin]]
 name = "import"
-path = "src/import.rs"
+path = "src/scripts/import.rs"
 
 [[bin]]
 name = "route_import"
-path = "src/route_plan_import.rs"
+path = "src/scripts/route_plan_import.rs"
 
 [dependencies]
 anyhow = "1.0.93"

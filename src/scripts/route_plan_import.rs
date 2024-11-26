@@ -1,12 +1,10 @@
 use std::{collections::HashMap, sync::Arc};
 
-use otobusum_anlik_backend::{
-    database::{
-        fetch_all_stop_coordinates, get_db_connection, insert_route_plan, BusStopRow, Coordinates,
-    },
-    request::request_graphhopper_routes,
-    BusRouteWithCoordinates,
-};
+use otobusum_anlik_backend::database::route::insert_route_plan;
+use otobusum_anlik_backend::db::{fetch_all_stop_coordinates, get_db_connection};
+use otobusum_anlik_backend::models::Coordinates;
+use otobusum_anlik_backend::request::request_graphhopper_routes;
+use otobusum_anlik_backend::models::bus::{BusRouteWithCoordinates, BusStopRow};
 
 #[tokio::main]
 async fn main() {
