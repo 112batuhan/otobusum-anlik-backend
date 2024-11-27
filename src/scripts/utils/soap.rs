@@ -1,10 +1,68 @@
-// use serde::{de::DeserializeOwned, Deserialize};
+use axum::http::{HeaderMap, HeaderName};
+use reqwest::header::CONTENT_TYPE;
+use serde::de::DeserializeOwned;
 
-// use crate::models::stop::{BusRouteStop, DurakDetayGYYResult};
+use anyhow::Result;
 
-// pub trait UnwrapSoap<R: DeserializeOwned>: DeserializeOwned {
-//     fn get_relevant_data(self) -> R;
-// }
+pub trait UnwrapSoap<R: DeserializeOwned>: DeserializeOwned {
+    fn get_relevant_data(self) -> R;
+}
+
+pub fn get_body(key: &str, soap_method: &str, content: Option<&str>) -> String {
+    format!(
+        r#"
+        <soap:Envelope
+            xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+            <soap:Body>
+                <{soap_method}
+                    xmlns="http://tempuri.org/">
+                    <{key}>{content:?}</{key}>
+                </{soap_method}>
+            </soap:Body>
+        </soap:Envelope>
+        "#,
+        key = key,
+        soap_method = soap_method,
+        content = content
+    )
+}
+
+pub async fn request_soap<T: UnwrapSoap<T>>(
+// pub async fn request_soap<T: UnwrapSoap<R>, R: DeserializeOwned>(
+    client: reqwest::Client,
+    url: &str,
+    soap_method: &str,
+    hat_kodu: Option<&str>,
+) -> Result<T>
+where
+{
+    let mut headers = HeaderMap::new();
+    headers.insert(CONTENT_TYPE, "text/xml; charset=UTF-8".parse().unwrap());
+    headers.insert(
+        "SOAPAction".parse::<HeaderName>().unwrap(),
+        format!("\"http://tempuri.org/{}\"", soap_method)
+            .parse()
+            .unwrap(),
+    );
+
+    let body = get_body("hat_kodu", soap_method, hat_kodu);
+    let response = client
+        .post(url)
+        .headers(headers)
+        .send()
+        .await?;
+
+    // let res = client.post(url).headers(headers).body(body).send().await?;
+    // let response_string = &res.text().await?;
+    // let envelope: T = serde_xml_rs::from_str(response_string)?;
+
+    // Ok(envelope.get_relevant_data())
+
+    let content = response.text().await?;
+    let envelope: T = serde_xml_rs::from_str(&content)?;
+
+    Ok(envelope.get_relevant_data())
+}
 
 // #[derive(Debug, Deserialize)]
 // pub struct DurakDetay {

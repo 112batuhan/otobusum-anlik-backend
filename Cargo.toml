@@ -16,6 +16,10 @@ path = "src/scripts/import_routes.rs"
 name = "import_lines"
 path = "src/scripts/import_lines.rs"
 
+[[bin]]
+name = "import_stops"
+path = "src/scripts/import_stops.rs"
+
 [dependencies]
 anyhow = "1.0.93"
 axum = { version = "0.7.7", features = ["macros"] }
