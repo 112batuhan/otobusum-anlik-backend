@@ -1,6 +1,6 @@
 use serde::{de::DeserializeOwned, Deserialize};
 
-use crate::models::bus::{BusRouteStop, DurakDetayGYYResult};
+use crate::models::stop::{BusRouteStop, DurakDetayGYYResult};
 
 pub trait UnwrapSoap<R: DeserializeOwned>: DeserializeOwned {
     fn get_relevant_data(self) -> R;

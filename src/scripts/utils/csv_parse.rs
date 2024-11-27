@@ -5,30 +5,7 @@ use serde::{
 };
 use std::io::Cursor;
 
-#[derive(Debug, Deserialize)]
-pub struct Stop {
-    #[serde(deserialize_with = "remove_non_numeric")]
-    pub stop_id: u32,
-    pub stop_code: u32,
-    pub stop_name: String,
-    pub stop_desc: String,
-    pub stop_lat: f64,
-    pub stop_lon: f64,
-    pub location_type: u32,
-}
-
-#[derive(Debug, Deserialize)]
-pub struct Route {
-    pub route_id: i32,
-    pub agency_id: Option<i32>,
-    pub route_short_name: Option<String>,
-    pub route_long_name: Option<String>,
-    pub route_type: Option<i32>,
-    pub route_desc: Option<String>,
-    pub route_code: Option<String>,
-}
-
-fn remove_non_numeric<'de, D>(deserializer: D) -> Result<u32, D::Error>
+pub fn remove_non_numeric<'de, D>(deserializer: D) -> Result<u32, D::Error>
 where
     D: Deserializer<'de>,
 {
