@@ -12,6 +12,9 @@ path = "src/main.rs"
 name = "import_routes"
 path = "src/scripts/import_routes.rs"
 
+[[bin]]
+name = "import_lines"
+path = "src/scripts/import_lines.rs"
 
 [dependencies]
 anyhow = "1.0.93"
