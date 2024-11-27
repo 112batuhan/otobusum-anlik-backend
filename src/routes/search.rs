@@ -26,7 +26,7 @@ pub async fn search(
     let stops = sqlx::query_as!(
         BusStop,
         r#"
-            SELECT * FROM bus_route_stops WHERE hatkodu LIKE '%' || $1 || '%'
+            SELECT * FROM bus_route_stops WHERE to_tsvector(durakadi) @@ websearch_to_tsquery('' || $1 || ':*')
             LIMIT 10
         "#,
         q
@@ -37,10 +37,11 @@ pub async fn search(
     let lines = sqlx::query_as!(
         BusLine,
         r#"
-            SELECT * FROM lines WHERE to_tsvector(code) @@ to_tsquery('' || $1 || ':*')
+            SELECT * FROM lines WHERE to_tsvector(code) @@ websearch_to_tsquery('' || $1 || ':*')
+                                OR to_tsvector(title) @@ websearch_to_tsquery('' || $1 || ':*')
             LIMIT 10
         "#,
-        Some(q)
+        q
     )
         .fetch_all(&state.db)
         .await?;
