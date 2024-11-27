@@ -1,13 +1,37 @@
 use std::{fs, sync::Arc};
 
-use otobusum_anlik_backend::{csv_parse::{read_csv_from_string, Route}, db::get_db_connection, request::request_csv};
-use sqlx::QueryBuilder;
+use otobusum_anlik_backend::{csv_parse::{read_csv_from_string, Route}, db::get_db_connection};
+use anyhow::Result;
+use sqlx::{PgPool, QueryBuilder};
+
+/// TODO: detect duplicate inserts, add unique index or change it
+pub async fn insert_route_plan(
+    pool: &PgPool,
+    hatkodu: &str,
+    yon: &str,
+    coordinate_string: &str,
+) -> Result<()> {
+    let query = r#"
+            INSERT INTO route_travel_plan (
+                hatkodu, yon, points
+            ) VALUES ($1, $2, $3)
+        "#;
+
+    sqlx::query(query)
+        .bind(hatkodu)
+        .bind(yon)
+        .bind(coordinate_string)
+        .execute(pool)
+        .await?;
+
+    Ok(())
+}
 
 #[tokio::main]
 async fn main() {
     dotenvy::dotenv().ok();
 
-    let client = reqwest::Client::new();
+    // let client = reqwest::Client::new();
     let db_conn = Arc::new(get_db_connection().await.unwrap());
 
     let file = fs::read_to_string("./routes.csv").unwrap();

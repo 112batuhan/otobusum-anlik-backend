@@ -4,7 +4,7 @@ use axum::extract::{Query, State};
 use serde::Deserialize;
 
 use crate::models::app::AppState;
-use crate::models::bus::{ BusStop };
+use crate::models::bus::BusStop;
 
 #[derive(Deserialize)]
 pub struct Search {
@@ -25,6 +25,8 @@ pub async fn search(
         q
     )
         .fetch_one(&state.db);
+
+    
 
     // let results = sqlx::query!(
     //     r#"
