@@ -27,7 +27,7 @@ pub async fn get_stop(
 ) -> Result<Json<BussesInStopResponse>, AppError> {
     let (buses, stop) = try_join!(
         fetch_line_code_with_stop_code(&state.db, stop_id),
-        fetch_stop_with_stop_code(&state.db, stop_id),
+        fetch_stop_with_stop_code(&state.db, stop_id as i32),
     )?;
 
     Ok(Json(BussesInStopResponse { stop, buses }))

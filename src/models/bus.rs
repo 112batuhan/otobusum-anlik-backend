@@ -9,7 +9,7 @@ pub struct BusStop {
     pub durakkodu: i32,
     pub yon: String,
     pub durakadi: String,
-    pub sirano: u32,
+    pub sirano: i32,
     pub xkoordinati: f64,
     pub ykoordinati: f64,
     pub duraktipi: String,
