@@ -1,0 +1,11 @@
+CREATE TABLE stops(
+  stop_code INTEGER PRIMARY KEY NOT NULL,
+  stop_name TEXT NOT NULL,
+  coordinate TEXT NOT NULL,
+  province TEXT NOT NULL,
+  direction TEXT NOT NULL,
+  smart Text NOT NULL,
+  physical Text,
+  stop_type Text NOT NULL,
+  disabled_can_use Text NOT NULL
+);

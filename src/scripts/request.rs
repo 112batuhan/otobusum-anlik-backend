@@ -22,31 +22,6 @@ pub fn get_body(key: &str, soap_method: &str, content: &str) -> String {
         content = content
     )
 }
-pub async fn request_soap<T: UnwrapSoap<R>, R: DeserializeOwned>(
-    client: reqwest::Client,
-    soap_method: &str,
-    hat_kodu: &str,
-) -> Result<R>
-where
-{
-    let url = "https://api.ibb.gov.tr/iett/ibb/ibb.asmx?wsdl";
-    let mut headers = HeaderMap::new();
-    headers.insert(CONTENT_TYPE, "text/xml; charset=UTF-8".parse().unwrap());
-    headers.insert(
-        "SOAPAction".parse::<HeaderName>().unwrap(),
-        format!("\"http://tempuri.org/{}\"", soap_method)
-            .parse()
-            .unwrap(),
-    );
-
-    let body = get_body("hat_kodu", soap_method, hat_kodu);
-
-    let res = client.post(url).headers(headers).body(body).send().await?;
-    let response_string = &res.text().await?;
-    let envelope: T = serde_xml_rs::from_str(response_string)?;
-
-    Ok(envelope.get_relevant_data())
-}
 
 pub async fn request_csv<T: DeserializeOwned>(
     client: reqwest::Client,

@@ -1,39 +1,50 @@
-// use serde::Deserialize;
+use serde::Deserialize;
 
-// #[derive(Debug, Deserialize)]
-// pub struct DurakDetayGYYResult {
-//     #[serde(rename = "NewDataSet")]
-//     pub dataset: DurakDetayNewDataSet,
-// }
+use crate::utils::xml_parse::UnwrapSoap;
 
-// #[derive(Debug, Deserialize)]
-// pub struct DurakDetayNewDataSet {
-//     #[serde(rename = "Table")]
-//     pub tables: Option<Vec<BusRouteStop>>,
-// }
+#[derive(Deserialize)]
+#[serde(rename = "Envelope")]
+pub struct BusStopsResponse {
+    #[serde(rename = "Body")]
+    pub body: BusStopsResponseBody
+}
 
-// #[derive(Debug, Deserialize)]
-// pub struct BusRouteStop {
-//     #[serde(rename = "HATKODU")]
-//     pub hatkodu: String,
-//     #[serde(rename = "YON")]
-//     pub yon: String,
-//     #[serde(rename = "SIRANO")]
-//     pub sirano: u32,
-//     #[serde(rename = "DURAKKODU")]
-//     pub durakkodu: u32,
-//     #[serde(rename = "DURAKADI")]
-//     pub durakadi: String,
-//     #[serde(rename = "XKOORDINATI")]
-//     pub xkoordinati: f64,
-//     #[serde(rename = "YKOORDINATI")]
-//     pub ykoordinati: f64,
-//     #[serde(rename = "DURAKTIPI")]
-//     pub duraktipi: String,
-//     #[serde(rename = "ISLETMEBOLGE")]
-//     pub isletmebolge: Option<String>,
-//     #[serde(rename = "ISLETMEALTBOLGE")]
-//     pub isletmealtbolge: String,
-//     #[serde(rename = "ILCEADI")]
-//     pub ilceadi: String,
-// }
+#[derive(Deserialize)]
+pub struct BusStopsResponseBody {
+    #[serde(rename = "GetDurak_jsonResponse")]
+    pub response: GetDurakJsonResponse,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct GetDurakJsonResponse {
+    #[serde(rename = "GetDurak_jsonResult")]
+    pub result: String,
+}
+
+impl UnwrapSoap<String> for BusStopsResponse {
+    fn get_relevant_data(self) -> String {
+        self.body.response.result
+    }
+}
+
+#[derive(Debug, Deserialize)]
+pub struct BusStopSoap {
+    #[serde(rename = "SDURAKKODU")]
+    pub stop_code: i32,
+    #[serde(rename = "SDURAKADI")]
+    pub stop_name: String,
+    #[serde(rename = "KOORDINAT")]
+    pub coordinate: String,
+    #[serde(rename = "ILCEADI")]
+    pub province: String,
+    #[serde(rename = "SYON")]
+    pub direction: String,
+    #[serde(rename = "AKILLI")]
+    pub smart: String,
+    #[serde(rename = "FIZIKI")]
+    pub physical: Option<String>,
+    #[serde(rename = "DURAK_TIPI")]
+    pub stop_type: String,
+    #[serde(rename = "ENGELLIKULLANIM")]
+    pub disabled_can_use: String,
+}
