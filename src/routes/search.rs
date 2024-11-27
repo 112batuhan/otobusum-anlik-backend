@@ -6,7 +6,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::models::app::{AppError, AppState};
 use crate::models::bus::BusStop;
-use crate::models::line::BusLine;
+use crate::models::line::{BusLine, BusLineWithCoordinates};
 
 #[derive(Deserialize)]
 pub struct Search {
@@ -35,10 +35,13 @@ pub async fn search(
         .await?;
 
     let lines = sqlx::query_as!(
-        BusLine,
+        BusLineWithCoordinates,
         r#"
-            SELECT * FROM lines WHERE to_tsvector(code) @@ websearch_to_tsquery('' || $1 || ':*')
-                                OR to_tsvector(title) @@ websearch_to_tsquery('' || $1 || ':*')
+            SELECT (code, title, points)
+            FROM lines
+            LEFT JOIN route_travel_plan
+            ON to_tsvector(code) @@ websearch_to_tsquery('' || $1 || ':*')
+                OR to_tsvector(title) @@ websearch_to_tsquery('' || $1 || ':*')
             LIMIT 10
         "#,
         q
