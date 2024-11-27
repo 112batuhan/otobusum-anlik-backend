@@ -26,7 +26,6 @@ pub struct Route {
     pub route_type: Option<i32>,
     pub route_desc: Option<String>,
     pub route_code: Option<String>,
-    // pub rank: String,
 }
 
 fn remove_non_numeric<'de, D>(deserializer: D) -> Result<u32, D::Error>

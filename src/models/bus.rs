@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::models::Coordinates;
 
-#[derive(Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct BusStop {
     pub hatkodu: String,
     pub id: i32,

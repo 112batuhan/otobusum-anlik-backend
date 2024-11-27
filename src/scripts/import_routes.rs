@@ -41,7 +41,7 @@ async fn main() {
     // let routes: Vec<Route> = request_csv(client.clone(), routes_url).await.unwrap();
 
     let mut query_builder =
-        QueryBuilder::new("INSERT INTO routes (id, agencyid, routeshortname, routelongname, routetype, routedesc, routecode)");
+        QueryBuilder::new("INSERT INTO routes (id, agency_id, route_short_name, route_long_name, route_type, route_desc, route_code)");
 
     query_builder.push_values(routes, |mut b, new_route| {
         b.push_bind(new_route.route_id)

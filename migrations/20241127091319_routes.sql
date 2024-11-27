@@ -1,9 +1,9 @@
 CREATE TABLE routes(
   id SERIAL PRIMARY KEY,
-  agencyid INTEGER NOT NULL,
-  routeshortname TEXT NOT NULL,
-  routelongname TEXT NOT NULL,
-  routetype TEXT NOT NULL,
-  routedesc TEXT,
-  routecode TEXT NOT NULL
+  agency_id INTEGER,
+  route_short_name TEXT,
+  route_long_name TEXT,
+  route_type INTEGER,
+  route_desc TEXT,
+  route_code TEXT
 );
