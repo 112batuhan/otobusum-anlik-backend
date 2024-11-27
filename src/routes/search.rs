@@ -16,7 +16,7 @@ pub struct Search {
 #[derive(Serialize)]
 pub struct SearchResponse {
     stops: Vec<BusStop>,
-    lines: Vec<BusLine>
+    lines: Vec<BusLineWithCoordinates>
 }
 
 pub async fn search(
@@ -26,7 +26,7 @@ pub async fn search(
     let stops = sqlx::query_as!(
         BusStop,
         r#"
-            SELECT * FROM bus_route_stops WHERE to_tsvector(durakadi) @@ websearch_to_tsquery('' || $1 || ':*')
+            SELECT * FROM stops WHERE to_tsvector(stop_name) @@ websearch_to_tsquery('' || $1 || ':*')
             LIMIT 10
         "#,
         q
@@ -37,11 +37,13 @@ pub async fn search(
     let lines = sqlx::query_as!(
         BusLineWithCoordinates,
         r#"
-            SELECT (code, title, points)
-            FROM lines
-            LEFT JOIN route_travel_plan
-            ON to_tsvector(code) @@ websearch_to_tsquery('' || $1 || ':*')
-                OR to_tsvector(title) @@ websearch_to_tsquery('' || $1 || ':*')
+            SELECT code, title, rtp.points
+            FROM
+                lines
+                LEFT JOIN route_travel_plan rtp ON lines.code = rtp.hatkodu
+            WHERE
+                TO_TSVECTOR( code ) @@ websearch_to_tsquery('' || $1 || ':*')
+                OR TO_TSVECTOR( title ) @@ websearch_to_tsquery('' || $1 || ':*')
             LIMIT 10
         "#,
         q

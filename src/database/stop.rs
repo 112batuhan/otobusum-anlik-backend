@@ -23,17 +23,17 @@ pub async fn fetch_line_code_with_stop_code(pool: &PgPool, stop_code: u32) -> Re
 
 pub async fn fetch_stop_with_stop_code(
     pool: &PgPool,
-    durakkodu: i32,
+    stop_code: i32,
 ) -> Result<BusStop> {
     let stop_info = sqlx::query_as!(
         BusStop,
         r#"
-        SELECT *
-        FROM bus_route_stops
-        WHERE durakkodu = $1
-        LIMIT 1
+            SELECT *
+            FROM stops
+            WHERE stop_code = $1
+            LIMIT 1
         "#,
-        durakkodu as i32
+        stop_code as i32
     )
     .fetch_optional(pool)
     .await?;
