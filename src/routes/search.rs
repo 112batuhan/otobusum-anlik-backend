@@ -4,9 +4,9 @@ use axum::extract::{Query, State};
 use axum::Json;
 use serde::{Deserialize, Serialize};
 
-use crate::database::route::Route;
 use crate::models::app::{AppError, AppState};
 use crate::models::bus::BusStop;
+use crate::models::line::BusLine;
 
 #[derive(Deserialize)]
 pub struct Search {
@@ -16,7 +16,7 @@ pub struct Search {
 #[derive(Serialize)]
 pub struct SearchResponse {
     stops: Vec<BusStop>,
-    routes: Vec<Route>
+    lines: Vec<BusLine>
 }
 
 pub async fn search(
@@ -34,10 +34,10 @@ pub async fn search(
         .fetch_all(&state.db)
         .await?;
 
-    let routes = sqlx::query_as!(
-        Route,
+    let lines = sqlx::query_as!(
+        BusLine,
         r#"
-            SELECT * FROM routes WHERE to_tsvector(route_short_name) @@ to_tsquery('' || $1 || ':*')
+            SELECT * FROM lines WHERE to_tsvector(code) @@ to_tsquery('' || $1 || ':*')
             LIMIT 10
         "#,
         Some(q)
@@ -45,5 +45,5 @@ pub async fn search(
         .fetch_all(&state.db)
         .await?;
 
-    Ok(Json(SearchResponse { stops, routes }))
+    Ok(Json(SearchResponse { stops, lines }))
 }

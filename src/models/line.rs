@@ -1,4 +1,7 @@
+use serde::Serialize;
+
+#[derive(Serialize)]
 pub struct BusLine {
     pub code: String,
-    pub name: String
+    pub title: String
 }
