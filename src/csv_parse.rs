@@ -19,14 +19,14 @@ pub struct Stop {
 
 #[derive(Debug, Deserialize)]
 pub struct Route {
-    pub _id: u32,
-    pub route_id: u32,
-    pub agency_id: u32,
-    pub route_short_name: String,
-    pub route_long_name: String,
-    pub route_type: u32,
-    pub route_desc: String,
-    pub route_code: String,
+    pub route_id: i32,
+    pub agency_id: Option<i32>,
+    pub route_short_name: Option<String>,
+    pub route_long_name: Option<String>,
+    pub route_type: Option<i32>,
+    pub route_desc: Option<String>,
+    pub route_code: Option<String>,
+    // pub rank: String,
 }
 
 fn remove_non_numeric<'de, D>(deserializer: D) -> Result<u32, D::Error>
