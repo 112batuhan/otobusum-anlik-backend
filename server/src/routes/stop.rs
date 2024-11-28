@@ -6,14 +6,11 @@ use axum::{
 };
 
 use serde::Serialize;
-use tokio::try_join;
 
 use crate::models::{
     app::{AppError, AppState},
-    bus::BusStop
+    bus::BusStop, line::LineStop
 };
-
-use crate::database::stop::{fetch_line_code_with_stop_code, fetch_stop_with_stop_code};
 
 #[derive(Serialize)]
 pub struct BussesInStopResponse {
@@ -25,10 +22,30 @@ pub async fn get_stop(
     Path(stop_id): Path<u32>,
     State(state): State<Arc<AppState>>,
 ) -> Result<Json<BussesInStopResponse>, AppError> {
-    let (buses, stop) = try_join!(
-        fetch_line_code_with_stop_code(&state.db, stop_id),
-        fetch_stop_with_stop_code(&state.db, stop_id as i32),
-    )?;
+    let stop = sqlx::query_as!(
+        BusStop,
+        r#"
+            SELECT * FROM stops WHERE stop_code = $1
+        "#,
+        stop_id as i32
+    )
+        .fetch_one(&state.db)
+        .await?;
 
-    Ok(Json(BussesInStopResponse { stop, buses }))
+    let line_stops = sqlx::query_as!(
+        LineStop,
+        r#"
+            SELECT * FROM line_stops WHERE stop_code = $1
+        "#,
+        stop_id as i32
+    )   
+        .fetch_all(&state.db)
+        .await?;
+
+    let line_codes = line_stops
+        .into_iter()
+        .map(|line| line.line_code)
+        .collect();
+
+    Ok(Json(BussesInStopResponse { stop, buses: line_codes }))
 }
