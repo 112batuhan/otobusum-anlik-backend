@@ -9,8 +9,7 @@ use serde::Serialize;
 
 use crate::models::{
     app::{AppError, AppState},
-    bus::BusStop,
-    line::LineStop,
+    bus::BusStop, line::LineStop
 };
 
 #[derive(Serialize)]
@@ -30,8 +29,8 @@ pub async fn get_stop(
         "#,
         stop_id as i32
     )
-    .fetch_one(&state.db)
-    .await?;
+        .fetch_one(&state.db)
+        .await?;
 
     let line_stops = sqlx::query_as!(
         LineStop,
@@ -39,14 +38,14 @@ pub async fn get_stop(
             SELECT * FROM line_stops WHERE stop_code = $1
         "#,
         stop_id as i32
-    )
-    .fetch_all(&state.db)
-    .await?;
+    )   
+        .fetch_all(&state.db)
+        .await?;
 
-    let line_codes = line_stops.into_iter().map(|line| line.line_code).collect();
+    let line_codes = line_stops
+        .into_iter()
+        .map(|line| line.line_code)
+        .collect();
 
-    Ok(Json(BussesInStopResponse {
-        stop,
-        buses: line_codes,
-    }))
+    Ok(Json(BussesInStopResponse { stop, buses: line_codes }))
 }

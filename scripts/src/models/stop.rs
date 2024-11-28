@@ -30,16 +30,18 @@ impl UnwrapSoap<Vec<BusStopSoap>> for BusStopsResponse {
 #[derive(Debug)]
 pub struct BusStopPoint {
     pub x: f64,
-    pub y: f64
+    pub y: f64,
 }
 
 impl<'de> Deserialize<'de> for BusStopPoint {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
-        D: serde::Deserializer<'de> {
+        D: serde::Deserializer<'de>,
+    {
         let s: &str = Deserialize::deserialize(deserializer)?;
 
-        let parsed = s.strip_prefix("POINT (")
+        let parsed = s
+            .strip_prefix("POINT (")
             .and_then(|s| s.strip_suffix(")"))
             .and_then(|coords| {
                 let mut parts = coords.split(' ');
@@ -48,11 +50,10 @@ impl<'de> Deserialize<'de> for BusStopPoint {
                 Some((x, y))
             });
 
-        
         if let Some((x, y)) = parsed {
             Ok(Self { x, y })
         } else {
-            return Err(serde::de::Error::custom("Error splitting point values"))
+            Err(serde::de::Error::custom("Error splitting point values"))
         }
     }
 }

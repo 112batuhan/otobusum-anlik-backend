@@ -1,6 +1,6 @@
 use std::{fs, sync::Arc};
 
-use scripts::{models::route::Route, utils::csv_parse::read_csv_from_string};
+use scripts::{models::routes::Route, utils::csv_parse::read_csv_from_string};
 use server::database::get_db_connection;
 use sqlx::QueryBuilder;
 

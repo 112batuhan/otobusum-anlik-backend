@@ -1718,6 +1718,7 @@ dependencies = [
  "axum",
  "dotenvy",
  "reqwest",
+ "serde",
  "serde-xml-rs",
  "serde_json",
  "sqlx",

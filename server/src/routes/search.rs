@@ -10,13 +10,13 @@ use crate::models::line::BusLineWithCoordinates;
 
 #[derive(Deserialize)]
 pub struct Search {
-    q: String
+    q: String,
 }
 
 #[derive(Serialize)]
 pub struct SearchResponse {
     stops: Vec<BusStop>,
-    lines: Vec<BusLineWithCoordinates>
+    lines: Vec<BusLineWithCoordinates>,
 }
 
 pub async fn search(
@@ -34,7 +34,7 @@ pub async fn search(
         .fetch_all(&state.db)
         .await?;
 
-                // COALESCE(NULLIF(ARRAY_AGG((bus_stops)), '{NULL}'), '{}') as "stop_codes: Vec<i32>"
+    // COALESCE(NULLIF(ARRAY_AGG((bus_stops)), '{NULL}'), '{}') as "stop_codes: Vec<i32>"
     let lines = sqlx::query_as!(
         BusLineWithCoordinates,
         r#"

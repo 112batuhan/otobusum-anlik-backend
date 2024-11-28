@@ -8,7 +8,7 @@ pub trait UnwrapSoap<R: DeserializeOwned>: DeserializeOwned {
     fn get_relevant_data(self) -> R;
 }
 
-pub fn get_body(key: &str, soap_method: &str, content: Option<&str>) -> String {
+pub fn get_body(key: &str, soap_method: &str, _content: Option<&str>) -> String {
     format!(
         r#"
         <soap:Envelope
