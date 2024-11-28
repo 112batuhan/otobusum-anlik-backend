@@ -1,6 +1,5 @@
 use serde::Deserialize;
 
-#[allow(dead_code)]
 #[derive(Debug, Deserialize)]
 pub struct Route {
     pub route_id: i32,

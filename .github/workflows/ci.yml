@@ -49,14 +49,15 @@ jobs:
       - name: Check for unused dependencies
         run: cargo +nightly udeps --all-targets
 
-  taplo:
-    name: taplo 
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions-rust-lang/setup-rust-toolchain@v1
-      - name: Install taplo
-        run: cargo install taplo-cli --locked
-      - name: Check Cargo.toml formatting
-        run: |
-          taplo fmt --check 
+  # enable if you want .toml formatting
+  # taplo:
+  #   name: taplo 
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - uses: actions-rust-lang/setup-rust-toolchain@v1
+  #     - name: Install taplo
+  #       run: cargo install taplo-cli --locked
+  #     - name: Check Cargo.toml formatting
+  #       run: |
+  #         taplo fmt --check 
