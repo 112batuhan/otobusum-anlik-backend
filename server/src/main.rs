@@ -1,19 +1,10 @@
-mod routes;
-mod models;
-mod database;
-mod db;
-
-use models::app::AppState;
-use db::get_db_connection;
 use std::sync::Arc;
 
+use axum::{routing::get, Router};
+use server::{database::get_db_connection, models::app::AppState, routes};
 use tower_http::{compression::CompressionLayer, cors::CorsLayer, trace::TraceLayer};
 use tracing::info;
 use tracing_subscriber::fmt::format::FmtSpan;
-use axum::{
-    routing::get,
-    Router,
-};
 
 #[tokio::main]
 async fn main() {
@@ -28,10 +19,7 @@ async fn main() {
         .await
         .expect("Failed to initialize DB connection");
 
-    sqlx::migrate!("./migrations")
-    .run(&db_conn)
-    .await
-    .ok();
+    sqlx::migrate!("../migrations").run(&db_conn).await.ok();
 
     let state = Arc::new(AppState::new(db_conn));
 

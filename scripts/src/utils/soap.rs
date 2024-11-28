@@ -4,10 +4,11 @@ use reqwest::header::CONTENT_TYPE;
 use anyhow::Result;
 use serde::de::DeserializeOwned;
 
-use super::xml_parse::UnwrapSoap;
+pub trait UnwrapSoap<R: DeserializeOwned>: DeserializeOwned {
+    fn get_relevant_data(self) -> R;
+}
 
-
-pub fn get_body(key: &str, soap_method: &str, content: Option<&str>) -> String {
+pub fn get_body(key: &str, soap_method: &str, _content: Option<&str>) -> String {
     format!(
         r#"
         <soap:Envelope
@@ -52,7 +53,7 @@ pub async fn request_soap<Response: UnwrapSoap<T>, T: DeserializeOwned>(
         .unwrap();
 
     let content = response.text().await.unwrap();
-    
+
     let envelope: Response = serde_xml_rs::from_str(&content)?;
     let data = envelope.get_relevant_data();
 
