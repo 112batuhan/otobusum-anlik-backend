@@ -27,6 +27,36 @@ impl UnwrapSoap<String> for BusStopsResponse {
     }
 }
 
+#[derive(Debug)]
+pub struct BusStopPoint {
+    pub x: f64,
+    pub y: f64
+}
+
+impl<'de> Deserialize<'de> for BusStopPoint {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de> {
+        let s: &str = Deserialize::deserialize(deserializer)?;
+
+        let parsed = s.strip_prefix("POINT (")
+            .and_then(|s| s.strip_suffix(")"))
+            .and_then(|coords| {
+                let mut parts = coords.split(' ');
+                let x = parts.next()?.parse::<f64>().ok()?;
+                let y = parts.next()?.parse::<f64>().ok()?;
+                Some((x, y))
+            });
+
+        
+        if let Some((x, y)) = parsed {
+            Ok(Self { x, y })
+        } else {
+            return Err(serde::de::Error::custom("Error splitting point values"))
+        }
+    }
+}
+
 #[derive(Debug, Deserialize)]
 pub struct BusStopSoap {
     #[serde(rename = "SDURAKKODU")]
@@ -34,7 +64,7 @@ pub struct BusStopSoap {
     #[serde(rename = "SDURAKADI")]
     pub stop_name: String,
     #[serde(rename = "KOORDINAT")]
-    pub coordinate: String,
+    pub coord: BusStopPoint,
     #[serde(rename = "ILCEADI")]
     pub province: String,
     #[serde(rename = "SYON")]
