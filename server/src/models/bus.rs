@@ -2,11 +2,18 @@ use serde::{Deserialize, Serialize};
 
 use crate::models::Coordinates;
 
+#[derive(Debug, Serialize, Deserialize, sqlx::Type)]
+pub struct BusStopPoint {
+    pub x: f64,
+    pub y: f64
+}
+
 #[derive(Debug, Serialize, Deserialize)]
 pub struct BusStop {
     pub stop_code: i32,
     pub stop_name: String,
-    pub coordinate: String,
+    pub x_coord: f64,
+    pub y_coord: f64,
     pub province: String,
     pub direction: String,
     pub smart: String,

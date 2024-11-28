@@ -31,7 +31,8 @@ async fn main() {
             INSERT INTO stops (
                 stop_code,
                 stop_name,
-                coordinate,
+                x_coord,
+                y_coord,
                 province,
                 direction,
                 smart,
@@ -44,7 +45,8 @@ async fn main() {
         query_builder.push_values(values, |mut b, stop| {
             b.push_bind(stop.stop_code)
                 .push_bind(&stop.stop_name)
-                .push_bind(&stop.coordinate)
+                .push_bind(&stop.coord.x)
+                .push_bind(&stop.coord.y)
                 .push_bind(&stop.province)
                 .push_bind(&stop.direction)
                 .push_bind(&stop.smart)

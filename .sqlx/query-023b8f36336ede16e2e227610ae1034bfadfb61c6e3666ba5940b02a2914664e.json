@@ -1,0 +1,76 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n            SELECT *\n            FROM stops\n            WHERE stop_code = $1\n            LIMIT 1\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "stop_code",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 1,
+        "name": "stop_name",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 2,
+        "name": "x_coord",
+        "type_info": "Float8"
+      },
+      {
+        "ordinal": 3,
+        "name": "y_coord",
+        "type_info": "Float8"
+      },
+      {
+        "ordinal": 4,
+        "name": "province",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 5,
+        "name": "direction",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 6,
+        "name": "smart",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 7,
+        "name": "physical",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 8,
+        "name": "stop_type",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 9,
+        "name": "disabled_can_use",
+        "type_info": "Text"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int4"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      true,
+      false,
+      false
+    ]
+  },
+  "hash": "023b8f36336ede16e2e227610ae1034bfadfb61c6e3666ba5940b02a2914664e"
+}

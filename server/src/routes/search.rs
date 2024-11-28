@@ -5,7 +5,7 @@ use axum::Json;
 use serde::{Deserialize, Serialize};
 
 use crate::models::app::{AppError, AppState};
-use crate::models::bus::BusStop;
+use crate::models::bus::{BusStop, BusStopPoint};
 use crate::models::line::BusLineWithCoordinates;
 
 #[derive(Deserialize)]
@@ -41,7 +41,7 @@ pub async fn search(
             SELECT
                 code,
                 title,
-                COALESCE(NULLIF(ARRAY_AGG((stops.coordinate)), '{NULL}'), '{}') as "stop_codes: Vec<String>"
+                COALESCE(NULLIF(ARRAY_AGG((stops.x_coord, stops.y_coord)), '{NULL}'), '{}') as "stop_coords: Vec<BusStopPoint>"
             FROM
                 lines
                 JOIN line_stops ON lines.code = line_stops.line_code

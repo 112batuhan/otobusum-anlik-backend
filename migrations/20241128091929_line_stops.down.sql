@@ -1,1 +1,1 @@
-DROP TABLE bus_stops;
+DROP TABLE line_stops;

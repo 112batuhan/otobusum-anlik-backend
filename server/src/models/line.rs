@@ -1,5 +1,7 @@
 use serde::{Deserialize, Serialize};
 
+use super::bus::BusStopPoint;
+
 #[derive(Serialize)]
 pub struct BusLine {
     pub code: String,
@@ -10,5 +12,5 @@ pub struct BusLine {
 pub struct BusLineWithCoordinates {
     pub code: String,
     pub title: String,
-    pub stop_codes: Option<Vec<String>>
+    pub stop_coords: Option<Vec<BusStopPoint>>
 }
