@@ -1,6 +1,4 @@
-use serde::Serialize;
-
-use super::Coordinates;
+use serde::{Deserialize, Serialize};
 
 #[derive(Serialize)]
 pub struct BusLine {
@@ -8,9 +6,9 @@ pub struct BusLine {
     pub title: String
 }
 
-#[derive(Serialize)]
+#[derive(Serialize, Deserialize, sqlx::Type)]
 pub struct BusLineWithCoordinates {
     pub code: String,
     pub title: String,
-    pub points: Vec<Coordinates>
+    pub stop_codes: Option<Vec<String>>
 }
