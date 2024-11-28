@@ -8,6 +8,13 @@ pub struct BusLine {
     pub title: String
 }
 
+#[derive(Serialize, Deserialize)]
+pub struct LineStop {
+    pub id: i32,
+    pub line_code: String,
+    pub stop_code: i32
+}
+
 #[derive(Serialize, Deserialize, sqlx::Type)]
 pub struct BusLineWithCoordinates {
     pub code: String,
