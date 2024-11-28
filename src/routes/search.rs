@@ -44,8 +44,8 @@ pub async fn search(
                 COALESCE(NULLIF(ARRAY_AGG((stops.coordinate)), '{NULL}'), '{}') as "stop_codes: Vec<String>"
             FROM
                 lines
-                JOIN bus_stops ON lines.code = bus_stops.line_code
-                JOIN stops on bus_stops.stop_code = stops.stop_code
+                JOIN line_stops ON lines.code = line_stops.line_code
+                JOIN stops on line_stops.stop_code = stops.stop_code
             WHERE
                 TO_TSVECTOR( code ) @@ websearch_to_tsquery('' || $1 || ':*')
                 OR TO_TSVECTOR( title ) @@ websearch_to_tsquery('' || $1 || ':*')

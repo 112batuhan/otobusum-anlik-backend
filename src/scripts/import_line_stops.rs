@@ -28,7 +28,7 @@ async fn main() {
     for values in all_records.chunks(MAX_ROWS_PER_QUERY) {
         let mut query_builder = QueryBuilder::new(
             r#"
-            INSERT INTO bus_stops (line_code, stop_code)
+            INSERT INTO line_stops (line_code, stop_code)
         "#,
         );
 
