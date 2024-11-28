@@ -1,8 +1,8 @@
 use anyhow::{Ok, Result};
-use reqwest::header::{HeaderMap, HeaderName, CONTENT_TYPE};
 use serde::{de::DeserializeOwned, Deserialize, Serialize};
+use server::models::Coordinates;
 
-use crate::{csv_parse::read_csv_from_string, models::Coordinates, xml_parse::UnwrapSoap};
+use super::utils::csv_parse::read_csv_from_string;
 
 pub fn get_body(key: &str, soap_method: &str, content: &str) -> String {
     format!(

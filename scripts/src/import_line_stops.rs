@@ -1,6 +1,7 @@
-use otobusum_anlik_backend::db::get_db_connection;
-use sqlx::{Executor, QueryBuilder};
 use std::sync::Arc;
+
+use server::database::get_db_connection;
+use sqlx::{Executor, QueryBuilder};
 
 struct LineStops {
     hatkodu: String,
@@ -33,7 +34,7 @@ async fn main() {
         );
 
         query_builder.push_values(values, |mut b, stop| {
-            b.push_bind(&stop.hatkodu).push_bind(&stop.durakkodu);
+            b.push_bind(&stop.hatkodu).push_bind(stop.durakkodu);
         });
 
         let query = query_builder.build();

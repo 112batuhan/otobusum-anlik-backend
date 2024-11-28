@@ -1,12 +1,11 @@
-mod models;
-mod utils;
-
-use otobusum_anlik_backend::db::get_db_connection;
 use std::sync::Arc;
 
-use models::stop::{BusStopSoap, BusStopsResponse};
+use scripts::{
+    models::stop::{BusStopSoap, BusStopsResponse},
+    utils::soap::request_soap,
+};
+use server::database::get_db_connection;
 use sqlx::QueryBuilder;
-use utils::soap::request_soap;
 
 #[tokio::main]
 async fn main() {
@@ -15,7 +14,7 @@ async fn main() {
     let db_conn = Arc::new(get_db_connection().await.unwrap());
     let client = reqwest::Client::new();
 
-    let stops = request_soap::<BusStopsResponse, String>(
+    let stops = request_soap::<BusStopsResponse, Vec<BusStopSoap>>(
         client,
         "https://api.ibb.gov.tr/iett/UlasimAnaVeri/HatDurakGuzergah.asmx?wsdl",
         "GetDurak_json",
@@ -24,11 +23,9 @@ async fn main() {
     .await
     .unwrap();
 
-    let parsed = serde_json::from_str::<Vec<BusStopSoap>>(&stops).unwrap();
-
     const MAX_ROWS_PER_QUERY: usize = 50_000 / 10;
 
-    for values in parsed.chunks(MAX_ROWS_PER_QUERY) {
+    for values in stops.chunks(MAX_ROWS_PER_QUERY) {
         let mut query_builder = QueryBuilder::new(
             r#"
             INSERT INTO stops (
@@ -45,7 +42,7 @@ async fn main() {
         );
 
         query_builder.push_values(values, |mut b, stop| {
-            b.push_bind(&stop.stop_code)
+            b.push_bind(stop.stop_code)
                 .push_bind(&stop.stop_name)
                 .push_bind(&stop.coordinate)
                 .push_bind(&stop.province)

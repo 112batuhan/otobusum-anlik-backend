@@ -1,0 +1,37 @@
+[package]
+edition = "2021"
+name = "scripts"
+version = "0.1.0"
+
+[[bin]]
+name = "import_routes"
+path = "src/import_routes.rs"
+
+[[bin]]
+name = "import_line_stops"
+path = "src/import_line_stops.rs"
+
+[[bin]]
+name = "import_lines"
+path = "src/import_lines.rs"
+
+[[bin]]
+name = "import_stops"
+path = "src/import_stops.rs"
+
+[dependencies]
+server = { workspace = true }
+
+anyhow = { workspace = true }
+axum = { workspace = true }
+csv = { workspace = true }
+dotenvy = { workspace = true }
+reqwest = { workspace = true }
+serde = { workspace = true }
+serde-xml-rs = { workspace = true }
+serde_json = { workspace = true }
+sqlx = { workspace = true }
+tokio = { workspace = true }
+tower-http = { workspace = true }
+tracing = { workspace = true }
+tracing-subscriber = { workspace = true }

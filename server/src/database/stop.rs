@@ -1,5 +1,5 @@
-use sqlx::PgPool;
 use anyhow::{Context, Result};
+use sqlx::PgPool;
 
 use crate::models::bus::BusStop;
 
@@ -21,10 +21,7 @@ pub async fn fetch_line_code_with_stop_code(pool: &PgPool, stop_code: u32) -> Re
     Ok(hatkodus)
 }
 
-pub async fn fetch_stop_with_stop_code(
-    pool: &PgPool,
-    stop_code: i32,
-) -> Result<BusStop> {
+pub async fn fetch_stop_with_stop_code(pool: &PgPool, stop_code: i32) -> Result<BusStop> {
     let stop_info = sqlx::query_as!(
         BusStop,
         r#"

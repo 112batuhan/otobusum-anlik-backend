@@ -1,12 +1,7 @@
-mod utils;
-mod models;
-
 use std::{fs, sync::Arc};
-use utils::csv_parse::read_csv_from_string;
 
-use otobusum_anlik_backend::db::get_db_connection;
-use models::route::Route;
-
+use scripts::{models::route::Route, utils::csv_parse::read_csv_from_string};
+use server::database::get_db_connection;
 use sqlx::QueryBuilder;
 
 // Imports line routes to db.

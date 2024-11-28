@@ -1,12 +1,12 @@
 use serde::Deserialize;
 
-use crate::utils::xml_parse::UnwrapSoap;
+use crate::utils::soap::UnwrapSoap;
 
 #[derive(Deserialize)]
 #[serde(rename = "Envelope")]
 pub struct BusStopsResponse {
     #[serde(rename = "Body")]
-    pub body: BusStopsResponseBody
+    pub body: BusStopsResponseBody,
 }
 
 #[derive(Deserialize)]
@@ -18,11 +18,11 @@ pub struct BusStopsResponseBody {
 #[derive(Debug, Deserialize)]
 pub struct GetDurakJsonResponse {
     #[serde(rename = "GetDurak_jsonResult")]
-    pub result: String,
+    pub result: Vec<BusStopSoap>,
 }
 
-impl UnwrapSoap<String> for BusStopsResponse {
-    fn get_relevant_data(self) -> String {
+impl UnwrapSoap<Vec<BusStopSoap>> for BusStopsResponse {
+    fn get_relevant_data(self) -> Vec<BusStopSoap> {
         self.body.response.result
     }
 }
