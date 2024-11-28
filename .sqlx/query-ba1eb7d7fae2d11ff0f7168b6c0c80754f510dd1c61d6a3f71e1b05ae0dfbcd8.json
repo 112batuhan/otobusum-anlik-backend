@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n            SELECT * FROM stops WHERE to_tsvector(stop_name) @@ websearch_to_tsquery('' || $1 || ':*')\n            LIMIT 10\n        ",
+  "query": "\n            SELECT * FROM stops WHERE stop_name ILIKE '%' || $1 || '%'\n            LIMIT 10\n        ",
   "describe": {
     "columns": [
       {
@@ -72,5 +72,5 @@
       false
     ]
   },
-  "hash": "cfbabf355920c5f2693046b910af920dd0d346e858d0c3d10221dd53438cb1be"
+  "hash": "ba1eb7d7fae2d11ff0f7168b6c0c80754f510dd1c61d6a3f71e1b05ae0dfbcd8"
 }
