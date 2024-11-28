@@ -13,6 +13,10 @@ name = "import_routes"
 path = "src/scripts/import_routes.rs"
 
 [[bin]]
+name = "import_line_stops"
+path = "src/scripts/import_line_stops.rs"
+
+[[bin]]
 name = "import_lines"
 path = "src/scripts/import_lines.rs"
 
