@@ -26,7 +26,7 @@ pub async fn search(
     let stops = sqlx::query_as!(
         BusStop,
         r#"
-            SELECT * FROM stops WHERE to_tsvector(stop_name) @@ websearch_to_tsquery('' || $1 || ':*')
+            SELECT * FROM stops WHERE stop_name ILIKE '%' || $1 || '%'
             LIMIT 10
         "#,
         q
