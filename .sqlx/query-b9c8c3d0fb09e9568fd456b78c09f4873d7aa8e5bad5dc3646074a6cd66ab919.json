@@ -1,0 +1,34 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n            SELECT\n                code,\n                title,\n                COALESCE(NULLIF(ARRAY_AGG((stops.x_coord, stops.y_coord)), '{NULL}'), '{}') as \"stop_coords: Vec<BusStopPoint>\"\n            FROM\n                lines\n                JOIN line_stops ON lines.code = line_stops.line_code\n                JOIN stops on line_stops.stop_code = stops.stop_code\n            WHERE\n                code ILIKE '%' || $1 || '%'\n                OR TO_TSVECTOR( title ) @@ websearch_to_tsquery('' || $1 || ':*')\n            GROUP BY\n                code, title\n            LIMIT 10\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "code",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 1,
+        "name": "title",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 2,
+        "name": "stop_coords: Vec<BusStopPoint>",
+        "type_info": "RecordArray"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Text"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      null
+    ]
+  },
+  "hash": "b9c8c3d0fb09e9568fd456b78c09f4873d7aa8e5bad5dc3646074a6cd66ab919"
+}
