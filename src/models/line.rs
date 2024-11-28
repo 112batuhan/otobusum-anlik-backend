@@ -10,5 +10,5 @@ pub struct BusLine {
 pub struct BusLineWithCoordinates {
     pub code: String,
     pub title: String,
-    pub stop_codes: Option<Vec<i32>>
+    pub stop_codes: Option<Vec<String>>
 }

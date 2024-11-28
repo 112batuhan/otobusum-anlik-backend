@@ -34,16 +34,18 @@ pub async fn search(
         .fetch_all(&state.db)
         .await?;
 
+                // COALESCE(NULLIF(ARRAY_AGG((bus_stops)), '{NULL}'), '{}') as "stop_codes: Vec<i32>"
     let lines = sqlx::query_as!(
         BusLineWithCoordinates,
         r#"
             SELECT
                 code,
                 title,
-                COALESCE(NULLIF(ARRAY_AGG((bus_stops.stop_code)), '{NULL}'), '{}') as "stop_codes: Vec<i32>"
+                COALESCE(NULLIF(ARRAY_AGG((stops.coordinate)), '{NULL}'), '{}') as "stop_codes: Vec<String>"
             FROM
                 lines
                 JOIN bus_stops ON lines.code = bus_stops.line_code
+                JOIN stops on bus_stops.stop_code = stops.stop_code
             WHERE
                 TO_TSVECTOR( code ) @@ websearch_to_tsquery('' || $1 || ':*')
                 OR TO_TSVECTOR( title ) @@ websearch_to_tsquery('' || $1 || ':*')
