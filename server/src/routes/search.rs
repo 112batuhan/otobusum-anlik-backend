@@ -47,7 +47,7 @@ pub async fn search(
                 JOIN line_stops ON lines.code = line_stops.line_code
                 JOIN stops on line_stops.stop_code = stops.stop_code
             WHERE
-                TO_TSVECTOR( code ) @@ websearch_to_tsquery('' || $1 || ':*')
+                code ILIKE '%' || $1 || '%'
                 OR TO_TSVECTOR( title ) @@ websearch_to_tsquery('' || $1 || ':*')
             GROUP BY
                 code, title
