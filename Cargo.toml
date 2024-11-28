@@ -9,12 +9,20 @@ name = "server"
 path = "src/main.rs"
 
 [[bin]]
-name = "import"
-path = "src/import.rs"
+name = "import_routes"
+path = "src/scripts/import_routes.rs"
 
 [[bin]]
-name = "route_import"
-path = "src/route_plan_import.rs"
+name = "import_line_stops"
+path = "src/scripts/import_line_stops.rs"
+
+[[bin]]
+name = "import_lines"
+path = "src/scripts/import_lines.rs"
+
+[[bin]]
+name = "import_stops"
+path = "src/scripts/import_stops.rs"
 
 [dependencies]
 anyhow = "1.0.93"

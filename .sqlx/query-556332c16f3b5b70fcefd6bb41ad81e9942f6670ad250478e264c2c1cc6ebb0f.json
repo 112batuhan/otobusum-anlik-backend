@@ -1,45 +1,65 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n        SELECT \n            durakkodu,\n            durakadi,\n            xkoordinati,\n            ykoordinati,\n            duraktipi,\n            isletmebolge,\n            isletmealtbolge,\n            ilceadi\n        FROM bus_route_stops\n        WHERE durakkodu = $1\n        LIMIT 1\n        ",
+  "query": "\n        SELECT *\n        FROM bus_route_stops\n        WHERE durakkodu = $1\n        LIMIT 1\n        ",
   "describe": {
     "columns": [
       {
         "ordinal": 0,
-        "name": "durakkodu",
+        "name": "id",
         "type_info": "Int4"
       },
       {
         "ordinal": 1,
-        "name": "durakadi",
+        "name": "hatkodu",
         "type_info": "Text"
       },
       {
         "ordinal": 2,
-        "name": "xkoordinati",
-        "type_info": "Float8"
-      },
-      {
-        "ordinal": 3,
-        "name": "ykoordinati",
-        "type_info": "Float8"
-      },
-      {
-        "ordinal": 4,
-        "name": "duraktipi",
+        "name": "yon",
         "type_info": "Text"
       },
       {
+        "ordinal": 3,
+        "name": "sirano",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 4,
+        "name": "durakkodu",
+        "type_info": "Int4"
+      },
+      {
         "ordinal": 5,
-        "name": "isletmebolge",
+        "name": "durakadi",
         "type_info": "Text"
       },
       {
         "ordinal": 6,
+        "name": "xkoordinati",
+        "type_info": "Float8"
+      },
+      {
+        "ordinal": 7,
+        "name": "ykoordinati",
+        "type_info": "Float8"
+      },
+      {
+        "ordinal": 8,
+        "name": "duraktipi",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 9,
+        "name": "isletmebolge",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 10,
         "name": "isletmealtbolge",
         "type_info": "Text"
       },
       {
-        "ordinal": 7,
+        "ordinal": 11,
         "name": "ilceadi",
         "type_info": "Text"
       }
@@ -55,10 +75,14 @@
       false,
       false,
       false,
+      false,
+      false,
+      false,
+      false,
       true,
       false,
       false
     ]
   },
-  "hash": "6565d8b39ec0dc7bb91f33f98fff97d2a9b2ea7bc46f6e4e727b57b14839c49f"
+  "hash": "556332c16f3b5b70fcefd6bb41ad81e9942f6670ad250478e264c2c1cc6ebb0f"
 }
