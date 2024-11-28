@@ -1,4 +1,5 @@
 [package]
+default-run = "server"
 edition = "2021"
 name = "server"
 version = "0.1.0"

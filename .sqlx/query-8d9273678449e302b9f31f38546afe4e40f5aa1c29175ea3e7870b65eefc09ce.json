@@ -1,0 +1,22 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n            SELECT hatkodu\n            FROM bus_route_stops\n            WHERE durakkodu = $1\n            ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "hatkodu",
+        "type_info": "Text"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int4"
+      ]
+    },
+    "nullable": [
+      false
+    ]
+  },
+  "hash": "8d9273678449e302b9f31f38546afe4e40f5aa1c29175ea3e7870b65eefc09ce"
+}
