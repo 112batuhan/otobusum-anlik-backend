@@ -40,7 +40,7 @@ pub async fn search(
             SELECT
                 code,
                 title,
-                COALESCE(NULLIF(ARRAY_AGG((bus_stops.stop_code)), '{NULL}'), '{}') as "stop_codes: Vec<String>"
+                COALESCE(NULLIF(ARRAY_AGG((bus_stops.stop_code)), '{NULL}'), '{}') as "stop_codes: Vec<i32>"
             FROM
                 lines
                 JOIN bus_stops ON lines.code = bus_stops.line_code
