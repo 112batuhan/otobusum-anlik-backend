@@ -51,7 +51,7 @@ pub async fn search(
                 OR TO_TSVECTOR( title ) @@ websearch_to_tsquery('' || $1 || ':*')
             GROUP BY
                 code, title
-            LIMIT 10
+            LIMIT 20
         "#,
         q
     )
