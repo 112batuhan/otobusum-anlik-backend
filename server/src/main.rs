@@ -25,6 +25,7 @@ async fn main() {
 
     let app = Router::new()
         .route("/stop/:stop_id", get(routes::stop::get_stop))
+        .route("/routes/:line_code", get(routes::routes::routes))
         .route("/search", get(routes::search::search))
         .layer(CorsLayer::very_permissive())
         .layer(
