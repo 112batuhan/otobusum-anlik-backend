@@ -1,7 +1,11 @@
+pub mod database;
+pub mod models;
+pub mod handlers;
+
 use std::sync::Arc;
 
 use axum::{routing::get, Router};
-use server::{database::get_db_connection, models::app::AppState, routes};
+use crate::{database::get_db_connection, models::app::AppState};
 use tower_http::{compression::CompressionLayer, cors::CorsLayer, trace::TraceLayer};
 use tracing::info;
 use tracing_subscriber::fmt::format::FmtSpan;
@@ -19,14 +23,14 @@ async fn main() {
         .await
         .expect("Failed to initialize DB connection");
 
-    sqlx::migrate!("../migrations").run(&db_conn).await.ok();
+    sqlx::migrate!("./migrations").run(&db_conn).await.ok();
 
     let state = Arc::new(AppState::new(db_conn));
 
     let app = Router::new()
-        .route("/stop/:stop_id", get(routes::stop::get_stop))
-        .route("/routes/:line_code", get(routes::routes::routes))
-        .route("/search", get(routes::search::search))
+        .route("/stop/:stop_id", get(handlers::stop::get_stop))
+        .route("/routes/:line_code", get(handlers::routes::routes))
+        .route("/search", get(handlers::search::search))
         .layer(CorsLayer::very_permissive())
         .layer(
             CompressionLayer::new()
