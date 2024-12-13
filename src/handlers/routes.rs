@@ -11,13 +11,27 @@ pub async fn routes(
     let routes = sqlx::query_as!(
         Route,
         r#"
-            SELECT * FROM routes
-            WHERE route_short_name = $1
+            SELECT 
+                id,
+                agency_id,
+                route_short_name,
+                route_long_name,
+                route_type,
+                route_desc,
+                routes.route_code,
+                route_paths.route_path
+            FROM 
+                routes
+                JOIN route_paths on route_paths.route_code = routes.route_short_name
+            WHERE
+                route_short_name = $1
         "#,
         line_code
     )
     .fetch_all(&state.db)
     .await?;
+
+    
 
     Ok(Json(
         routes
