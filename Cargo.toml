@@ -3,6 +3,10 @@ edition = "2021"
 name = "otobusum-anlik-backend"
 version = "1.0.0"
 
+[[bin]]
+name = "server"
+path = "src/main.rs"
+
 [dependencies]
 anyhow = "1.0.93"
 axum = { version = "0.7.7", features = ["macros"] }
