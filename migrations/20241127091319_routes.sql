@@ -1,4 +1,4 @@
-CREATE TABLE routes(
+CREATE TABLE IF NOT EXISTS routes(
   id SERIAL PRIMARY KEY,
   agency_id INTEGER,
   route_short_name TEXT,

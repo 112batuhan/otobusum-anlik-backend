@@ -1,4 +1,4 @@
-CREATE TABLE lines(
+CREATE TABLE IF NOT EXISTS lines(
   code TEXT PRIMARY KEY,
   title Text NOT NULL
 );

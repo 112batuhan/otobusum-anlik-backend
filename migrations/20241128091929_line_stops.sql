@@ -1,4 +1,4 @@
-CREATE TABLE line_stops(
+CREATE TABLE IF NOT EXISTS line_stops(
   id SERIAL PRIMARY KEY,
   line_code TEXT NOT NULL,
   stop_code INTEGER NOT NULL
