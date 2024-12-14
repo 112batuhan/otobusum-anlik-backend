@@ -22,7 +22,7 @@ pub async fn routes(
                 route_paths.route_path
             FROM 
                 routes
-                JOIN route_paths on route_paths.route_code = routes.route_code
+                LEFT JOIN route_paths on route_paths.route_code = routes.route_code
             WHERE
                 route_short_name = $1
         "#,
