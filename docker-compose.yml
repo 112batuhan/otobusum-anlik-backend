@@ -36,27 +36,9 @@ services:
     depends_on:
       - postgres
 
-  graphhopper:
-    build:
-      context: .  
-      dockerfile: Dockerfile.graphhopper
-    ports:
-      - "8989:8989"
-    volumes:
-      - graphhopper:/data
-    environment:
-      - JAVA_OPTS=-Xmx2g -Xms2g
-      - GRAPH_CACHE_DIR=/data/graph-cache
-      - OSM_FILE=/data/map.osm.pbf
-      - CONFIG_FILE=/data/config.yml
-    restart: unless-stopped
-    networks:
-      - server
-
 
 volumes:
   postgres:
-  graphhopper:
   
 
 networks:
