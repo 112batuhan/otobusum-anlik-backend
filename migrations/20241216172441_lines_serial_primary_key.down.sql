@@ -1,0 +1,2 @@
+ALTER TABLE lines DROP COLUMN id;
+ALTER TABLE lines ADD PRIMARY KEY (code); 
