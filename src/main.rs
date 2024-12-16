@@ -1,11 +1,11 @@
 pub mod database;
-pub mod models;
 pub mod handlers;
+pub mod models;
 
 use std::sync::Arc;
 
-use axum::{routing::get, Router};
 use crate::{database::get_db_connection, models::app::AppState};
+use axum::{routing::get, Router};
 use tower_http::{compression::CompressionLayer, cors::CorsLayer, trace::TraceLayer};
 use tracing::info;
 use tracing_subscriber::fmt::format::FmtSpan;

@@ -31,8 +31,8 @@ pub async fn search(
         "#,
         q
     )
-        .fetch_all(&state.db)
-        .await?;
+    .fetch_all(&state.db)
+    .await?;
 
     // COALESCE(NULLIF(ARRAY_AGG((bus_stops)), '{NULL}'), '{}') as "stop_codes: Vec<i32>"
     let lines = sqlx::query_as!(

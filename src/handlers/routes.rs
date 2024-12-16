@@ -1,8 +1,14 @@
 use std::sync::Arc;
 
-use axum::{extract::{Path, State}, Json};
+use axum::{
+    extract::{Path, State},
+    Json,
+};
 
-use crate::{database::route::Route, models::app::{AppError, AppState}};
+use crate::{
+    database::route::Route,
+    models::app::{AppError, AppState},
+};
 
 pub async fn routes(
     Path(line_code): Path<String>,
@@ -31,9 +37,5 @@ pub async fn routes(
     .fetch_all(&state.db)
     .await?;
 
-    
-
-    Ok(Json(
-        routes
-    ))
+    Ok(Json(routes))
 }
