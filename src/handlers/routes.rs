@@ -6,8 +6,8 @@ use axum::{
 };
 
 use crate::{
-    database::route::Route,
     models::app::{AppError, AppState},
+    models::routes::Route,
 };
 
 pub async fn routes(

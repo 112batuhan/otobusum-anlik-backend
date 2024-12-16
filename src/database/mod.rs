@@ -1,5 +1,3 @@
-pub mod route;
-
 use anyhow::Result;
 use sqlx::PgPool;
 
