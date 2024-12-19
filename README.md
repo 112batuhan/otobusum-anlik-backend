@@ -2,7 +2,4 @@ Small backend service for [otobusum-anlik](https://github.com/metkm/otobusum-anl
 
 Rust Axum Postgres stack
 
-### This will have one endpoint for now so here it is:
-GET `/stop/{stop_id}`
-
-I will implement docs soon...
+A detailed readme and automated endpoint docs will come later.
