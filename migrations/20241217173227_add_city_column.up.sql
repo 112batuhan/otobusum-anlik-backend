@@ -8,4 +8,4 @@ CREATE UNIQUE INDEX id_code_index_lines ON lines (code, city);
 CREATE UNIQUE INDEX id_code_index_routes ON routes (route_code, city);
 CREATE UNIQUE INDEX id_code_index_paths ON route_paths (route_code, city);
 CREATE UNIQUE INDEX id_code_index_stops ON stops (stop_code, city);
-CREATE UNIQUE INDEX id_code_index_line_stops ON line_stops (line_code, city);
+CREATE UNIQUE INDEX id_code_index_line_stops ON line_stops (stop_code, city);
