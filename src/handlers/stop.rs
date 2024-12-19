@@ -1,11 +1,14 @@
 use std::sync::Arc;
 
+use anyhow::anyhow;
 use axum::{
     extract::{Path, State},
     Json,
 };
-
-use serde::Serialize;
+use cached::proc_macro::io_cached;
+use cached::AsyncRedisCache;
+use serde::{Deserialize, Serialize};
+use tokio::try_join;
 
 use crate::models::{
     app::{AppError, AppState},
@@ -13,26 +16,28 @@ use crate::models::{
     line::LineStop,
 };
 
-#[derive(Serialize)]
+#[derive(Serialize, Deserialize, Clone)]
 pub struct BussesInStopResponse {
     stop: BusStop,
     buses: Vec<String>,
 }
 
-// pub stop_name: String,
-// pub x_coord: f64,
-// pub y_coord: f64,
-// pub province: String,
-// pub smart: String,
-// pub physical: Option<String>,
-// pub stop_type: String,
-// pub disabled_can_use: String,
-// pub city: String,
-pub async fn get_stop(
-    Path(stop_id): Path<u32>,
-    State(state): State<Arc<AppState>>,
-) -> Result<Json<BussesInStopResponse>, AppError> {
-    let stop = sqlx::query_as!(
+#[io_cached(
+    map_error = r##"|e| anyhow!("{}", e) "##,
+    ty = "AsyncRedisCache<u32, BussesInStopResponse>",
+    convert = "{stop_id}",
+    create = r##" {
+        AsyncRedisCache::new("get_stop", 600)
+            .build()
+            .await
+            .expect("error building redis cache")
+    } "##
+)]
+pub async fn cached_get_stop(
+    stop_id: u32,
+    state: Arc<AppState>,
+) -> Result<BussesInStopResponse, AppError> {
+    let stop_future = sqlx::query_as!(
         BusStop,
         r#"
             SELECT 
@@ -51,10 +56,9 @@ pub async fn get_stop(
         "#,
         stop_id as i32
     )
-    .fetch_one(&state.db)
-    .await?;
+    .fetch_one(&state.db);
 
-    let line_stops = sqlx::query_as!(
+    let line_stops_future = sqlx::query_as!(
         LineStop,
         r#"
             SELECT 
@@ -65,13 +69,21 @@ pub async fn get_stop(
         "#,
         stop_id as i32
     )
-    .fetch_all(&state.db)
-    .await?;
+    .fetch_all(&state.db);
+
+    let (stop, line_stops) = try_join!(stop_future, line_stops_future)?;
 
     let line_codes = line_stops.into_iter().map(|line| line.line_code).collect();
 
-    Ok(Json(BussesInStopResponse {
+    Ok(BussesInStopResponse {
         stop,
         buses: line_codes,
-    }))
+    })
+}
+
+pub async fn get_stop(
+    Path(stop_id): Path<u32>,
+    State(state): State<Arc<AppState>>,
+) -> Result<Json<BussesInStopResponse>, AppError> {
+    cached_get_stop(stop_id, state).await.map(Json)
 }

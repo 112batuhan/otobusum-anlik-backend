@@ -1,7 +1,10 @@
 use std::sync::Arc;
 
+use anyhow::anyhow;
 use axum::extract::{Query, State};
 use axum::Json;
+use cached::proc_macro::io_cached;
+use cached::AsyncRedisCache;
 use serde::{Deserialize, Serialize};
 
 use crate::models::app::{AppError, AppState};
@@ -13,16 +16,24 @@ pub struct Search {
     q: String,
 }
 
-#[derive(Serialize)]
+#[derive(Serialize, Deserialize, Clone)]
 pub struct SearchResponse {
     stops: Vec<BusStop>,
     lines: Vec<BusLine>,
 }
 
-pub async fn search(
-    Query(Search { q }): Query<Search>,
-    State(state): State<Arc<AppState>>,
-) -> Result<Json<SearchResponse>, AppError> {
+#[io_cached(
+    map_error = r##"|e| anyhow!("{}", e) "##,
+    ty = "AsyncRedisCache<String, SearchResponse>",
+    convert = "{q.clone()}",
+    create = r##" {
+        AsyncRedisCache::new("search", 600)
+            .build()
+            .await
+            .expect("error building redis cache")
+    } "##
+)]
+pub async fn search_cached(q: String, state: Arc<AppState>) -> Result<SearchResponse, AppError> {
     let stops = sqlx::query_as!(
         BusStop,
         r#"
@@ -67,5 +78,11 @@ pub async fn search(
     .fetch_all(&state.db)
     .await?;
 
-    Ok(Json(SearchResponse { stops, lines }))
+    Ok(SearchResponse { stops, lines })
+}
+pub async fn search(
+    Query(Search { q }): Query<Search>,
+    State(state): State<Arc<AppState>>,
+) -> Result<Json<SearchResponse>, AppError> {
+    search_cached(q, state).await.map(Json)
 }

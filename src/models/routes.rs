@@ -6,7 +6,7 @@ pub struct Coordinate {
     pub lng: f64,
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct Route {
     pub id: i32,
     pub agency_id: Option<i32>,

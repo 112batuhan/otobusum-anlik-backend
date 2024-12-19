@@ -8,7 +8,7 @@ pub struct BusStopPoint {
     pub y: f64,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct BusStop {
     pub id: i32,
     pub stop_code: i32,

@@ -1,19 +1,33 @@
 use std::sync::Arc;
 
+use anyhow::anyhow;
 use axum::{
     extract::{Path, State},
     Json,
 };
+use cached::proc_macro::io_cached;
+use cached::AsyncRedisCache;
 
 use crate::{
     models::app::{AppError, AppState},
     models::routes::Route,
 };
 
-pub async fn routes(
-    Path(line_code): Path<String>,
-    State(state): State<Arc<AppState>>,
-) -> Result<Json<Vec<Route>>, AppError> {
+#[io_cached(
+    map_error = r##"|e| anyhow!("{}", e) "##,
+    ty = "AsyncRedisCache<String, Vec<Route>>",
+    convert = "{line_code.clone()}",
+    create = r##" {
+        AsyncRedisCache::new("routes", 600)
+            .build()
+            .await
+            .expect("error building redis cache")
+    } "##
+)]
+pub async fn routes_cached(
+    line_code: String,
+    state: Arc<AppState>,
+) -> Result<Vec<Route>, AppError> {
     let routes = sqlx::query_as!(
         Route,
         r#"
@@ -37,5 +51,12 @@ pub async fn routes(
     .fetch_all(&state.db)
     .await?;
 
-    Ok(Json(routes))
+    Ok(routes)
+}
+
+pub async fn routes(
+    Path(line_code): Path<String>,
+    State(state): State<Arc<AppState>>,
+) -> Result<Json<Vec<Route>>, AppError> {
+    routes_cached(line_code, state).await.map(Json)
 }
