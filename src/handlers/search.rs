@@ -26,7 +26,19 @@ pub async fn search(
     let stops = sqlx::query_as!(
         BusStop,
         r#"
-            SELECT * FROM stops WHERE stop_name ILIKE '%' || $1 || '%'
+            SELECT
+                id,
+                stop_code,
+                stop_name,
+                x_coord,
+                y_coord,
+                physical as "physical!",
+                province as "province!",
+                smart as "smart!",
+                stop_type as "stop_type!",
+                disabled_can_use "disabled_can_use!",
+                city
+             FROM stops WHERE stop_name ILIKE '%' || $1 || '%'
             LIMIT 10
         "#,
         q

@@ -19,6 +19,15 @@ pub struct BussesInStopResponse {
     buses: Vec<String>,
 }
 
+// pub stop_name: String,
+// pub x_coord: f64,
+// pub y_coord: f64,
+// pub province: String,
+// pub smart: String,
+// pub physical: Option<String>,
+// pub stop_type: String,
+// pub disabled_can_use: String,
+// pub city: String,
 pub async fn get_stop(
     Path(stop_id): Path<u32>,
     State(state): State<Arc<AppState>>,
@@ -26,7 +35,19 @@ pub async fn get_stop(
     let stop = sqlx::query_as!(
         BusStop,
         r#"
-            SELECT * FROM stops WHERE stop_code = $1
+            SELECT 
+                id,
+                stop_code,
+                stop_name,
+                x_coord,
+                y_coord,
+                physical as "physical!",
+                province as "province!",
+                smart as "smart!",
+                stop_type as "stop_type!",
+                disabled_can_use "disabled_can_use!",
+                city
+            FROM stops WHERE stop_code = $1
         "#,
         stop_id as i32
     )
@@ -36,7 +57,11 @@ pub async fn get_stop(
     let line_stops = sqlx::query_as!(
         LineStop,
         r#"
-            SELECT * FROM line_stops WHERE stop_code = $1
+            SELECT 
+                id,
+                line_code as "line_code!",
+                stop_code as "stop_code!"
+            FROM line_stops WHERE stop_code = $1
         "#,
         stop_id as i32
     )

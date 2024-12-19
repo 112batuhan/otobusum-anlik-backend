@@ -18,7 +18,7 @@ pub async fn routes(
         Route,
         r#"
             SELECT 
-                id,
+                routes.id,
                 agency_id,
                 route_short_name,
                 route_long_name,

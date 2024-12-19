@@ -10,16 +10,17 @@ pub struct BusStopPoint {
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct BusStop {
+    pub id: i32,
     pub stop_code: i32,
     pub stop_name: String,
     pub x_coord: f64,
     pub y_coord: f64,
     pub province: String,
-    pub direction: String,
     pub smart: String,
-    pub physical: Option<String>,
     pub stop_type: String,
     pub disabled_can_use: String,
+    pub city: String,
+    pub physical: String,
 }
 
 #[derive(Debug, Serialize)]
