@@ -16,6 +16,12 @@ services:
     networks:
       - server 
 
+  redis:
+    image: redis:latest
+    restart: always
+    ports:
+      - "6379:6379" 
+
   server:
     build:
       context: .

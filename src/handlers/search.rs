@@ -5,8 +5,8 @@ use axum::Json;
 use serde::{Deserialize, Serialize};
 
 use crate::models::app::{AppError, AppState};
-use crate::models::bus::{BusStop, BusStopPoint};
-use crate::models::line::BusLineWithCoordinates;
+use crate::models::bus::BusStop;
+use crate::models::line::BusLine;
 
 #[derive(Deserialize)]
 pub struct Search {
@@ -16,7 +16,7 @@ pub struct Search {
 #[derive(Serialize)]
 pub struct SearchResponse {
     stops: Vec<BusStop>,
-    lines: Vec<BusLineWithCoordinates>,
+    lines: Vec<BusLine>,
 }
 
 pub async fn search(
@@ -48,16 +48,13 @@ pub async fn search(
 
     // COALESCE(NULLIF(ARRAY_AGG((bus_stops)), '{NULL}'), '{}') as "stop_codes: Vec<i32>"
     let lines = sqlx::query_as!(
-        BusLineWithCoordinates,
+        BusLine,
         r#"
             SELECT
                 code,
-                title,
-                COALESCE(NULLIF(ARRAY_AGG((stops.x_coord, stops.y_coord)), '{NULL}'), '{}') as "stop_coords: Vec<BusStopPoint>"
+                title
             FROM
                 lines
-                JOIN line_stops ON lines.code = line_stops.line_code
-                JOIN stops on line_stops.stop_code = stops.stop_code
             WHERE
                 code ILIKE '%' || $1 || '%'
                 OR TO_TSVECTOR( title ) @@ websearch_to_tsquery('' || $1 || ':*')
@@ -67,8 +64,8 @@ pub async fn search(
         "#,
         q
     )
-        .fetch_all(&state.db)
-        .await?;
+    .fetch_all(&state.db)
+    .await?;
 
     Ok(Json(SearchResponse { stops, lines }))
 }
