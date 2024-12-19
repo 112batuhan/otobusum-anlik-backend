@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n            SELECT * FROM line_stops WHERE stop_code = $1\n        ",
+  "query": "\n            SELECT \n                id,\n                line_code as \"line_code!\",\n                stop_code as \"stop_code!\"\n            FROM line_stops WHERE stop_code = $1\n        ",
   "describe": {
     "columns": [
       {
@@ -10,12 +10,12 @@
       },
       {
         "ordinal": 1,
-        "name": "line_code",
+        "name": "line_code!",
         "type_info": "Text"
       },
       {
         "ordinal": 2,
-        "name": "stop_code",
+        "name": "stop_code!",
         "type_info": "Int4"
       }
     ],
@@ -26,9 +26,9 @@
     },
     "nullable": [
       false,
-      false,
-      false
+      true,
+      true
     ]
   },
-  "hash": "57ed4c191622b1605f13bdaf0b52076497922e6c41825b975e431f2220172dfb"
+  "hash": "b8aff8c9cebcc394c6e4f3f276ec174cd68855e58bbe9f1f4a5e4ba2f6906811"
 }

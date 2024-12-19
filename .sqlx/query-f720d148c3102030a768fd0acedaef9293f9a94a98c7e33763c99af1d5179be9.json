@@ -1,0 +1,82 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n            SELECT \n                id,\n                stop_code,\n                stop_name,\n                x_coord,\n                y_coord,\n                physical as \"physical!\",\n                province as \"province!\",\n                smart as \"smart!\",\n                stop_type as \"stop_type!\",\n                disabled_can_use \"disabled_can_use!\",\n                city\n            FROM stops WHERE stop_code = $1\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 1,
+        "name": "stop_code",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 2,
+        "name": "stop_name",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 3,
+        "name": "x_coord",
+        "type_info": "Float8"
+      },
+      {
+        "ordinal": 4,
+        "name": "y_coord",
+        "type_info": "Float8"
+      },
+      {
+        "ordinal": 5,
+        "name": "physical!",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 6,
+        "name": "province!",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 7,
+        "name": "smart!",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 8,
+        "name": "stop_type!",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 9,
+        "name": "disabled_can_use!",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 10,
+        "name": "city",
+        "type_info": "Text"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int4"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      false,
+      false,
+      true,
+      true,
+      true,
+      true,
+      true,
+      false
+    ]
+  },
+  "hash": "f720d148c3102030a768fd0acedaef9293f9a94a98c7e33763c99af1d5179be9"
+}
