@@ -5,3 +5,4 @@ ALTER TABLE stops ALTER COLUMN stop_type SET NOT NULL;
 ALTER TABLE stops ALTER COLUMN disabled_can_use SET NOT NULL;
 
 ALTER TABLE stops ADD COLUMN direction TEXT;
+ALTER TABLE line_stops ADD route_code TEXT;
