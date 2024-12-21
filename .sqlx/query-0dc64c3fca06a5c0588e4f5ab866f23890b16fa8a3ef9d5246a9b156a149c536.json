@@ -1,0 +1,46 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n            SELECT \n                id,\n                line_code,\n                stop_code,\n                route_code as \"route_code!\",\n                city\n            FROM\n                line_stops\n            WHERE\n                stop_code = $1\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 1,
+        "name": "line_code",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 2,
+        "name": "stop_code",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 3,
+        "name": "route_code!",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 4,
+        "name": "city",
+        "type_info": "Text"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int4"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      true,
+      false
+    ]
+  },
+  "hash": "0dc64c3fca06a5c0588e4f5ab866f23890b16fa8a3ef9d5246a9b156a149c536"
+}
