@@ -4,14 +4,14 @@ use sqlx::{PgPool, Pool, Postgres};
 
 pub struct AppState {
     pub db: PgPool,
-    // pub reqwest: reqwest::Client,
+    pub reqwest: reqwest::Client,
 }
 
 impl AppState {
     pub fn new(conn: Pool<Postgres>) -> Self {
         Self {
             db: conn,
-            // reqwest: reqwest::Client::new()
+            reqwest: reqwest::Client::new(),
         }
     }
 }

@@ -1,3 +1,4 @@
+pub mod api;
 pub mod database;
 pub mod handlers;
 pub mod models;
@@ -5,7 +6,7 @@ pub mod models;
 use std::sync::Arc;
 
 use crate::{database::get_db_connection, models::app::AppState};
-use axum::{routing::get, Router};
+use axum::{http::HeaderValue, routing::get, Router};
 use tower_http::{compression::CompressionLayer, cors::CorsLayer, trace::TraceLayer};
 use tracing::info;
 use tracing_subscriber::fmt::format::FmtSpan;
@@ -30,8 +31,12 @@ async fn main() {
     let app = Router::new()
         .route("/stop/:stop_id", get(handlers::stop::get_stop))
         .route("/routes/:line_code", get(handlers::routes::routes))
+        .route(
+            "/bus-locations/:line_code",
+            get(handlers::bus_locations::bus_locations),
+        )
         .route("/search", get(handlers::search::search))
-        .layer(CorsLayer::very_permissive())
+        .layer(CorsLayer::new().allow_origin("https://metkm.win".parse::<HeaderValue>().unwrap()))
         .layer(
             CompressionLayer::new()
                 .gzip(true)
