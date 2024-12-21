@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n            SELECT\n                id,\n                stop_code,\n                stop_name,\n                x_coord,\n                y_coord,\n                physical as \"physical!\",\n                province as \"province!\",\n                smart as \"smart!\",\n                stop_type as \"stop_type!\",\n                disabled_can_use \"disabled_can_use!\",\n                city\n             FROM stops WHERE stop_name ILIKE '%' || $1 || '%'\n            LIMIT 10\n        ",
+  "query": "\n            SELECT\n                id,\n                stop_code,\n                stop_name,\n                x_coord,\n                y_coord,\n                physical as \"physical!\",\n                province as \"province!\",\n                smart as \"smart!\",\n                stop_type as \"stop_type!\",\n                disabled_can_use \"disabled_can_use!\",\n                city\n             FROM\n                stops\n             WHERE\n                stop_name ILIKE '%' || $1 || '%'\n                AND city = 'istanbul'\n            LIMIT 10\n        ",
   "describe": {
     "columns": [
       {
@@ -78,5 +78,5 @@
       false
     ]
   },
-  "hash": "b24c8991c3bcdce47356c113257b23915ac911fb24024c620c30387a3090e716"
+  "hash": "bcbe31b912157806529366bdc4ba6496857d8d9e3b7a930ac77b50df310281ee"
 }
