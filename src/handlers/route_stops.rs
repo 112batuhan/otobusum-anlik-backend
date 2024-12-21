@@ -18,7 +18,7 @@ use crate::models::{
     ty = "AsyncRedisCache<String, Vec<BusStop>>",
     convert = "{route_code.clone()}",
     create = r##" {
-        AsyncRedisCache::new("routes", 600)
+        AsyncRedisCache::new("route-stops", 600)
             .build()
             .await
             .expect("error building redis cache")
