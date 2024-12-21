@@ -31,8 +31,14 @@ async fn main() {
     let app = Router::new()
         .route("/stop/:stop_id", get(handlers::stop::get_stop))
         .route("/routes/:line_code", get(handlers::routes::routes))
-        .route("/bus-locations/:line_code", get(handlers::bus_locations::bus_locations))
-        .route("/route-stops/:route_code", get(handlers::route_stops::route_stops))
+        .route(
+            "/bus-locations/:line_code",
+            get(handlers::bus_locations::bus_locations),
+        )
+        .route(
+            "/route-stops/:route_code",
+            get(handlers::route_stops::route_stops),
+        )
         .route("/search", get(handlers::search::search))
         .layer(CorsLayer::new().allow_origin("https://metkm.win".parse::<HeaderValue>().unwrap()))
         .layer(

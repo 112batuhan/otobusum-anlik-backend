@@ -1,11 +1,17 @@
-use std::sync::Arc;
 use anyhow::anyhow;
+use std::sync::Arc;
 
-use axum::{extract::{Path, State}, Json};
+use axum::{
+    extract::{Path, State},
+    Json,
+};
 use cached::proc_macro::io_cached;
 use cached::AsyncRedisCache;
 
-use crate::models::{app::{AppError, AppState}, bus::BusStop};
+use crate::models::{
+    app::{AppError, AppState},
+    bus::BusStop,
+};
 
 #[io_cached(
     map_error = r##"|e| anyhow!("{}", e) "##,
@@ -20,7 +26,7 @@ use crate::models::{app::{AppError, AppState}, bus::BusStop};
 )]
 pub async fn route_stops_cached(
     route_code: String,
-    state: Arc<AppState>
+    state: Arc<AppState>,
 ) -> Result<Vec<BusStop>, AppError> {
     let stops = sqlx::query_as!(
         BusStop,
@@ -45,15 +51,15 @@ pub async fn route_stops_cached(
         "#,
         route_code
     )
-        .fetch_all(&state.db)
-        .await?;
+    .fetch_all(&state.db)
+    .await?;
 
     Ok(stops)
 }
 
 pub async fn route_stops(
     Path(route_code): Path<String>,
-    State(state): State<Arc<AppState>>
+    State(state): State<Arc<AppState>>,
 ) -> Result<Json<Vec<BusStop>>, AppError> {
     route_stops_cached(route_code, state).await.map(Json)
 }
