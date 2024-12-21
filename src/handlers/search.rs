@@ -71,11 +71,13 @@ pub async fn search_cached(q: String, state: Arc<AppState>) -> Result<SearchResp
             FROM
                 lines
             WHERE
-                code ILIKE '%' || $1 || '%'
-                OR TO_TSVECTOR( title ) @@ websearch_to_tsquery('' || $1 || ':*')
+                (
+                    code ILIKE '%' || $1 || '%'
+                    OR TO_TSVECTOR( title ) @@ websearch_to_tsquery('' || $1 || ':*')
+                )
                 AND city = 'istanbul'
             GROUP BY
-                code, title
+                code, title, city
             LIMIT 20
         "#,
         q
