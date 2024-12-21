@@ -1,9 +1,3 @@
-use serde_xml_rs;
-
-struct BusLocationsResponse {
-    
-}
-
 fn get_body(key_outer: &str, key: &str, value: &str) -> String {
     format!(
         r#"
@@ -20,7 +14,7 @@ fn get_body(key_outer: &str, key: &str, value: &str) -> String {
     )
 }
 
-pub async fn get_bus_locations(client: &reqwest::Client, line_code: &str) -> anyhow::Result<()> {
+pub async fn get_bus_locations(client: &reqwest::Client, line_code: &str) -> anyhow::Result<String> {
     let body = get_body("GetHatOtoKonum_json", "HatKodu", line_code);
 
     let response = client.post("https://api.ibb.gov.tr/iett/FiloDurum/SeferGerceklesme.asmx")
@@ -33,7 +27,5 @@ pub async fn get_bus_locations(client: &reqwest::Client, line_code: &str) -> any
     let content = response.text()
         .await?;
 
-    println!("{content}");
-
-    Ok(())
+    Ok(content)
 }
