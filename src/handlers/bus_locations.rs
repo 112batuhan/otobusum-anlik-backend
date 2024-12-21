@@ -2,8 +2,8 @@ use anyhow::anyhow;
 use cached::AsyncRedisCache;
 use std::sync::Arc;
 
-use axum::Json;
 use axum::extract::{Path, State};
+use axum::Json;
 use cached::proc_macro::io_cached;
 
 use crate::api::get_bus_locations::get_bus_locations;
