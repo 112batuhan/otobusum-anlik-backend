@@ -8,7 +8,7 @@ use cached::AsyncRedisCache;
 use serde::{Deserialize, Serialize};
 
 use crate::models::app::{AppError, AppState};
-use crate::models::bus::BusStop;
+use crate::models::stop::BusStop;
 use crate::models::line::BusLine;
 
 #[derive(Deserialize)]

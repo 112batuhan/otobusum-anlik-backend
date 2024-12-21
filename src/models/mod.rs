@@ -4,6 +4,8 @@ pub mod app;
 pub mod bus;
 pub mod line;
 pub mod routes;
+pub mod stop;
+pub mod location;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Coordinates {

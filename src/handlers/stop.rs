@@ -12,7 +12,7 @@ use tokio::try_join;
 
 use crate::models::{
     app::{AppError, AppState},
-    bus::BusStop,
+    stop::BusStop,
     line::LineStop,
 };
 

@@ -2,71 +2,13 @@ use anyhow::anyhow;
 use cached::AsyncRedisCache;
 use std::sync::Arc;
 
-use axum::extract::{Path, State};
 use axum::Json;
+use axum::extract::{Path, State};
 use cached::proc_macro::io_cached;
-use serde::{de, Deserialize, Deserializer, Serialize};
 
 use crate::api::get_bus_locations::get_bus_locations;
 use crate::models::app::{AppError, AppState};
-
-#[derive(Serialize, Deserialize, Clone)]
-pub struct BusLocation {
-    #[serde(alias = "kapino")]
-    door_no: String,
-    #[serde(alias = "boylam")]
-    #[serde(deserialize_with = "deserialize_f64_from_string")]
-    lng: f64,
-    #[serde(alias = "enlem")]
-    #[serde(deserialize_with = "deserialize_f64_from_string")]
-    lat: f64,
-    #[serde(alias = "hatkodu")]
-    line_code: String,
-    #[serde(alias = "guzergahkodu")]
-    route_code: String,
-    #[serde(alias = "hatad")]
-    line_name: String,
-    #[serde(alias = "yon")]
-    direction: String,
-    #[serde(alias = "son_konum_zamani")]
-    last_location_update: String,
-    #[serde(alias = "yakinDurakKodu")]
-    #[serde(deserialize_with = "deserialize_u32_from_string")]
-    closest_stop_code: u32,
-}
-
-pub fn deserialize_f64_from_string<'de, D>(deserializer: D) -> Result<f64, D::Error>
-where
-    D: Deserializer<'de>,
-{
-    let s: String = Deserialize::deserialize(deserializer)?;
-    s.parse::<f64>().map_err(de::Error::custom)
-}
-pub fn deserialize_u32_from_string<'de, D>(deserializer: D) -> Result<u32, D::Error>
-where
-    D: Deserializer<'de>,
-{
-    let s: String = Deserialize::deserialize(deserializer)?;
-    s.parse::<u32>().map_err(de::Error::custom)
-}
-
-#[derive(Serialize, Deserialize)]
-pub struct BusLocationResponseJson {
-    #[serde(alias = "GetHatOtoKonum_jsonResult")]
-    content: String,
-}
-
-#[derive(Serialize, Deserialize)]
-pub struct BusLocationResponseBody {
-    #[serde(alias = "GetHatOtoKonum_jsonResponse")]
-    content: BusLocationResponseJson,
-}
-
-#[derive(Serialize, Deserialize)]
-pub struct BusLocationResponse {
-    #[serde(alias = "Body")]
-    content: BusLocationResponseBody,
-}
+use crate::models::location::{BusLocation, BusLocationResponse};
 
 #[io_cached(
     map_error = r##"|e| anyhow!("{}", e) "##,
