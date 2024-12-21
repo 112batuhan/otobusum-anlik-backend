@@ -63,9 +63,14 @@ pub async fn cached_get_stop(
         r#"
             SELECT 
                 id,
-                line_code as "line_code!",
-                stop_code as "stop_code!"
-            FROM line_stops WHERE stop_code = $1
+                line_code,
+                stop_code,
+                route_code as "route_code!",
+                city
+            FROM
+                line_stops
+            WHERE
+                stop_code = $1
         "#,
         stop_id as i32
     )

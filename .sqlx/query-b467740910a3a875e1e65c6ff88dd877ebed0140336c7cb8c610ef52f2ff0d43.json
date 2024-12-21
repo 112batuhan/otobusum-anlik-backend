@@ -1,0 +1,82 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n            SELECT\n                stops.id,\n                stops.stop_code,\n                stops.stop_name,\n                stops.x_coord,\n                stops.y_coord,\n                stops.province,\n                stops.smart,\n                stops.stop_type,\n                stops.disabled_can_use,\n                stops.physical,\n                stops.city\n            FROM\n                line_stops\n                RIGHT JOIN stops ON stops.stop_code = line_stops.stop_code\n            WHERE\n                line_stops.route_code = $1\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 1,
+        "name": "stop_code",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 2,
+        "name": "stop_name",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 3,
+        "name": "x_coord",
+        "type_info": "Float8"
+      },
+      {
+        "ordinal": 4,
+        "name": "y_coord",
+        "type_info": "Float8"
+      },
+      {
+        "ordinal": 5,
+        "name": "province",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 6,
+        "name": "smart",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 7,
+        "name": "stop_type",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 8,
+        "name": "disabled_can_use",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 9,
+        "name": "physical",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 10,
+        "name": "city",
+        "type_info": "Text"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Text"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      false,
+      false,
+      true,
+      true,
+      true,
+      true,
+      true,
+      false
+    ]
+  },
+  "hash": "b467740910a3a875e1e65c6ff88dd877ebed0140336c7cb8c610ef52f2ff0d43"
+}
