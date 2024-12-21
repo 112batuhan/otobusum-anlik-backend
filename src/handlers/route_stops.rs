@@ -10,7 +10,7 @@ use cached::AsyncRedisCache;
 
 use crate::models::{
     app::{AppError, AppState},
-    bus::BusStop,
+    stop::BusStop,
 };
 
 #[io_cached(

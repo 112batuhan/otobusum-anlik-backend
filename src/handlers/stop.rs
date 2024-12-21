@@ -12,8 +12,8 @@ use tokio::try_join;
 
 use crate::models::{
     app::{AppError, AppState},
-    bus::BusStop,
     line::LineStop,
+    stop::BusStop,
 };
 
 #[derive(Serialize, Deserialize, Clone)]

@@ -8,8 +8,8 @@ use cached::AsyncRedisCache;
 use serde::{Deserialize, Serialize};
 
 use crate::models::app::{AppError, AppState};
-use crate::models::bus::BusStop;
 use crate::models::line::BusLine;
+use crate::models::stop::BusStop;
 
 #[derive(Deserialize)]
 pub struct Search {
