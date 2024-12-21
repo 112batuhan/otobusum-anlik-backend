@@ -15,12 +15,12 @@ pub struct BusStop {
     pub stop_name: String,
     pub x_coord: f64,
     pub y_coord: f64,
-    pub province: String,
-    pub smart: String,
-    pub stop_type: String,
-    pub disabled_can_use: String,
+    pub province: Option<String>,
+    pub smart: Option<String>,
+    pub stop_type: Option<String>,
+    pub disabled_can_use: Option<String>,
+    pub physical: Option<String>,
     pub city: String,
-    pub physical: String,
 }
 
 #[derive(Debug, Serialize)]

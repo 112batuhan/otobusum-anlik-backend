@@ -67,7 +67,8 @@ pub async fn search_cached(q: String, state: Arc<AppState>) -> Result<SearchResp
         r#"
             SELECT
                 code,
-                title
+                title,
+                city
             FROM
                 lines
             WHERE
