@@ -5,7 +5,7 @@ use std::sync::Arc;
 use axum::extract::{Path, State};
 use axum::Json;
 use cached::proc_macro::io_cached;
-use serde::{Deserialize, Serialize};
+use serde::{de, Deserialize, Deserializer, Serialize};
 
 use crate::api::get_bus_locations::get_bus_locations;
 use crate::models::app::{AppError, AppState};
@@ -15,8 +15,10 @@ pub struct BusLocation {
     #[serde(alias = "kapino")]
     door_no: String,
     #[serde(alias = "boylam")]
+    #[serde(deserialize_with = "deserialize_f64_from_string")]
     lng: f64,
     #[serde(alias = "enlem")]
+    #[serde(deserialize_with = "deserialize_f64_from_string")]
     lat: f64,
     #[serde(alias = "hatkodu")]
     line_code: String,
@@ -29,7 +31,23 @@ pub struct BusLocation {
     #[serde(alias = "son_konum_zamani")]
     last_location_update: String,
     #[serde(alias = "yakinDurakKodu")]
+    #[serde(deserialize_with = "deserialize_u32_from_string")]
     closest_stop_code: u32,
+}
+
+pub fn deserialize_f64_from_string<'de, D>(deserializer: D) -> Result<f64, D::Error>
+where
+    D: Deserializer<'de>,
+{
+    let s: String = Deserialize::deserialize(deserializer)?;
+    s.parse::<f64>().map_err(de::Error::custom)
+}
+pub fn deserialize_u32_from_string<'de, D>(deserializer: D) -> Result<u32, D::Error>
+where
+    D: Deserializer<'de>,
+{
+    let s: String = Deserialize::deserialize(deserializer)?;
+    s.parse::<u32>().map_err(de::Error::custom)
 }
 
 #[derive(Serialize, Deserialize)]
