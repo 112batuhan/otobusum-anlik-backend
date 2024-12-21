@@ -12,41 +12,41 @@ use crate::api::get_bus_locations::get_bus_locations;
 
 #[derive(Serialize, Deserialize, Clone)]
 pub struct BusLocation {
-    #[serde(rename = "kapino")]
+    #[serde(alias = "kapino")]
     door_no: String,
-    #[serde(rename = "boylam")]
+    #[serde(alias = "boylam")]
     lng: String,
-    #[serde(rename = "enlem")]
+    #[serde(alias = "enlem")]
     lat: String,
-    #[serde(rename = "hatkodu")]
+    #[serde(alias = "hatkodu")]
     line_code: String,
-    #[serde(rename = "guzergahkodu")]
+    #[serde(alias = "guzergahkodu")]
     route_code: String,
-    #[serde(rename = "hatad")]
+    #[serde(alias = "hatad")]
     line_name: String,
-    #[serde(rename = "yon")]
+    #[serde(alias = "yon")]
     direction: String,
-    #[serde(rename = "son_konum_zamani")]
+    #[serde(alias = "son_konum_zamani")]
     last_location_update: String,
-    #[serde(rename = "yakinDurakKodu")]
+    #[serde(alias = "yakinDurakKodu")]
     closest_stop_code: String,
 }
 
 #[derive(Serialize, Deserialize)]
 pub struct BusLocationResponseJson {
-    #[serde(rename = "GetHatOtoKonum_jsonResult")]
+    #[serde(alias = "GetHatOtoKonum_jsonResult")]
     content: String
 }
 
 #[derive(Serialize, Deserialize)]
 pub struct BusLocationResponseBody {
-    #[serde(rename = "GetHatOtoKonum_jsonResponse")]
+    #[serde(alias = "GetHatOtoKonum_jsonResponse")]
     content: BusLocationResponseJson
 }
 
 #[derive(Serialize, Deserialize)]
 pub struct BusLocationResponse {
-    #[serde(rename = "Body")]
+    #[serde(alias = "Body")]
     content: BusLocationResponseBody
 }
 
@@ -71,8 +71,6 @@ pub async fn bus_locations_cached(
 
     let response: BusLocationResponse = serde_xml_rs::from_str(&content)?;
     let inner_content = response.content.content.content;
-
-    println!("{:?}", inner_content);
 
     let bus_locations = serde_json::from_str(&inner_content)?;
     Ok(bus_locations)
