@@ -1,7 +1,7 @@
+pub mod api;
 pub mod database;
 pub mod handlers;
 pub mod models;
-pub mod api;
 
 use std::sync::Arc;
 
@@ -31,12 +31,12 @@ async fn main() {
     let app = Router::new()
         .route("/stop/:stop_id", get(handlers::stop::get_stop))
         .route("/routes/:line_code", get(handlers::routes::routes))
-        .route("/bus-locations/:line_code", get(handlers::bus_locations::bus_locations))
-        .route("/search", get(handlers::search::search))
-        .layer(
-            CorsLayer::new()
-                .allow_origin("https://metkm.win".parse::<HeaderValue>().unwrap())
+        .route(
+            "/bus-locations/:line_code",
+            get(handlers::bus_locations::bus_locations),
         )
+        .route("/search", get(handlers::search::search))
+        .layer(CorsLayer::new().allow_origin("https://metkm.win".parse::<HeaderValue>().unwrap()))
         .layer(
             CompressionLayer::new()
                 .gzip(true)

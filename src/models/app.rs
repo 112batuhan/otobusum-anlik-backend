@@ -11,7 +11,7 @@ impl AppState {
     pub fn new(conn: Pool<Postgres>) -> Self {
         Self {
             db: conn,
-            reqwest: reqwest::Client::new()
+            reqwest: reqwest::Client::new(),
         }
     }
 }
