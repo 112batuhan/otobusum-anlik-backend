@@ -15,9 +15,9 @@ pub struct BusLocation {
     #[serde(alias = "kapino")]
     door_no: String,
     #[serde(alias = "boylam")]
-    lng: String,
+    lng: f64,
     #[serde(alias = "enlem")]
-    lat: String,
+    lat: f64,
     #[serde(alias = "hatkodu")]
     line_code: String,
     #[serde(alias = "guzergahkodu")]
@@ -29,7 +29,7 @@ pub struct BusLocation {
     #[serde(alias = "son_konum_zamani")]
     last_location_update: String,
     #[serde(alias = "yakinDurakKodu")]
-    closest_stop_code: String,
+    closest_stop_code: u32,
 }
 
 #[derive(Serialize, Deserialize)]
