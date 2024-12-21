@@ -49,7 +49,11 @@ pub async fn search_cached(q: String, state: Arc<AppState>) -> Result<SearchResp
                 stop_type as "stop_type!",
                 disabled_can_use "disabled_can_use!",
                 city
-             FROM stops WHERE stop_name ILIKE '%' || $1 || '%'
+             FROM
+                stops
+             WHERE
+                stop_name ILIKE '%' || $1 || '%'
+                AND city = 'istanbul'
             LIMIT 10
         "#,
         q
@@ -69,6 +73,7 @@ pub async fn search_cached(q: String, state: Arc<AppState>) -> Result<SearchResp
             WHERE
                 code ILIKE '%' || $1 || '%'
                 OR TO_TSVECTOR( title ) @@ websearch_to_tsquery('' || $1 || ':*')
+                AND city = 'istanbul'
             GROUP BY
                 code, title
             LIMIT 20
