@@ -2,8 +2,8 @@ use serde::Deserialize;
 
 use crate::database::city::City;
 
-fn default_city() -> City {
-    return City::istanbul;
+pub fn default_city() -> City {
+    City::istanbul
 }
 
 #[derive(Deserialize, Debug)]

@@ -7,18 +7,16 @@ use cached::proc_macro::io_cached;
 use cached::AsyncRedisCache;
 use serde::{Deserialize, Serialize};
 
+use crate::database::city::City;
+use crate::query::default_city;
 use crate::models::app::{AppError, AppState};
 use crate::models::line::BusLine;
 use crate::models::stop::BusStop;
 
-fn default_city() -> String {
-    return "istanbul".to_string();
-}
-
 #[derive(Deserialize, Debug)]
 pub struct Search {
     #[serde(default = "default_city")]
-    city: String,
+    city: City,
     q: String,
 }
 
@@ -66,7 +64,7 @@ pub async fn search_cached(
             LIMIT 10
         "#,
         query.q,
-        query.city
+        query.city.as_str()
     )
     .fetch_all(&state.db)
     .await?;
@@ -92,7 +90,7 @@ pub async fn search_cached(
             LIMIT 20
         "#,
         query.q,
-        query.city
+        query.city.as_str()
     )
     .fetch_all(&state.db)
     .await?;
