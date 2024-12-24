@@ -31,8 +31,8 @@ pub async fn get_bus_locations(
         .await?;
 
     let content = response.text().await?;
-    let response: BusLocationResponse = serde_xml_rs::from_str(&content)?;
-    let inner_content = response.content.content.content;
+    let response_parsed: BusLocationResponse = serde_xml_rs::from_str(&content)?;
+    let inner_content = response_parsed.content.content.content;
 
     let bus_locations = serde_json::from_str(&inner_content)?;
     Ok(bus_locations)
@@ -42,7 +42,7 @@ pub async fn get_bus_locations_izmir(
     client: &reqwest::Client,
     line_code: &str,
 ) -> anyhow::Result<Vec<BusLocation>> {
-    let response = client
+    let response_izmir = client
         .get(format!(
             "https://openapi.izmir.bel.tr/api/iztek/hatotobuskonumlari/{line_code}"
         ))
@@ -50,7 +50,7 @@ pub async fn get_bus_locations_izmir(
         .send()
         .await?;
 
-    let location_response = response.json::<BusLocationResponseIzmir>().await?;
+    let location_response = response_izmir.json::<BusLocationResponseIzmir>().await?;
 
     let bus_locations: Vec<BusLocation> = location_response
         .bus_locations
