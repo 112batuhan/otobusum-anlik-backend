@@ -12,7 +12,7 @@ use crate::models::line::BusLine;
 use crate::models::stop::BusStop;
 
 fn default_city() -> String {
-    return "istanbul".to_string()
+    return "istanbul".to_string();
 }
 
 #[derive(Deserialize, Debug)]
@@ -39,7 +39,10 @@ pub struct SearchResponse {
             .expect("error building redis cache")
     } "##
 )]
-pub async fn search_cached(query: Search, state: Arc<AppState>) -> Result<SearchResponse, AppError> {
+pub async fn search_cached(
+    query: Search,
+    state: Arc<AppState>,
+) -> Result<SearchResponse, AppError> {
     let stops = sqlx::query_as!(
         BusStop,
         r#"

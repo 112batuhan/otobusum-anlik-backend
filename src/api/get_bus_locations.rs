@@ -1,3 +1,5 @@
+use crate::models::location::{BusLocation, BusLocationResponse, BusLocationResponseIzmir};
+
 fn get_body(key_outer: &str, key: &str, value: &str) -> String {
     format!(
         r#"
@@ -17,7 +19,7 @@ fn get_body(key_outer: &str, key: &str, value: &str) -> String {
 pub async fn get_bus_locations(
     client: &reqwest::Client,
     line_code: &str,
-) -> anyhow::Result<String> {
+) -> anyhow::Result<Vec<BusLocation>> {
     let body = get_body("GetHatOtoKonum_json", "HatKodu", line_code);
 
     let response = client
@@ -29,6 +31,32 @@ pub async fn get_bus_locations(
         .await?;
 
     let content = response.text().await?;
+    let response: BusLocationResponse = serde_xml_rs::from_str(&content)?;
+    let inner_content = response.content.content.content;
 
-    Ok(content)
+    let bus_locations = serde_json::from_str(&inner_content)?;
+    Ok(bus_locations)
+}
+
+pub async fn get_bus_locations_izmir(
+    client: &reqwest::Client,
+    line_code: &str,
+) -> anyhow::Result<Vec<BusLocation>> {
+    let response = client
+        .get(format!(
+            "https://openapi.izmir.bel.tr/api/iztek/hatotobuskonumlari/{line_code}"
+        ))
+        .header("Content-Type", "application/json; charset=utf-8")
+        .send()
+        .await?;
+
+    let location_response = response.json::<BusLocationResponseIzmir>().await?;
+
+    let bus_locations: Vec<BusLocation> = location_response
+        .bus_locations
+        .into_iter()
+        .map(BusLocation::from)
+        .collect();
+
+    Ok(bus_locations)
 }
