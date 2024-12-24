@@ -1,3 +1,5 @@
+pub mod city;
+
 use anyhow::Result;
 use sqlx::PgPool;
 

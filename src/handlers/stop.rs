@@ -2,7 +2,7 @@ use std::sync::Arc;
 
 use anyhow::anyhow;
 use axum::{
-    extract::{Path, State},
+    extract::{Path, Query, State},
     Json,
 };
 use cached::proc_macro::io_cached;
@@ -10,10 +10,14 @@ use cached::AsyncRedisCache;
 use serde::{Deserialize, Serialize};
 use tokio::try_join;
 
-use crate::models::{
-    app::{AppError, AppState},
-    line::LineStop,
-    stop::BusStop,
+use crate::{
+    database::city::City,
+    models::{
+        app::{AppError, AppState},
+        line::LineStop,
+        stop::BusStop,
+    },
+    query::CityQuery,
 };
 
 #[derive(Serialize, Deserialize, Clone)]
@@ -24,8 +28,8 @@ pub struct BussesInStopResponse {
 
 #[io_cached(
     map_error = r##"|e| anyhow!("{}", e) "##,
-    ty = "AsyncRedisCache<u32, BussesInStopResponse>",
-    convert = "{stop_id}",
+    ty = "AsyncRedisCache<String, BussesInStopResponse>",
+    convert = r#"{ format!("{}{:?}", stop_id, city) }"#,
     create = r##" {
         AsyncRedisCache::new("get_stop", 600)
             .build()
@@ -35,6 +39,7 @@ pub struct BussesInStopResponse {
 )]
 pub async fn cached_get_stop(
     stop_id: u32,
+    city: City,
     state: Arc<AppState>,
 ) -> Result<BussesInStopResponse, AppError> {
     let stop_future = sqlx::query_as!(
@@ -46,15 +51,20 @@ pub async fn cached_get_stop(
                 stop_name,
                 x_coord,
                 y_coord,
-                physical as "physical!",
-                province as "province!",
-                smart as "smart!",
-                stop_type as "stop_type!",
-                disabled_can_use "disabled_can_use!",
+                physical,
+                province,
+                smart,
+                stop_type,
+                disabled_can_use,
                 city
-            FROM stops WHERE stop_code = $1
+            FROM
+                stops
+            WHERE
+                stop_code = $1
+                AND city = $2
         "#,
-        stop_id as i32
+        stop_id as i32,
+        city.as_str(),
     )
     .fetch_one(&state.db);
 
@@ -71,13 +81,14 @@ pub async fn cached_get_stop(
                 line_stops
             WHERE
                 stop_code = $1
+                AND city = $2
         "#,
-        stop_id as i32
+        stop_id as i32,
+        city.as_str(),
     )
     .fetch_all(&state.db);
 
     let (stop, line_stops) = try_join!(stop_future, line_stops_future)?;
-
     let line_codes = line_stops.into_iter().map(|line| line.line_code).collect();
 
     Ok(BussesInStopResponse {
@@ -89,6 +100,7 @@ pub async fn cached_get_stop(
 pub async fn get_stop(
     Path(stop_id): Path<u32>,
     State(state): State<Arc<AppState>>,
+    Query(query): Query<CityQuery>,
 ) -> Result<Json<BussesInStopResponse>, AppError> {
-    cached_get_stop(stop_id, state).await.map(Json)
+    cached_get_stop(stop_id, query.city, state).await.map(Json)
 }

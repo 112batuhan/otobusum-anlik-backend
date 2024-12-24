@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n            SELECT \n                id,\n                line_code,\n                stop_code,\n                route_code as \"route_code!\",\n                city\n            FROM\n                line_stops\n            WHERE\n                stop_code = $1\n        ",
+  "query": "\n            SELECT \n                id,\n                line_code,\n                stop_code,\n                route_code as \"route_code!\",\n                city\n            FROM\n                line_stops\n            WHERE\n                stop_code = $1\n                AND city = $2\n        ",
   "describe": {
     "columns": [
       {
@@ -31,7 +31,8 @@
     ],
     "parameters": {
       "Left": [
-        "Int4"
+        "Int4",
+        "Text"
       ]
     },
     "nullable": [
@@ -42,5 +43,5 @@
       false
     ]
   },
-  "hash": "0dc64c3fca06a5c0588e4f5ab866f23890b16fa8a3ef9d5246a9b156a149c536"
+  "hash": "2509baf0908b680a86f9ce0b0b3d7516a9f21e50d7114161e345d2ba79a984d9"
 }

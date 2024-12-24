@@ -5,7 +5,12 @@ where
     D: Deserializer<'de>,
 {
     let s: String = Deserialize::deserialize(deserializer)?;
-    s.parse::<f64>().map_err(de::Error::custom)
+    s.chars()
+        .filter(|&c| c != '.' && c != ' ')
+        .map(|c| if c == ',' { '.' } else { c })
+        .collect::<String>()
+        .parse::<f64>()
+        .map_err(de::Error::custom)
 }
 pub fn deserialize_u32_from_string<'de, D>(deserializer: D) -> Result<u32, D::Error>
 where
@@ -18,7 +23,7 @@ where
 #[derive(Serialize, Deserialize, Clone)]
 pub struct BusLocation {
     #[serde(alias = "kapino")]
-    pub door_no: String,
+    pub door_no: Option<String>,
     #[serde(alias = "boylam")]
     #[serde(deserialize_with = "deserialize_f64_from_string")]
     pub lng: f64,
@@ -26,15 +31,15 @@ pub struct BusLocation {
     #[serde(deserialize_with = "deserialize_f64_from_string")]
     pub lat: f64,
     #[serde(alias = "hatkodu")]
-    pub line_code: String,
+    pub line_code: Option<String>,
     #[serde(alias = "guzergahkodu")]
-    pub route_code: String,
+    pub route_code: Option<String>,
     #[serde(alias = "hatad")]
-    pub line_name: String,
+    pub line_name: Option<String>,
     #[serde(alias = "yon")]
-    pub direction: String,
+    pub direction: Option<String>,
     #[serde(alias = "son_konum_zamani")]
-    pub last_location_update: String,
+    pub last_location_update: Option<String>,
     #[serde(alias = "yakinDurakKodu")]
     #[serde(deserialize_with = "deserialize_u32_from_string")]
     pub closest_stop_code: u32,
@@ -56,4 +61,46 @@ pub struct BusLocationResponseBody {
 pub struct BusLocationResponse {
     #[serde(alias = "Body")]
     pub content: BusLocationResponseBody,
+}
+
+// For izmir
+
+#[derive(Deserialize, Debug)]
+pub struct BusLocationResponseIzmir {
+    #[serde(alias = "HataMesaj")]
+    pub error_message: String,
+    #[serde(alias = "HatOtobusKonumlari")]
+    pub bus_locations: Vec<BusLocationIzmir>,
+    #[serde(alias = "HataVarMi")]
+    pub is_error: bool,
+}
+
+#[derive(Deserialize, Debug)]
+pub struct BusLocationIzmir {
+    #[serde(alias = "OtobusId")]
+    pub bus_id: u32,
+    #[serde(alias = "Yon")]
+    pub direction: u32,
+    #[serde(alias = "KoorX")]
+    #[serde(deserialize_with = "deserialize_f64_from_string")]
+    pub x_coord: f64,
+    #[serde(alias = "KoorY")]
+    #[serde(deserialize_with = "deserialize_f64_from_string")]
+    pub y_coord: f64,
+}
+
+impl From<BusLocationIzmir> for BusLocation {
+    fn from(value: BusLocationIzmir) -> Self {
+        Self {
+            lng: value.x_coord,
+            lat: value.y_coord,
+            closest_stop_code: 0,
+            door_no: None,
+            line_code: None,
+            direction: None,
+            line_name: None,
+            route_code: None,
+            last_location_update: None,
+        }
+    }
 }
