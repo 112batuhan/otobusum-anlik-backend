@@ -11,8 +11,14 @@ use crate::models::app::{AppError, AppState};
 use crate::models::line::BusLine;
 use crate::models::stop::BusStop;
 
-#[derive(Deserialize)]
+fn default_city() -> String {
+    return "istanbul".to_string()
+}
+
+#[derive(Deserialize, Debug)]
 pub struct Search {
+    #[serde(default = "default_city")]
+    city: String,
     q: String,
 }
 
@@ -25,7 +31,7 @@ pub struct SearchResponse {
 #[io_cached(
     map_error = r##"|e| anyhow!("{}", e) "##,
     ty = "AsyncRedisCache<String, SearchResponse>",
-    convert = "{q.clone()}",
+    convert = "{query.q.clone()}",
     create = r##" {
         AsyncRedisCache::new("search", 600)
             .build()
@@ -33,7 +39,7 @@ pub struct SearchResponse {
             .expect("error building redis cache")
     } "##
 )]
-pub async fn search_cached(q: String, state: Arc<AppState>) -> Result<SearchResponse, AppError> {
+pub async fn search_cached(query: Search, state: Arc<AppState>) -> Result<SearchResponse, AppError> {
     let stops = sqlx::query_as!(
         BusStop,
         r#"
@@ -43,20 +49,21 @@ pub async fn search_cached(q: String, state: Arc<AppState>) -> Result<SearchResp
                 stop_name,
                 x_coord,
                 y_coord,
-                physical as "physical!",
-                province as "province!",
-                smart as "smart!",
-                stop_type as "stop_type!",
-                disabled_can_use "disabled_can_use!",
+                physical,
+                province,
+                smart,
+                stop_type,
+                disabled_can_use,
                 city
              FROM
                 stops
              WHERE
                 stop_name ILIKE '%' || $1 || '%'
-                AND city = 'istanbul'
+                AND city = $2
             LIMIT 10
         "#,
-        q
+        query.q,
+        query.city
     )
     .fetch_all(&state.db)
     .await?;
@@ -76,12 +83,13 @@ pub async fn search_cached(q: String, state: Arc<AppState>) -> Result<SearchResp
                     code ILIKE '%' || $1 || '%'
                     OR TO_TSVECTOR( title ) @@ websearch_to_tsquery('' || $1 || ':*')
                 )
-                AND city = 'istanbul'
+                AND city = $2
             GROUP BY
                 code, title, city
             LIMIT 20
         "#,
-        q
+        query.q,
+        query.city
     )
     .fetch_all(&state.db)
     .await?;
@@ -89,8 +97,9 @@ pub async fn search_cached(q: String, state: Arc<AppState>) -> Result<SearchResp
     Ok(SearchResponse { stops, lines })
 }
 pub async fn search(
-    Query(Search { q }): Query<Search>,
+    Query(query): Query<Search>,
     State(state): State<Arc<AppState>>,
 ) -> Result<Json<SearchResponse>, AppError> {
-    search_cached(q, state).await.map(Json)
+    println!("{:?}", query);
+    search_cached(query, state).await.map(Json)
 }
