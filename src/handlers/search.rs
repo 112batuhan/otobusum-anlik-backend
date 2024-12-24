@@ -31,7 +31,7 @@ pub struct SearchResponse {
 #[io_cached(
     map_error = r##"|e| anyhow!("{}", e) "##,
     ty = "AsyncRedisCache<String, SearchResponse>",
-    convert = "{query.q.clone()}",
+    convert = r#"{ format!("{}{}", query.q, query.city) }"#,
     create = r##" {
         AsyncRedisCache::new("search", 600)
             .build()
