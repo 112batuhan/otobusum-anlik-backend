@@ -6,6 +6,7 @@ pub mod line;
 pub mod location;
 pub mod routes;
 pub mod stop;
+pub mod timetable;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Coordinates {

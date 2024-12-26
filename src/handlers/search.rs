@@ -101,6 +101,5 @@ pub async fn search(
     Query(query): Query<Search>,
     State(state): State<Arc<AppState>>,
 ) -> Result<Json<SearchResponse>, AppError> {
-    println!("{:?}", query);
     search_cached(query, state).await.map(Json)
 }

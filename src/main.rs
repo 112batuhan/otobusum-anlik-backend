@@ -40,6 +40,10 @@ async fn main() {
             "/route-stops/:route_code",
             get(handlers::route_stops::route_stops),
         )
+        .route(
+            "/timetable/:route_code",
+            get(handlers::timetable::timetable),
+        )
         .route("/search", get(handlers::search::search))
         .layer(CorsLayer::new().allow_origin("https://metkm.win".parse::<HeaderValue>().unwrap()))
         .layer(
