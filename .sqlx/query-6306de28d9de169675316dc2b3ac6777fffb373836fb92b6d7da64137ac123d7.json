@@ -1,0 +1,71 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n            SELECT\n                route_code,\n                city,\n                sunday,\n                monday,\n                tuesday,\n                wednesday,\n                thursday,\n                friday,\n                saturday\n            FROM\n                timetable\n            WHERE\n                route_code = $1\n                AND city = $2\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "route_code",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 1,
+        "name": "city",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 2,
+        "name": "sunday",
+        "type_info": "TimeArray"
+      },
+      {
+        "ordinal": 3,
+        "name": "monday",
+        "type_info": "TimeArray"
+      },
+      {
+        "ordinal": 4,
+        "name": "tuesday",
+        "type_info": "TimeArray"
+      },
+      {
+        "ordinal": 5,
+        "name": "wednesday",
+        "type_info": "TimeArray"
+      },
+      {
+        "ordinal": 6,
+        "name": "thursday",
+        "type_info": "TimeArray"
+      },
+      {
+        "ordinal": 7,
+        "name": "friday",
+        "type_info": "TimeArray"
+      },
+      {
+        "ordinal": 8,
+        "name": "saturday",
+        "type_info": "TimeArray"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Text",
+        "Text"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true
+    ]
+  },
+  "hash": "6306de28d9de169675316dc2b3ac6777fffb373836fb92b6d7da64137ac123d7"
+}
