@@ -100,7 +100,7 @@ impl BusLocation {
             lng: location.y_coord,
             lat: location.x_coord,
             closest_stop_code: 0,
-            door_no: None,
+            door_no: Some(location.bus_id.to_string()),
             line_code: None,
             route_code: Some(format!("{line_code}_{}_D0", dir)),
             line_name: None,
