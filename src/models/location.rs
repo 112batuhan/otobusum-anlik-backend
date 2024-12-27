@@ -102,9 +102,9 @@ impl BusLocation {
             closest_stop_code: 0,
             door_no: None,
             line_code: None,
-            direction: Some(format!("{line_code}_{}_D0", dir)),
+            route_code: Some(format!("{line_code}_{}_D0", dir)),
             line_name: None,
-            route_code: None,
+            direction: None,
             last_location_update: None,
         }
     }
