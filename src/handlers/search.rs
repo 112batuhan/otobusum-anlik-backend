@@ -89,7 +89,7 @@ pub async fn search_cached(
                 code, title, city
             ORDER BY
                 code
-            LIMIT 30
+            LIMIT 40
         "#,
         query.q,
         query.city.as_str()
