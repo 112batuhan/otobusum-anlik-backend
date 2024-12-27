@@ -97,8 +97,8 @@ impl BusLocation {
             .unwrap_or_default();
 
         Self {
-            lng: location.x_coord,
-            lat: location.y_coord,
+            lng: location.y_coord,
+            lat: location.x_coord,
             closest_stop_code: 0,
             door_no: None,
             line_code: None,
