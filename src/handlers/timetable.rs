@@ -23,8 +23,9 @@ pub async fn timetable_cached(
         Timetable,
         r#"
             SELECT
-                route_code,
-                city,
+                routes.route_long_name,
+                timetable.route_code,
+                timetable.city,
                 sunday,
                 monday,
                 tuesday,
@@ -34,9 +35,10 @@ pub async fn timetable_cached(
                 saturday
             FROM
                 timetable
+                LEFT JOIN routes ON routes.route_code = timetable.route_code
             WHERE
-                route_code = $1
-                AND city = $2
+                timetable.route_code = $1
+                AND timetable.city = $2
         "#,
         route_code,
         city.as_str()
