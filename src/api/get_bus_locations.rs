@@ -1,5 +1,7 @@
 use crate::models::locations::{
-    ist::BusLocationIstResponse, izm::BusLocationIzmResponse, BusLocation,
+    ist::{BusLocationIst, BusLocationIstResponse},
+    izm::BusLocationIzmResponse,
+    BusLocation,
 };
 
 fn get_body(key_outer: &str, key: &str, value: &str) -> String {
@@ -36,7 +38,11 @@ pub async fn get_bus_locations_ist(
     let response_parsed: BusLocationIstResponse = serde_xml_rs::from_str(&content)?;
     let inner_content = response_parsed.content.content.content;
 
-    let bus_locations = serde_json::from_str(&inner_content)?;
+    let bus_locations = serde_json::from_str::<Vec<BusLocationIst>>(&inner_content)?
+        .into_iter()
+        .map(BusLocation::from)
+        .collect();
+
     Ok(bus_locations)
 }
 
