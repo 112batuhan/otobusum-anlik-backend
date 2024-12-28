@@ -45,7 +45,7 @@ jobs:
         with:
           toolchain: nightly
       - name: Install cargo-udeps
-        run: cargo install cargo-udeps
+        run: cargo install cargo-udeps --force
       - name: Check for unused dependencies
         run: cargo +nightly udeps --all-targets
 
