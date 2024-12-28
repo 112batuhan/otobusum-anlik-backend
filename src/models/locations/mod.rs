@@ -13,6 +13,7 @@ pub struct BusLocation {
     pub lng: f64,
     pub lat: f64,
     pub route_code: String,
+    pub closes_stop_code: Option<u32>
 }
 
 impl From<BusLocationIst> for BusLocation {
@@ -22,6 +23,7 @@ impl From<BusLocationIst> for BusLocation {
             lat: value.lat,
             lng: value.lng,
             route_code: value.route_code,
+            closes_stop_code: Some(value.closest_stop_code)
         }
     }
 }
@@ -35,6 +37,7 @@ impl BusLocation {
             lat: value.y_coord,
             lng: value.x_coord,
             route_code: format!("{line_code}_{}_D0", dir),
+            closes_stop_code: None,
         }
     }
 }
