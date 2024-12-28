@@ -63,7 +63,7 @@ pub async fn get_bus_locations_izm(
     let bus_locations: Vec<BusLocation> = location_response
         .bus_locations
         .into_iter()
-        .map(|loc| BusLocation::from_bus_location_izm(loc, &line_code))
+        .map(|loc| BusLocation::from_bus_location_izm(loc, line_code))
         .collect();
 
     Ok(bus_locations)
