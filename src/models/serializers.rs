@@ -5,10 +5,7 @@ where
     D: Deserializer<'de>,
 {
     let s: String = Deserialize::deserialize(deserializer)?;
-    s.chars()
-        .filter(|&c| c != '.' && c != ' ')
-        .map(|c| if c == ',' { '.' } else { c })
-        .collect::<String>()
+    s.replace(",", ".")
         .parse::<f64>()
         .map_err(de::Error::custom)
 }
