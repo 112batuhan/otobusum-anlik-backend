@@ -34,8 +34,8 @@ impl BusLocation {
 
         Self {
             bus_id: value.bus_id.to_string(),
-            lat: value.y_coord,
-            lng: value.x_coord,
+            lat: value.x_coord, // izmir returns coordinates reversed for some reason
+            lng: value.y_coord,
             route_code: format!("{line_code}_{}_D0", dir),
             closes_stop_code: None,
         }
