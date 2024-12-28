@@ -1,4 +1,6 @@
-use crate::models::location::{BusLocation, BusLocationResponse, BusLocationResponseIzmir};
+use crate::models::locations::{
+    ist::BusLocationIstResponse, izm::BusLocationIzmResponse, BusLocation,
+};
 
 fn get_body(key_outer: &str, key: &str, value: &str) -> String {
     format!(
@@ -16,7 +18,7 @@ fn get_body(key_outer: &str, key: &str, value: &str) -> String {
     )
 }
 
-pub async fn get_bus_locations(
+pub async fn get_bus_locations_ist(
     client: &reqwest::Client,
     line_code: &str,
 ) -> anyhow::Result<Vec<BusLocation>> {
@@ -31,14 +33,14 @@ pub async fn get_bus_locations(
         .await?;
 
     let content = response.text().await?;
-    let response_parsed: BusLocationResponse = serde_xml_rs::from_str(&content)?;
+    let response_parsed: BusLocationIstResponse = serde_xml_rs::from_str(&content)?;
     let inner_content = response_parsed.content.content.content;
 
     let bus_locations = serde_json::from_str(&inner_content)?;
     Ok(bus_locations)
 }
 
-pub async fn get_bus_locations_izmir(
+pub async fn get_bus_locations_izm(
     client: &reqwest::Client,
     line_code: &str,
 ) -> anyhow::Result<Vec<BusLocation>> {
@@ -50,12 +52,12 @@ pub async fn get_bus_locations_izmir(
         .send()
         .await?;
 
-    let location_response = response_izmir.json::<BusLocationResponseIzmir>().await?;
+    let location_response = response_izmir.json::<BusLocationIzmResponse>().await?;
 
     let bus_locations: Vec<BusLocation> = location_response
         .bus_locations
         .into_iter()
-        .map(|loc| BusLocation::from_bus_location_izmir(loc, line_code))
+        .map(|loc| BusLocation::from_bus_location_izm(loc, &line_code))
         .collect();
 
     Ok(bus_locations)

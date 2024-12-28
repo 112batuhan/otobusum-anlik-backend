@@ -22,8 +22,9 @@ pub struct Route {
 
 #[derive(Default, Debug)]
 pub enum Direction {
-    #[default] G = 0,
-    D = 1
+    #[default]
+    G = 0,
+    D = 1,
 }
 
 impl TryFrom<i32> for Direction {
@@ -33,7 +34,7 @@ impl TryFrom<i32> for Direction {
         match v {
             x if x == Direction::G as i32 => Ok(Direction::G),
             x if x == Direction::D as i32 => Ok(Direction::D),
-            _ => Err(())
+            _ => Err(()),
         }
     }
 }
