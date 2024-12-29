@@ -20,7 +20,7 @@ pub struct Route {
     pub route_path: Option<sqlx::types::JsonValue>,
 }
 
-#[derive(Default, Debug)]
+#[derive(Deserialize, Default, Debug)]
 pub enum Direction {
     #[default]
     G = 0,
@@ -42,5 +42,14 @@ impl TryFrom<i32> for Direction {
 impl fmt::Display for Direction {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "{:?}", self)
+    }
+}
+
+impl Direction {
+    pub fn as_str(&self) -> &'static str {
+        match self {
+            Direction::G => "G",
+            Direction::D => "D",
+        }
     }
 }

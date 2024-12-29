@@ -41,7 +41,7 @@ async fn main() {
             get(handlers::route_stops::route_stops),
         )
         .route(
-            "/timetable/:route_code",
+            "/timetable/:line_code",
             get(handlers::timetable::timetable),
         )
         .route("/search", get(handlers::search::search))
