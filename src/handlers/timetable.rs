@@ -9,7 +9,9 @@ use serde::Deserialize;
 use crate::{
     database::city::City,
     models::{
-        app::{AppError, AppState}, routes::Direction, timetable::Timetable
+        app::{AppError, AppState},
+        routes::Direction,
+        timetable::Timetable,
     },
     query::default_city,
 };
@@ -70,7 +72,7 @@ pub async fn timetable_cached(
 pub struct TimetableQuery {
     #[serde(default = "default_city")]
     pub city: City,
-    pub direction: Direction
+    pub direction: Direction,
 }
 
 pub async fn timetable(

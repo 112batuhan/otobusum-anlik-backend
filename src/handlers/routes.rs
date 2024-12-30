@@ -51,7 +51,6 @@ pub async fn routes_cached(
             WHERE
                 route_short_name = $1
                 AND routes.city = $2
-                AND route_paths.city = $2
         "#,
         line_code,
         city.as_str()
