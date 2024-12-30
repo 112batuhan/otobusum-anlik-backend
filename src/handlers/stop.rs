@@ -72,8 +72,8 @@ pub async fn cached_get_stop(
         LineStop,
         r#"
             SELECT 
+                DISTINCT ON (line_code) line_code,
                 id,
-                line_code,
                 stop_code,
                 route_code as "route_code!",
                 city
