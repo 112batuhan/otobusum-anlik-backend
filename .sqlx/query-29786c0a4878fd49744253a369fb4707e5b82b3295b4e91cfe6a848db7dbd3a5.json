@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n            SELECT\n                stops.id,\n                stops.stop_code,\n                stops.stop_name,\n                stops.x_coord,\n                stops.y_coord,\n                stops.province,\n                stops.smart,\n                stops.stop_type,\n                stops.disabled_can_use,\n                stops.physical,\n                stops.city\n            FROM\n                line_stops\n                RIGHT JOIN stops ON stops.stop_code = line_stops.stop_code\n            WHERE\n                line_stops.route_code = $1\n                AND line_stops.city = $2\n        ",
+  "query": "\n            SELECT\n                stops.id,\n                stops.stop_code,\n                stops.stop_name,\n                stops.x_coord,\n                stops.y_coord,\n                stops.province,\n                stops.smart,\n                stops.stop_type,\n                stops.disabled_can_use,\n                stops.physical,\n                stops.city\n            FROM\n                line_stops\n                RIGHT JOIN stops ON stops.stop_code = line_stops.stop_code\n            WHERE\n                line_stops.route_code = $1\n                AND line_stops.city = $2\n            ORDER BY\n                line_stops.stop_order\n        ",
   "describe": {
     "columns": [
       {
@@ -79,5 +79,5 @@
       false
     ]
   },
-  "hash": "6fa739f7d48a2f3008732122addf9fdb75df51205752f88cfe90bdd564d8af7c"
+  "hash": "29786c0a4878fd49744253a369fb4707e5b82b3295b4e91cfe6a848db7dbd3a5"
 }

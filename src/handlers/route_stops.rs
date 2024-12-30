@@ -54,6 +54,8 @@ pub async fn route_stops_cached(
             WHERE
                 line_stops.route_code = $1
                 AND line_stops.city = $2
+            ORDER BY
+                line_stops.stop_order
         "#,
         route_code,
         city.as_str()
