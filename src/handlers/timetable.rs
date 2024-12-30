@@ -53,7 +53,7 @@ pub async fn timetable_cached(
                     WHERE
                         route_short_name = $1
                         AND routes.city = $2
-                        AND routes.route_code LIKE '%_' || $3 || '_%'
+                        AND routes.route_code LIKE '%\_' || $3 || '\_%'
                 )
             GROUP BY
                 route_short_name
