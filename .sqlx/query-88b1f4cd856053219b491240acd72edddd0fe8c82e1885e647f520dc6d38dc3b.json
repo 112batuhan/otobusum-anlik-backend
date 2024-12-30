@@ -1,17 +1,17 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n            SELECT \n                id,\n                line_code,\n                stop_code,\n                route_code as \"route_code!\",\n                city\n            FROM\n                line_stops\n            WHERE\n                stop_code = $1\n                AND city = $2\n        ",
+  "query": "\n            SELECT \n                DISTINCT ON (line_code) line_code,\n                id,\n                stop_code,\n                route_code as \"route_code!\",\n                city\n            FROM\n                line_stops\n            WHERE\n                stop_code = $1\n                AND city = $2\n        ",
   "describe": {
     "columns": [
       {
         "ordinal": 0,
-        "name": "id",
-        "type_info": "Int4"
+        "name": "line_code",
+        "type_info": "Text"
       },
       {
         "ordinal": 1,
-        "name": "line_code",
-        "type_info": "Text"
+        "name": "id",
+        "type_info": "Int4"
       },
       {
         "ordinal": 2,
@@ -43,5 +43,5 @@
       false
     ]
   },
-  "hash": "2509baf0908b680a86f9ce0b0b3d7516a9f21e50d7114161e345d2ba79a984d9"
+  "hash": "88b1f4cd856053219b491240acd72edddd0fe8c82e1885e647f520dc6d38dc3b"
 }
