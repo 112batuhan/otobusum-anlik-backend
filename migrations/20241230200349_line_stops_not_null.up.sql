@@ -1,0 +1,4 @@
+ALTER TABLE line_stops
+  ALTER COLUMN route_code SET NOT NULL,
+  ALTER COLUMN line_code SET NOT NULL,
+  ALTER COLUMN stop_code SET NOT NULL
