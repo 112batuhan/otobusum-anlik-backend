@@ -48,6 +48,7 @@ pub async fn routes_cached(
             FROM 
                 routes
                 LEFT JOIN route_paths on route_paths.route_code = routes.route_code
+                    AND route_paths.city = $2
             WHERE
                 route_short_name = $1
                 AND routes.city = $2

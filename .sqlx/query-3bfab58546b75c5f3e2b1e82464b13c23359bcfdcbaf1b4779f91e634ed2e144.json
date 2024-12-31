@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n            SELECT \n                routes.id,\n                agency_id,\n                route_short_name,\n                route_long_name,\n                route_type,\n                route_desc,\n                routes.route_code,\n                route_paths.route_path\n            FROM \n                routes\n                LEFT JOIN route_paths on route_paths.route_code = routes.route_code\n            WHERE\n                route_short_name = $1\n                AND routes.city = $2\n        ",
+  "query": "\n            SELECT \n                routes.id,\n                agency_id,\n                route_short_name,\n                route_long_name,\n                route_type,\n                route_desc,\n                routes.route_code,\n                route_paths.route_path\n            FROM \n                routes\n                LEFT JOIN route_paths on route_paths.route_code = routes.route_code\n                    AND route_paths.city = $2\n            WHERE\n                route_short_name = $1\n                AND routes.city = $2\n        ",
   "describe": {
     "columns": [
       {
@@ -61,5 +61,5 @@
       true
     ]
   },
-  "hash": "b1f2d15f8c5fb7ab0a4a895eb7d8ce4cdac823ae5937f8c1b38b9fb88489a07e"
+  "hash": "3bfab58546b75c5f3e2b1e82464b13c23359bcfdcbaf1b4779f91e634ed2e144"
 }
