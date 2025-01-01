@@ -30,7 +30,14 @@ impl From<BusLocationIst> for BusLocation {
 
 impl BusLocation {
     pub fn from_bus_location_izm(value: BusLocationIzm, line_code: &str) -> Self {
-        let dir = Direction::try_from(value.direction as i32).unwrap_or_default();
+        let mut dir = Direction::try_from(value.direction as i32).unwrap_or_default();
+
+        // For some reason directions are reversed in izmir. Wtf
+        dir = if dir == Direction::G {
+            Direction::D
+        } else {
+            Direction::G
+        };
 
         Self {
             bus_id: value.bus_id.to_string(),

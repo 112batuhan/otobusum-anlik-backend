@@ -20,7 +20,7 @@ pub struct Route {
     pub route_path: Option<sqlx::types::JsonValue>,
 }
 
-#[derive(Deserialize, Default, Debug)]
+#[derive(Deserialize, Default, Debug, PartialEq)]
 pub enum Direction {
     #[default]
     G = 0,
