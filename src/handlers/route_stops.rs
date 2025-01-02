@@ -11,16 +11,15 @@ use cached::AsyncRedisCache;
 use crate::{
     database::city::City,
     models::{
-        app::{AppError, AppState},
-        stop::BusStop,
+        app::{AppError, AppState}, routes::Direction, stop::BusStop
     },
-    query::CityQuery,
+    query::LineStopsQuery,
 };
 
 #[io_cached(
     map_error = r##"|e| anyhow!("{}", e) "##,
     ty = "AsyncRedisCache<String, Vec<BusStop>>",
-    convert = r#"{ format!("{}{:?}", route_code, city) }"#,
+    convert = r#"{ format!("{}{:?}", line_code, city) }"#,
     create = r##" {
         AsyncRedisCache::new("route-stops", 600)
             .build()
@@ -29,7 +28,8 @@ use crate::{
     } "##
 )]
 pub async fn route_stops_cached(
-    route_code: String,
+    line_code: String,
+    direction: Direction,
     city: City,
     state: Arc<AppState>,
 ) -> Result<Vec<BusStop>, AppError> {
@@ -52,12 +52,14 @@ pub async fn route_stops_cached(
                 line_stops
                 RIGHT JOIN stops ON stops.stop_code = line_stops.stop_code
             WHERE
-                line_stops.route_code = $1
-                AND line_stops.city = $2
+                line_stops.line_code = $1
+                AND line_stops.city = $3
+                AND line_stops.route_code LIKE $1 || '_' || $2 || '_D0'
             ORDER BY
                 line_stops.stop_order
         "#,
-        route_code,
+        line_code,
+        direction.as_str(),
         city.as_str()
     )
     .fetch_all(&state.db)
@@ -67,11 +69,16 @@ pub async fn route_stops_cached(
 }
 
 pub async fn route_stops(
-    Path(route_code): Path<String>,
+    Path(line_code): Path<String>,
     State(state): State<Arc<AppState>>,
-    Query(query): Query<CityQuery>,
+    Query(query): Query<LineStopsQuery>,
 ) -> Result<Json<Vec<BusStop>>, AppError> {
-    route_stops_cached(route_code, query.city, state)
+    route_stops_cached(
+            line_code,
+            query.direction,
+            query.city, 
+            state
+    )
         .await
         .map(Json)
 }

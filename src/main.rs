@@ -37,7 +37,7 @@ async fn main() {
             get(handlers::bus_locations::bus_locations),
         )
         .route(
-            "/route-stops/:route_code",
+            "/route-stops/:line_code",
             get(handlers::route_stops::route_stops),
         )
         .route("/timetable/:line_code", get(handlers::timetable::timetable))

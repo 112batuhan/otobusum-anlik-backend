@@ -4,7 +4,6 @@ use axum::{
     extract::{Path, Query, State},
     Json,
 };
-use serde::Deserialize;
 
 use crate::{
     database::city::City,
@@ -13,7 +12,7 @@ use crate::{
         routes::Direction,
         timetable::Timetable,
     },
-    query::default_city,
+    query::TimetableQuery,
 };
 
 pub async fn timetable_cached(
@@ -66,13 +65,6 @@ pub async fn timetable_cached(
     .await?;
 
     Ok(timetable)
-}
-
-#[derive(Deserialize, Debug)]
-pub struct TimetableQuery {
-    #[serde(default = "default_city")]
-    pub city: City,
-    pub direction: Direction,
 }
 
 pub async fn timetable(
