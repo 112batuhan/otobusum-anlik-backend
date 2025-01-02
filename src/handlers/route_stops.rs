@@ -19,7 +19,7 @@ use crate::{
 #[io_cached(
     map_error = r##"|e| anyhow!("{}", e) "##,
     ty = "AsyncRedisCache<String, Vec<BusStop>>",
-    convert = r#"{ format!("{}{:?}", line_code, city) }"#,
+    convert = r#"{ format!("{}{}{:?}", line_code, direction, city) }"#,
     create = r##" {
         AsyncRedisCache::new("route-stops", 600)
             .build()
