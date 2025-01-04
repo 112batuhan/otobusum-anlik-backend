@@ -29,6 +29,14 @@ async fn main() {
 
     let state = Arc::new(AppState::new(db_conn));
 
+    let allow_origin = if cfg!(debug_assertions) {
+        "*".parse::<HeaderValue>().unwrap()
+    } else {
+        "https://metkm.win".parse::<HeaderValue>().unwrap()
+    };
+
+    let cors_layer = CorsLayer::new().allow_origin(allow_origin);
+
     let app = Router::new()
         .route("/stop/:stop_id", get(handlers::stop::get_stop))
         .route("/routes/:line_code", get(handlers::routes::routes))
@@ -42,7 +50,7 @@ async fn main() {
         )
         .route("/timetable/:line_code", get(handlers::timetable::timetable))
         .route("/search", get(handlers::search::search))
-        .layer(CorsLayer::new().allow_origin("https://metkm.win".parse::<HeaderValue>().unwrap()))
+        .layer(cors_layer)
         .layer(
             CompressionLayer::new()
                 .gzip(true)

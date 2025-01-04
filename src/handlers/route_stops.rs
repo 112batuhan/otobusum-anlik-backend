@@ -11,7 +11,9 @@ use cached::AsyncRedisCache;
 use crate::{
     database::city::City,
     models::{
-        app::{AppError, AppState}, routes::Direction, stop::BusStop
+        app::{AppError, AppState},
+        routes::Direction,
+        stop::BusStop,
     },
     query::LineStopsQuery,
 };
@@ -73,12 +75,7 @@ pub async fn route_stops(
     State(state): State<Arc<AppState>>,
     Query(query): Query<LineStopsQuery>,
 ) -> Result<Json<Vec<BusStop>>, AppError> {
-    route_stops_cached(
-            line_code,
-            query.direction,
-            query.city, 
-            state
-    )
+    route_stops_cached(line_code, query.direction, query.city, state)
         .await
         .map(Json)
 }
