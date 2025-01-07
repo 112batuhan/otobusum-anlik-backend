@@ -49,6 +49,7 @@ pub async fn timetable_cached(
                     FROM
                         routes
                         RIGHT JOIN timetable ON routes.route_code = timetable.route_code
+                            AND timetable.city = $2
                     WHERE
                         route_short_name = $1
                         AND routes.city = $2
