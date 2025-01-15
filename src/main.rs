@@ -32,7 +32,7 @@ async fn main() {
     let allow_origin = if cfg!(debug_assertions) {
         "*".parse::<HeaderValue>().unwrap()
     } else {
-        "https://metkm.win".parse::<HeaderValue>().unwrap()
+        "https://otobusumweb.metkm.win".parse::<HeaderValue>().unwrap()
     };
 
     let cors_layer = CorsLayer::new().allow_origin(allow_origin);
