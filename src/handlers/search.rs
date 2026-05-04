@@ -9,8 +9,10 @@ use serde::{Deserialize, Serialize};
 
 use crate::database::city::City;
 use crate::models::app::{AppError, AppState};
-use crate::models::line::BusLine;
+use crate::models::line::Line;
 use crate::models::stop::BusStop;
+use crate::models::v1::line::LineV1;
+use crate::models::v1::stop::BusStopV1;
 use crate::query::default_city;
 
 #[derive(Deserialize, Debug)]
@@ -23,7 +25,22 @@ pub struct Search {
 #[derive(Serialize, Deserialize, Clone)]
 pub struct SearchResponse {
     stops: Vec<BusStop>,
-    lines: Vec<BusLine>,
+    lines: Vec<Line>,
+}
+
+#[derive(Serialize, Deserialize, Clone)]
+pub struct SearchResponseV1 {
+    stops: Vec<BusStopV1>,
+    lines: Vec<LineV1>,
+}
+
+impl From<SearchResponse> for SearchResponseV1 {
+    fn from(value: SearchResponse) -> Self {
+        Self {
+            lines: value.lines.into_iter().map(|s| LineV1::from(s)).collect(),
+            stops: value.stops.into_iter().map(|s| BusStopV1::from(s)).collect()
+        }
+    }
 }
 
 #[io_cached(
@@ -71,9 +88,10 @@ pub async fn search_cached(
 
     // COALESCE(NULLIF(ARRAY_AGG((bus_stops)), '{NULL}'), '{}') as "stop_codes: Vec<i32>"
     let lines = sqlx::query_as!(
-        BusLine,
+        Line,
         r#"
             SELECT
+                id,
                 code,
                 title,
                 city
@@ -86,7 +104,7 @@ pub async fn search_cached(
                 )
                 AND city = $2
             GROUP BY
-                code, title, city
+                code, title, city, id
             ORDER BY
                 code
             LIMIT 40
@@ -99,9 +117,17 @@ pub async fn search_cached(
 
     Ok(SearchResponse { stops, lines })
 }
+
 pub async fn search(
     Query(query): Query<Search>,
     State(state): State<Arc<AppState>>,
 ) -> Result<Json<SearchResponse>, AppError> {
     search_cached(query, state).await.map(Json)
+}
+
+pub async fn search_v1(
+    Query(query): Query<Search>,
+    State(state): State<Arc<AppState>>,
+) -> Result<Json<SearchResponseV1>, AppError> {
+    search_cached(query, state).await.map(SearchResponseV1::from).map(Json)
 }

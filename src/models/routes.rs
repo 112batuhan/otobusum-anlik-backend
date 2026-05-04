@@ -2,12 +2,6 @@ use std::fmt;
 
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Deserialize, Serialize)]
-pub struct Coordinate {
-    pub lat: f64,
-    pub lng: f64,
-}
-
 #[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct Route {
     pub id: i32,

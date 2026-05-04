@@ -13,7 +13,7 @@ use crate::{
     models::{
         app::{AppError, AppState},
         routes::Direction,
-        stop::BusStop,
+        stop::BusStop, v1::stop::BusStopV1,
     },
     query::LineStopsQuery,
 };
@@ -79,3 +79,15 @@ pub async fn route_stops(
         .await
         .map(Json)
 }
+
+pub async fn route_stops_v1(
+    Path(line_code): Path<String>,
+    State(state): State<Arc<AppState>>,
+    Query(query): Query<LineStopsQuery>,
+) -> Result<Json<Vec<BusStopV1>>, AppError> {
+    route_stops_cached(line_code, query.direction, query.city, state)
+        .await
+        .map(|s| s.into_iter().map(|s| BusStopV1::from(s)).collect())
+        .map(Json)
+}
+

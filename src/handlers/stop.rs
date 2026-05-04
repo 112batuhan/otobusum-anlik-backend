@@ -17,6 +17,9 @@ use crate::{
         line::LineStop,
         stop::BusStop,
     },
+    models::v1::{
+        stop::BusStopV1,
+    },
     query::CityQuery,
 };
 
@@ -24,6 +27,21 @@ use crate::{
 pub struct BussesInStopResponse {
     stop: BusStop,
     buses: Vec<String>,
+}
+
+#[derive(Serialize, Deserialize, Clone)]
+pub struct BussesInStopResponseV1 {
+    stop: BusStopV1,
+    buses: Vec<String>,
+}
+
+impl From<BussesInStopResponse> for BussesInStopResponseV1 {
+    fn from(value: BussesInStopResponse) -> Self {
+        Self {
+            buses: value.buses,
+            stop: BusStopV1::from(value.stop)
+        }
+    }
 }
 
 #[io_cached(
@@ -103,4 +121,12 @@ pub async fn get_stop(
     Query(query): Query<CityQuery>,
 ) -> Result<Json<BussesInStopResponse>, AppError> {
     cached_get_stop(stop_id, query.city, state).await.map(Json)
+}
+
+pub async fn get_stop_v1(
+    Path(stop_id): Path<u32>,
+    State(state): State<Arc<AppState>>,
+    Query(query): Query<CityQuery>,
+) -> Result<Json<BussesInStopResponseV1>, AppError> {
+    cached_get_stop(stop_id, query.city, state).await.map(BussesInStopResponseV1::from).map(Json)
 }

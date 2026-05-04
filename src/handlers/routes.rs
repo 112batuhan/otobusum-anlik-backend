@@ -12,7 +12,7 @@ use crate::{
     database::city::City,
     models::{
         app::{AppError, AppState},
-        routes::Route,
+        routes::Route, v1::route::RouteV1,
     },
     query::CityQuery,
 };
@@ -68,4 +68,15 @@ pub async fn routes(
     Query(query): Query<CityQuery>,
 ) -> Result<Json<Vec<Route>>, AppError> {
     routes_cached(line_code, query.city, state).await.map(Json)
+}
+
+pub async fn routes_v1(
+    Path(line_code): Path<String>,
+    State(state): State<Arc<AppState>>,
+    Query(query): Query<CityQuery>,
+) -> Result<Json<Vec<RouteV1>>, AppError> {
+    routes_cached(line_code, query.city, state)
+        .await
+        .map(|v| v.into_iter().map(|v| RouteV1::from(v)).collect())
+        .map(Json)
 }

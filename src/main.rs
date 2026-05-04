@@ -41,17 +41,15 @@ async fn main() {
 
     let app = Router::new()
         .route("/stop/:stop_id", get(handlers::stop::get_stop))
+        .route("/v1/stop/:stop_id", get(handlers::stop::get_stop_v1))
         .route("/routes/:line_code", get(handlers::routes::routes))
-        .route(
-            "/bus-locations/:line_code",
-            get(handlers::bus_locations::bus_locations),
-        )
-        .route(
-            "/route-stops/:line_code",
-            get(handlers::route_stops::route_stops),
-        )
+        .route("/v1/routes/:line_code", get(handlers::routes::routes_v1))
+        .route("/bus-locations/:line_code", get(handlers::bus_locations::bus_locations))
+        .route("/route-stops/:line_code", get(handlers::route_stops::route_stops))
+        .route("/v1/route-stops/:line_code", get(handlers::route_stops::route_stops_v1))
         .route("/timetable/:line_code", get(handlers::timetable::timetable))
         .route("/search", get(handlers::search::search))
+        .route("/v1/search", get(handlers::search::search_v1))
         .layer(cors_layer)
         .layer(
             CompressionLayer::new()

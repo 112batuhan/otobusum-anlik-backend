@@ -1,7 +1,8 @@
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Clone)]
-pub struct BusLine {
+pub struct Line {
+    pub id: i32,
     pub code: String,
     pub title: String,
     pub city: String,

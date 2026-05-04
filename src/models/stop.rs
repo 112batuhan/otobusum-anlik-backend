@@ -1,11 +1,5 @@
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Serialize, Deserialize, sqlx::Type)]
-pub struct BusStopPoint {
-    pub x: f64,
-    pub y: f64,
-}
-
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct BusStop {
     pub id: i32,
