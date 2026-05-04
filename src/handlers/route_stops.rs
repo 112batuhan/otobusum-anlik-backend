@@ -87,7 +87,7 @@ pub async fn route_stops_v1(
 ) -> Result<Json<Vec<BusStopV1>>, AppError> {
     route_stops_cached(line_code, query.direction, query.city, state)
         .await
-        .map(|s| s.into_iter().map(|s| BusStopV1::from(s)).collect())
+        .map(|s| s.into_iter().map(BusStopV1::from).collect())
         .map(Json)
 }
 

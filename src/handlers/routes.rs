@@ -77,6 +77,6 @@ pub async fn routes_v1(
 ) -> Result<Json<Vec<RouteV1>>, AppError> {
     routes_cached(line_code, query.city, state)
         .await
-        .map(|v| v.into_iter().map(|v| RouteV1::from(v)).collect())
+        .map(|v| v.into_iter().map(RouteV1::from).collect())
         .map(Json)
 }

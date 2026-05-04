@@ -37,8 +37,8 @@ pub struct SearchResponseV1 {
 impl From<SearchResponse> for SearchResponseV1 {
     fn from(value: SearchResponse) -> Self {
         Self {
-            lines: value.lines.into_iter().map(|s| LineV1::from(s)).collect(),
-            stops: value.stops.into_iter().map(|s| BusStopV1::from(s)).collect()
+            lines: value.lines.into_iter().map(LineV1::from).collect(),
+            stops: value.stops.into_iter().map(BusStopV1::from).collect()
         }
     }
 }
