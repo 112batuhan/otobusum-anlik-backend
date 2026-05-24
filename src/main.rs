@@ -45,6 +45,7 @@ async fn main() {
         .route("/routes/:line_code", get(handlers::routes::routes))
         .route("/v1/routes/:line_code", get(handlers::routes::routes_v1))
         .route("/bus-locations/:line_code", get(handlers::bus_locations::bus_locations))
+        .route("/bus-info/:door_no", get(handlers::bus_info::bus_info))
         .route("/route-stops/:line_code", get(handlers::route_stops::route_stops))
         .route("/v1/route-stops/:line_code", get(handlers::route_stops::route_stops_v1))
         .route("/timetable/:line_code", get(handlers::timetable::timetable))

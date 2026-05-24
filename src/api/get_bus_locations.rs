@@ -3,22 +3,7 @@ use crate::models::locations::{
     izm::BusLocationIzmResponse,
     BusLocation,
 };
-
-fn get_body(key_outer: &str, key: &str, value: &str) -> String {
-    format!(
-        r#"
-        <soap:Envelope
-            xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
-                <soap:Body>
-                    <{key_outer}
-                        xmlns="http://tempuri.org/">
-                        <{key}>{value}</{key}>
-                    </{key_outer}>
-                </soap:Body>
-            </soap:Envelope>
-        "#
-    )
-}
+use super::get_body;
 
 pub async fn get_bus_locations_ist(
     client: &reqwest::Client,
@@ -35,7 +20,7 @@ pub async fn get_bus_locations_ist(
         .await?;
 
     let content = response.text().await?;
-    let response_parsed: BusLocationIstResponse = serde_xml_rs::from_str(&content)?;
+    let response_parsed = serde_xml_rs::from_str::<BusLocationIstResponse>(&content)?;
     let inner_content = response_parsed.content.content.content;
 
     let bus_locations = serde_json::from_str::<Vec<BusLocationIst>>(&inner_content)?
