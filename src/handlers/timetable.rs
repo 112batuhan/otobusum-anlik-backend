@@ -1,4 +1,9 @@
 use std::sync::Arc;
+use anyhow::anyhow;
+
+use cached::macros::concurrent_cached;
+use cached::AsyncRedisCache;
+use cached::time::Duration;
 
 use axum::{
     extract::{Path, Query, State},
@@ -15,6 +20,17 @@ use crate::{
     query::TimetableQuery,
 };
 
+#[concurrent_cached(
+    map_error = r##"|e| anyhow!("{}", e) "##,
+    ty = "AsyncRedisCache<String, Timetable>",
+    convert = r#"{ format!("{}{}{}", line_code, city, direction) }"#,
+    create = r##" {
+        AsyncRedisCache::new("timetable", Duration::from_secs(600))
+            .build()
+            .await
+            .expect("error building redis cache")
+    } "##
+)]
 pub async fn timetable_cached(
     line_code: String,
     city: City,

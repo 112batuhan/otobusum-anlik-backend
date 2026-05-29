@@ -1,23 +1,26 @@
 use anyhow::anyhow;
 use cached::AsyncRedisCache;
 use std::sync::Arc;
+use cached::time::Duration;
 
 use axum::extract::{Path, Query, State};
 use axum::Json;
-use cached::proc_macro::io_cached;
+use cached::macros::concurrent_cached;
 
-use crate::api::get_bus_locations::{get_bus_locations_ist, get_bus_locations_izm};
+use crate::api::get_bus_locations_ist::get_bus_locations_ist;
+use crate::api::get_bus_locations_izm::get_bus_locations_izm;
+
 use crate::database::city::City;
 use crate::models::app::{AppError, AppState};
 use crate::models::locations::BusLocation;
 use crate::query::CityQuery;
 
-#[io_cached(
-    map_error = r##"|e| anyhow!("{}", e) "##,
+#[concurrent_cached(
+    map_error = r##"|e| anyhow!("{}", e)"##,
     ty = "AsyncRedisCache<String, Vec<BusLocation>>",
     convert = r#"{ format!("{}{:?}", line_code, city) }"#,
     create = r##" {
-        AsyncRedisCache::new("bus-locations", 60)
+        AsyncRedisCache::new("bus-locations", Duration::from_secs(60))
             .build()
             .await
             .expect("error building redis cache")

@@ -5,8 +5,11 @@ use axum::{
     extract::{Path, Query, State},
     Json,
 };
-use cached::proc_macro::io_cached;
+
+use cached::macros::concurrent_cached;
 use cached::AsyncRedisCache;
+use cached::time::Duration;
+
 use serde::{Deserialize, Serialize};
 use tokio::try_join;
 
@@ -44,12 +47,12 @@ impl From<BussesInStopResponse> for BussesInStopResponseV1 {
     }
 }
 
-#[io_cached(
+#[concurrent_cached(
     map_error = r##"|e| anyhow!("{}", e) "##,
     ty = "AsyncRedisCache<String, BussesInStopResponse>",
     convert = r#"{ format!("{}{:?}", stop_id, city) }"#,
     create = r##" {
-        AsyncRedisCache::new("get_stop", 600)
+        AsyncRedisCache::new("get_stop", Duration::from_secs(600))
             .build()
             .await
             .expect("error building redis cache")

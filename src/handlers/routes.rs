@@ -5,8 +5,10 @@ use axum::{
     extract::{Path, Query, State},
     Json,
 };
-use cached::proc_macro::io_cached;
+
+use cached::macros::concurrent_cached;
 use cached::AsyncRedisCache;
+use cached::time::Duration;
 
 use crate::{
     database::city::City,
@@ -17,12 +19,12 @@ use crate::{
     query::CityQuery,
 };
 
-#[io_cached(
+#[concurrent_cached(
     map_error = r##"|e| anyhow!("{}", e) "##,
     ty = "AsyncRedisCache<String, Vec<Route>>",
     convert = r#"{ format!("{}{:?}", line_code, city) }"#,
     create = r##" {
-        AsyncRedisCache::new("routes", 600)
+        AsyncRedisCache::new("routes", Duration::from_secs(600))
             .build()
             .await
             .expect("error building redis cache")

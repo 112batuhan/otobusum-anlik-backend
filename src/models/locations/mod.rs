@@ -1,6 +1,7 @@
-use ist::BusLocationIst;
 use izm::BusLocationIzm;
 use serde::{Deserialize, Serialize};
+
+use crate::models::locations::ist::{BusLocationIstOpenData, BusLocationIstOtobusumNerede};
 
 use super::routes::Direction;
 
@@ -16,14 +17,26 @@ pub struct BusLocation {
     pub closest_stop_code: Option<u32>,
 }
 
-impl From<BusLocationIst> for BusLocation {
-    fn from(value: BusLocationIst) -> Self {
+impl From<BusLocationIstOpenData> for BusLocation {
+    fn from(value: BusLocationIstOpenData) -> Self {
         Self {
             bus_id: value.door_no,
             lat: value.lat,
             lng: value.lng,
             route_code: value.route_code,
             closest_stop_code: Some(value.closest_stop_code),
+        }
+    }
+}
+
+impl From<BusLocationIstOtobusumNerede> for BusLocation {
+    fn from(value: BusLocationIstOtobusumNerede) -> Self {
+        Self {
+            bus_id: value.bus_id,
+            lat: value.lat,
+            lng: value.lng,
+            route_code: value.route_code,
+            closest_stop_code: Some(value.closest_stop_code)
         }
     }
 }

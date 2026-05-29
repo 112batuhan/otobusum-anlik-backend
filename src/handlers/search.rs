@@ -3,9 +3,10 @@ use std::sync::Arc;
 use anyhow::anyhow;
 use axum::extract::{Query, State};
 use axum::Json;
-use cached::proc_macro::io_cached;
-use cached::AsyncRedisCache;
 use serde::{Deserialize, Serialize};
+use cached::macros::concurrent_cached;
+use cached::AsyncRedisCache;
+use cached::time::Duration;
 
 use crate::database::city::City;
 use crate::models::app::{AppError, AppState};
@@ -43,12 +44,12 @@ impl From<SearchResponse> for SearchResponseV1 {
     }
 }
 
-#[io_cached(
+#[concurrent_cached(
     map_error = r##"|e| anyhow!("{}", e) "##,
     ty = "AsyncRedisCache<String, SearchResponse>",
     convert = r#"{ format!("{}{}", query.q, query.city) }"#,
     create = r##" {
-        AsyncRedisCache::new("search", 600)
+        AsyncRedisCache::new("search", Duration::from_secs(600))
             .build()
             .await
             .expect("error building redis cache")

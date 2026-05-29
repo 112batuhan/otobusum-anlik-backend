@@ -1,7 +1,7 @@
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 use sqlx::types::chrono::NaiveTime;
 
-#[derive(Serialize)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Timetable {
     pub route_short_name: Option<String>,
     pub sunday: Option<Vec<NaiveTime>>,
