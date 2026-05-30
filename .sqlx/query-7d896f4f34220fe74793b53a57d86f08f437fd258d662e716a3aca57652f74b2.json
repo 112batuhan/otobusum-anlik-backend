@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n            SELECT \n                routes.id,\n                agency_id,\n                route_short_name,\n                route_long_name,\n                route_type,\n                route_desc,\n                routes.route_code,\n                route_paths.route_path\n            FROM \n                routes\n                LEFT JOIN route_paths on route_paths.route_code = routes.route_code\n                    AND route_paths.city = $2\n            WHERE\n                route_short_name = $1\n                AND routes.city = $2\n        ",
+  "query": "\n            SELECT \n                routes.id,\n                agency_id,\n                code,\n                title,\n                type,\n                description,\n                routes.route_code,\n                route_paths.path\n            FROM \n                routes\n                LEFT JOIN route_paths on route_paths.route_code = routes.route_code\n                    AND route_paths.city = $2\n            WHERE\n                code = $1\n                AND routes.city = $2\n        ",
   "describe": {
     "columns": [
       {
@@ -15,22 +15,22 @@
       },
       {
         "ordinal": 2,
-        "name": "route_short_name",
+        "name": "code",
         "type_info": "Text"
       },
       {
         "ordinal": 3,
-        "name": "route_long_name",
+        "name": "title",
         "type_info": "Text"
       },
       {
         "ordinal": 4,
-        "name": "route_type",
+        "name": "type",
         "type_info": "Int4"
       },
       {
         "ordinal": 5,
-        "name": "route_desc",
+        "name": "description",
         "type_info": "Text"
       },
       {
@@ -40,7 +40,7 @@
       },
       {
         "ordinal": 7,
-        "name": "route_path",
+        "name": "path",
         "type_info": "Jsonb"
       }
     ],
@@ -61,5 +61,5 @@
       true
     ]
   },
-  "hash": "3bfab58546b75c5f3e2b1e82464b13c23359bcfdcbaf1b4779f91e634ed2e144"
+  "hash": "7d896f4f34220fe74793b53a57d86f08f437fd258d662e716a3aca57652f74b2"
 }

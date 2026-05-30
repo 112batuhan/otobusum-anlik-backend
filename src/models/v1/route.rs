@@ -19,18 +19,12 @@ impl From<Route> for RouteV1 {
         Self {
             id: value.id,
             agency_id: value.agency_id,
-            line_code: value.route_short_name,
-            name: value.route_long_name,
-            r#type: value.route_type,
-            desc: value.route_desc,
+            line_code: value.code,
+            name: value.title,
+            r#type: value.r#type,
+            desc: value.description,
             code: value.route_code,
-            path: value.route_path,
+            path: value.path,
         }
     }
 }
-
-// impl From<Vec<Route>> for Vec<RouteV1> {
-//     fn from(value: Vec<Route>) -> Self {
-//         value.into_iter().map(RouteV1::from).collect()
-//     }
-// }

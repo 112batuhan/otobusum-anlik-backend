@@ -1,9 +1,9 @@
-use std::sync::Arc;
 use anyhow::anyhow;
+use std::sync::Arc;
 
 use cached::macros::concurrent_cached;
-use cached::AsyncRedisCache;
 use cached::time::Duration;
+use cached::AsyncRedisCache;
 
 use axum::{
     extract::{Path, Query, State},
@@ -41,7 +41,7 @@ pub async fn timetable_cached(
         Timetable,
         r#"
            SELECT
-                route_short_name,
+                code,
                 array_remove(array_agg(sunday), null) as sunday,
                 array_remove(array_agg(monday), null) as monday,
                 array_remove(array_agg(tuesday), null) as tuesday,
@@ -54,7 +54,7 @@ pub async fn timetable_cached(
                     SELECT
                         timetable.route_code,
                         timetable.city,
-                        routes.route_short_name,
+                        routes.code,
                         unnest(sunday) as sunday,
                         unnest(monday) as monday,
                         unnest(tuesday) as tuesday,
@@ -67,12 +67,12 @@ pub async fn timetable_cached(
                         RIGHT JOIN timetable ON routes.route_code = timetable.route_code
                             AND timetable.city = $2
                     WHERE
-                        route_short_name = $1
+                        code = $1
                         AND routes.city = $2
                         AND routes.route_code LIKE '%\_' || $3 || '\_%'
                 )
             GROUP BY
-                route_short_name
+                code
         "#,
         line_code,
         city.as_str(),

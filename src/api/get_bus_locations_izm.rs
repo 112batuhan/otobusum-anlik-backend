@@ -1,5 +1,4 @@
-use crate::models::locations::{BusLocation, izm::BusLocationIzmResponse};
-
+use crate::models::locations::{izm::BusLocationIzmResponse, BusLocation};
 
 pub async fn get_bus_locations_izm(
     client: &reqwest::Client,

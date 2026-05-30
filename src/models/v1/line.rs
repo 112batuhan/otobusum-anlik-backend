@@ -16,8 +16,7 @@ impl From<Line> for LineV1 {
             id: value.id,
             city: value.city,
             code: value.code,
-            name: value.title
+            name: value.title,
         }
     }
 }
-

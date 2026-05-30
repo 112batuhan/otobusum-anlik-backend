@@ -6,15 +6,16 @@ use axum::{
     Json,
 };
 use cached::macros::concurrent_cached;
-use cached::AsyncRedisCache;
 use cached::time::Duration;
+use cached::AsyncRedisCache;
 
 use crate::{
     database::city::City,
     models::{
         app::{AppError, AppState},
         routes::Direction,
-        stop::BusStop, v1::stop::BusStopV1,
+        stop::BusStop,
+        v1::stop::BusStopV1,
     },
     query::LineStopsQuery,
 };
@@ -42,12 +43,12 @@ pub async fn route_stops_cached(
             SELECT
                 stops.id,
                 stops.stop_code,
-                stops.stop_name,
-                stops.x_coord,
-                stops.y_coord,
+                stops.name,
+                stops.lng,
+                stops.lat,
                 stops.province,
                 stops.smart,
-                stops.stop_type,
+                stops.type,
                 stops.disabled_can_use,
                 stops.physical,
                 stops.city
@@ -91,4 +92,3 @@ pub async fn route_stops_v1(
         .map(|s| s.into_iter().map(BusStopV1::from).collect())
         .map(Json)
 }
-

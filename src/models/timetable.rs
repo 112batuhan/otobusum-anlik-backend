@@ -3,7 +3,7 @@ use sqlx::types::chrono::NaiveTime;
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Timetable {
-    pub route_short_name: Option<String>,
+    pub code: Option<String>,
     pub sunday: Option<Vec<NaiveTime>>,
     pub monday: Option<Vec<NaiveTime>>,
     pub tuesday: Option<Vec<NaiveTime>>,

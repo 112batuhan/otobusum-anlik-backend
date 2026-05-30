@@ -36,7 +36,7 @@ impl From<BusLocationIstOtobusumNerede> for BusLocation {
             lat: value.lat,
             lng: value.lng,
             route_code: value.route_code,
-            closest_stop_code: Some(value.closest_stop_code)
+            closest_stop_code: Some(value.closest_stop_code),
         }
     }
 }

@@ -3,10 +3,10 @@ use std::sync::Arc;
 use anyhow::anyhow;
 use axum::extract::{Query, State};
 use axum::Json;
-use serde::{Deserialize, Serialize};
 use cached::macros::concurrent_cached;
-use cached::AsyncRedisCache;
 use cached::time::Duration;
+use cached::AsyncRedisCache;
+use serde::{Deserialize, Serialize};
 
 use crate::database::city::City;
 use crate::models::app::{AppError, AppState};
@@ -39,7 +39,7 @@ impl From<SearchResponse> for SearchResponseV1 {
     fn from(value: SearchResponse) -> Self {
         Self {
             lines: value.lines.into_iter().map(LineV1::from).collect(),
-            stops: value.stops.into_iter().map(BusStopV1::from).collect()
+            stops: value.stops.into_iter().map(BusStopV1::from).collect(),
         }
     }
 }
@@ -65,19 +65,19 @@ pub async fn search_cached(
             SELECT
                 id,
                 stop_code,
-                stop_name,
-                x_coord,
-                y_coord,
+                name,
+                lng,
+                lat,
                 physical,
                 province,
                 smart,
-                stop_type,
+                type,
                 disabled_can_use,
                 city
              FROM
                 stops
              WHERE
-                stop_name ILIKE '%' || $1 || '%'
+                name ILIKE '%' || $1 || '%'
                 AND city = $2
             LIMIT 10
         "#,
@@ -130,5 +130,8 @@ pub async fn search_v1(
     Query(query): Query<Search>,
     State(state): State<Arc<AppState>>,
 ) -> Result<Json<SearchResponseV1>, AppError> {
-    search_cached(query, state).await.map(SearchResponseV1::from).map(Json)
+    search_cached(query, state)
+        .await
+        .map(SearchResponseV1::from)
+        .map(Json)
 }

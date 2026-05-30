@@ -21,7 +21,7 @@ pub struct BusLocationIstOtobusumNerede {
     #[serde(alias = "K_GUZERGAH_GUZERGAHKODU")]
     pub route_code: String,
     #[serde(alias = "H_GOREV_DURAK_GECIS_DURAKID")]
-    pub closest_stop_code: u32
+    pub closest_stop_code: u32,
 }
 
 #[derive(Serialize, Deserialize, Clone)]
@@ -69,7 +69,7 @@ pub struct BusLocationIstOpenDataResponse {
 
 pub enum BusLocationIst {
     OpenDataResponse(Vec<BusLocationIstOpenData>),
-    OtobusumNeredeResponse(Vec<BusLocationIstOtobusumNerede>)
+    OtobusumNeredeResponse(Vec<BusLocationIstOtobusumNerede>),
 }
 
 #[derive(Serialize, Deserialize, Clone)]
@@ -92,7 +92,7 @@ pub struct BusInfoIst {
     #[serde(deserialize_with = "deserialize_u32_from_string")]
     pub speed: u32,
     #[serde(alias = "Plaka")]
-    pub plate: Option<String>
+    pub plate: Option<String>,
 }
 
 #[derive(Serialize, Deserialize)]

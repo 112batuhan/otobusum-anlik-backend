@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n            SELECT \n                id,\n                stop_code,\n                stop_name,\n                x_coord,\n                y_coord,\n                physical,\n                province,\n                smart,\n                stop_type,\n                disabled_can_use,\n                city\n            FROM\n                stops\n            WHERE\n                stop_code = $1\n                AND city = $2\n        ",
+  "query": "\n            SELECT\n                id,\n                stop_code,\n                name,\n                lng,\n                lat,\n                physical,\n                province,\n                smart,\n                type,\n                disabled_can_use,\n                city\n             FROM\n                stops\n             WHERE\n                name ILIKE '%' || $1 || '%'\n                AND city = $2\n            LIMIT 10\n        ",
   "describe": {
     "columns": [
       {
@@ -15,17 +15,17 @@
       },
       {
         "ordinal": 2,
-        "name": "stop_name",
+        "name": "name",
         "type_info": "Text"
       },
       {
         "ordinal": 3,
-        "name": "x_coord",
+        "name": "lng",
         "type_info": "Float8"
       },
       {
         "ordinal": 4,
-        "name": "y_coord",
+        "name": "lat",
         "type_info": "Float8"
       },
       {
@@ -45,7 +45,7 @@
       },
       {
         "ordinal": 8,
-        "name": "stop_type",
+        "name": "type",
         "type_info": "Text"
       },
       {
@@ -61,7 +61,7 @@
     ],
     "parameters": {
       "Left": [
-        "Int4",
+        "Text",
         "Text"
       ]
     },
@@ -79,5 +79,5 @@
       false
     ]
   },
-  "hash": "2d5a36568d7de04c764d679815a4dc39cc31f8d33ea73fbc09d03a98679fe5b9"
+  "hash": "bae0d41d587e7292531c7c501d8bd10af044e843078b062b094682446fba6df1"
 }

@@ -22,15 +22,15 @@ impl From<BusStop> for BusStopV1 {
         Self {
             id: value.id,
             code: value.stop_code,
-            name: value.stop_name,
-            lng: value.x_coord,
-            lat: value.y_coord,
+            name: value.name,
+            lng: value.lng,
+            lat: value.lat,
             province: value.province,
             smart: value.smart,
-            stop_type: value.stop_type,
+            stop_type: value.r#type,
             disabled_can_use: value.disabled_can_use,
             physical: value.physical,
-            city: value.city
+            city: value.city,
         }
     }
 }

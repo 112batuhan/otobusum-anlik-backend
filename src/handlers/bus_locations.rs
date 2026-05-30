@@ -1,7 +1,7 @@
 use anyhow::anyhow;
+use cached::time::Duration;
 use cached::AsyncRedisCache;
 use std::sync::Arc;
-use cached::time::Duration;
 
 use axum::extract::{Path, Query, State};
 use axum::Json;

@@ -7,14 +7,15 @@ use axum::{
 };
 
 use cached::macros::concurrent_cached;
-use cached::AsyncRedisCache;
 use cached::time::Duration;
+use cached::AsyncRedisCache;
 
 use crate::{
     database::city::City,
     models::{
         app::{AppError, AppState},
-        routes::Route, v1::route::RouteV1,
+        routes::Route,
+        v1::route::RouteV1,
     },
     query::CityQuery,
 };
@@ -41,18 +42,18 @@ pub async fn routes_cached(
             SELECT 
                 routes.id,
                 agency_id,
-                route_short_name,
-                route_long_name,
-                route_type,
-                route_desc,
+                code,
+                title,
+                type,
+                description,
                 routes.route_code,
-                route_paths.route_path
+                route_paths.path
             FROM 
                 routes
                 LEFT JOIN route_paths on route_paths.route_code = routes.route_code
                     AND route_paths.city = $2
             WHERE
-                route_short_name = $1
+                code = $1
                 AND routes.city = $2
         "#,
         line_code,

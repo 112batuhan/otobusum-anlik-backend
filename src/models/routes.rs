@@ -6,12 +6,12 @@ use serde::{Deserialize, Serialize};
 pub struct Route {
     pub id: i32,
     pub agency_id: Option<i32>,
-    pub route_short_name: Option<String>,
-    pub route_long_name: Option<String>,
-    pub route_type: Option<i32>,
-    pub route_desc: Option<String>,
+    pub code: Option<String>,
+    pub title: Option<String>,
+    pub r#type: Option<i32>,
+    pub description: Option<String>,
     pub route_code: Option<String>,
-    pub route_path: Option<sqlx::types::JsonValue>,
+    pub path: Option<sqlx::types::JsonValue>,
 }
 
 #[derive(Deserialize, Default, Debug, PartialEq)]

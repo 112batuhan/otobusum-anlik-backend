@@ -7,21 +7,19 @@ use axum::{
 };
 
 use cached::macros::concurrent_cached;
-use cached::AsyncRedisCache;
 use cached::time::Duration;
+use cached::AsyncRedisCache;
 
 use serde::{Deserialize, Serialize};
 use tokio::try_join;
 
 use crate::{
     database::city::City,
+    models::v1::stop::BusStopV1,
     models::{
         app::{AppError, AppState},
         line::LineStop,
         stop::BusStop,
-    },
-    models::v1::{
-        stop::BusStopV1,
     },
     query::CityQuery,
 };
@@ -42,7 +40,7 @@ impl From<BussesInStopResponse> for BussesInStopResponseV1 {
     fn from(value: BussesInStopResponse) -> Self {
         Self {
             buses: value.buses,
-            stop: BusStopV1::from(value.stop)
+            stop: BusStopV1::from(value.stop),
         }
     }
 }
@@ -69,13 +67,13 @@ pub async fn cached_get_stop(
             SELECT 
                 id,
                 stop_code,
-                stop_name,
-                x_coord,
-                y_coord,
+                name,
+                lng,
+                lat,
                 physical,
                 province,
                 smart,
-                stop_type,
+                type,
                 disabled_can_use,
                 city
             FROM
@@ -131,5 +129,8 @@ pub async fn get_stop_v1(
     State(state): State<Arc<AppState>>,
     Query(query): Query<CityQuery>,
 ) -> Result<Json<BussesInStopResponseV1>, AppError> {
-    cached_get_stop(stop_id, query.city, state).await.map(BussesInStopResponseV1::from).map(Json)
+    cached_get_stop(stop_id, query.city, state)
+        .await
+        .map(BussesInStopResponseV1::from)
+        .map(Json)
 }
