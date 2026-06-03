@@ -15,7 +15,7 @@ use tokio::try_join;
 
 use crate::{
     database::city::City,
-    models::v1::stop::BusStopV1,
+    models::v1::stop::BusStop as BusStopV1,
     models::{
         app::{AppError, AppState},
         line::LineStop,

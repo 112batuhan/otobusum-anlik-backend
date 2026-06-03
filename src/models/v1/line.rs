@@ -1,17 +1,15 @@
 use serde::{Deserialize, Serialize};
 
-use crate::models::line::Line;
-
 #[derive(Serialize, Deserialize, Clone)]
-pub struct LineV1 {
+pub struct Line {
     pub id: i32,
     pub code: String,
     pub name: String,
     pub city: String,
 }
 
-impl From<Line> for LineV1 {
-    fn from(value: Line) -> Self {
+impl From<crate::models::line::Line> for Line {
+    fn from(value: crate::models::line::Line) -> Self {
         Self {
             id: value.id,
             city: value.city,

@@ -13,9 +13,9 @@ use crate::{
     database::city::City,
     models::{
         app::{AppError, AppState},
-        routes::Direction,
+        route::Direction,
         stop::BusStop,
-        v1::stop::BusStopV1,
+        v1::stop::BusStop as BusStopV1,
     },
     query::LineStopsQuery,
 };

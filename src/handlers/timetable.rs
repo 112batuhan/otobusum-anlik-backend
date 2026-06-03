@@ -14,7 +14,7 @@ use crate::{
     database::city::City,
     models::{
         app::{AppError, AppState},
-        routes::Direction,
+        route::Direction,
         timetable::Timetable,
     },
     query::TimetableQuery,

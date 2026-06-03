@@ -14,8 +14,8 @@ use crate::{
     database::city::City,
     models::{
         app::{AppError, AppState},
-        routes::Route,
-        v1::route::RouteV1,
+        route::Route,
+        v1::route::Route as RouteV1,
     },
     query::CityQuery,
 };

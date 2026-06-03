@@ -1,9 +1,7 @@
 use serde::{Deserialize, Serialize};
 
-use crate::models::routes::Route;
-
 #[derive(Debug, Deserialize, Serialize, Clone)]
-pub struct RouteV1 {
+pub struct Route {
     pub id: i32,
     pub agency_id: Option<i32>,
     pub line_code: Option<String>,
@@ -14,8 +12,8 @@ pub struct RouteV1 {
     pub path: Option<sqlx::types::JsonValue>,
 }
 
-impl From<Route> for RouteV1 {
-    fn from(value: Route) -> Self {
+impl From<crate::models::route::Route> for Route {
+    fn from(value: crate::models::route::Route) -> Self {
         Self {
             id: value.id,
             agency_id: value.agency_id,

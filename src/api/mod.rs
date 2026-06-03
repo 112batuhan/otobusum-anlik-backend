@@ -1,2 +1,2 @@
-pub mod get_bus_locations_ist;
-pub mod get_bus_locations_izm;
+pub mod ist;
+pub mod izm;
