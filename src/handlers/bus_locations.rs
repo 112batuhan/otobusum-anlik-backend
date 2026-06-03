@@ -7,13 +7,13 @@ use axum::extract::{Path, Query, State};
 use axum::Json;
 use cached::macros::concurrent_cached;
 
-use crate::api::get_bus_locations_ist::get_bus_locations_ist;
-use crate::api::get_bus_locations_izm::get_bus_locations_izm;
-
 use crate::database::city::City;
 use crate::models::app::{AppError, AppState};
-use crate::models::locations::BusLocation;
+use crate::models::bus_location::BusLocation;
 use crate::query::CityQuery;
+
+use crate::api::ist::fetch_bus_locations::fetch_bus_locations as fetch_bus_locations_ist;
+use crate::api::izm::fetch_bus_locations::fetch_bus_locations as fetch_bus_locations_izm;
 
 #[concurrent_cached(
     map_error = r##"|e| anyhow!("{}", e)"##,
@@ -32,8 +32,8 @@ pub async fn bus_locations_cached(
     state: Arc<AppState>,
 ) -> Result<Vec<BusLocation>, AppError> {
     let bus_locations = match city {
-        City::istanbul => get_bus_locations_ist(&state.reqwest, &line_code).await?,
-        City::izmir => get_bus_locations_izm(&state.reqwest, &line_code).await?,
+        City::istanbul => fetch_bus_locations_ist(&state.reqwest, &line_code).await?,
+        City::izmir => fetch_bus_locations_izm(&state.reqwest, &line_code).await?,
     };
 
     Ok(bus_locations)

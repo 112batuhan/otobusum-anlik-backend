@@ -6,13 +6,18 @@ use serde::{Deserialize, Serialize};
 use serde_json::json;
 use tracing::{info, warn};
 
-use crate::models::locations::{
-    ist::{
-        BusLocationIst, BusLocationIstOpenData, BusLocationIstOpenDataResponse,
-        BusLocationIstOtobusumNerede, IstTokensResponse,
+use crate::{
+    api::ist::get_opendata_xml_body,
+    models::ist::{
+        bus_location::{
+            BusLocation as BusLocationIst, BusLocationOpenData, BusLocationOpenDataResponse,
+            BusLocationOtobusumNerede,
+        },
+        tokens::TokensResponse,
     },
-    BusLocation,
 };
+
+use crate::models::bus_location::BusLocation;
 
 #[derive(Serialize, Deserialize, Clone)]
 struct IstOtobusumNeredeSearchResponse {
@@ -22,27 +27,11 @@ struct IstOtobusumNeredeSearchResponse {
     line_code: String,
 }
 
-fn get_body(key_outer: &str, key: &str, value: &str) -> String {
-    format!(
-        r#"
-        <soap:Envelope
-            xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
-                <soap:Body>
-                    <{key_outer}
-                        xmlns="http://tempuri.org/">
-                        <{key}>{value}</{key}>
-                    </{key_outer}>
-                </soap:Body>
-            </soap:Envelope>
-        "#
-    )
-}
-
-pub async fn get_bus_locations_ist_open_data(
+pub async fn fetch_bus_locations_opendata(
     client: &reqwest::Client,
     line_code: &str,
-) -> anyhow::Result<Vec<BusLocationIstOpenData>> {
-    let body = get_body("GetHatOtoKonum_json", "HatKodu", line_code);
+) -> anyhow::Result<Vec<BusLocationOpenData>> {
+    let body = get_opendata_xml_body("GetHatOtoKonum_json", "HatKodu", line_code);
 
     let response = client
         .post("https://api.ibb.gov.tr/iett/FiloDurum/SeferGerceklesme.asmx")
@@ -52,11 +41,9 @@ pub async fn get_bus_locations_ist_open_data(
         .send()
         .await?;
 
-    let content =
-        serde_xml_rs::from_str::<BusLocationIstOpenDataResponse>(&response.text().await?)?;
-    Ok(serde_json::from_str::<Vec<BusLocationIstOpenData>>(
-        &content.content.content.content,
-    )?)
+    let content = quick_xml::de::from_str::<BusLocationOpenDataResponse>(&response.text().await?)?;
+
+    Ok(serde_json::from_str(&content.content.content.content)?)
 }
 
 #[cached(
@@ -65,10 +52,11 @@ pub async fn get_bus_locations_ist_open_data(
     convert = r#"{ "credentials".to_string() }"#,
     result = true
 )]
-pub async fn get_ist_otobusum_nerede_credentials(
+pub async fn fetch_otobusumnerede_credentials(
+    // pub async fn get_ist_otobusum_nerede_credentials(
     client: &reqwest::Client,
     headers: &reqwest::header::HeaderMap,
-) -> anyhow::Result<IstTokensResponse> {
+) -> anyhow::Result<TokensResponse> {
     let mut auth_body = HashMap::new();
 
     auth_body.insert("client_id", std::env::var("IBB_CLIENT_ID").unwrap());
@@ -84,14 +72,15 @@ pub async fn get_ist_otobusum_nerede_credentials(
         .json(&auth_body)
         .send()
         .await?
-        .json::<IstTokensResponse>()
+        .json()
         .await?)
 }
 
-pub async fn get_bus_locations_ist_otobusum_nerede(
+pub async fn fetch_bus_locations_otobusumnerede(
+    // pub async fn get_bus_locations_ist_otobusum_nerede(
     client: &reqwest::Client,
     line_code: &str,
-) -> anyhow::Result<Vec<BusLocationIstOtobusumNerede>> {
+) -> anyhow::Result<Vec<BusLocationOtobusumNerede>> {
     let mut headers = reqwest::header::HeaderMap::new();
 
     headers.append("Host", "ntcapi.iett.istanbul".parse().unwrap());
@@ -101,7 +90,7 @@ pub async fn get_bus_locations_ist_otobusum_nerede(
     );
     headers.append("Accept-Encoding", "gzip".parse().unwrap());
 
-    let credentials = get_ist_otobusum_nerede_credentials(client, &headers).await?;
+    let credentials = fetch_otobusumnerede_credentials(client, &headers).await?;
 
     headers.insert(
         "Authorization",
@@ -161,22 +150,22 @@ pub async fn get_bus_locations_ist_otobusum_nerede(
         .json(&location_body)
         .send()
         .await?
-        .json::<Vec<BusLocationIstOtobusumNerede>>()
+        .json()
         .await?;
 
     Ok(location_response)
 }
 
-pub async fn get_bus_locations_ist(
+pub async fn fetch_bus_locations(
     client: &reqwest::Client,
     line_code: &str,
 ) -> anyhow::Result<Vec<BusLocation>> {
-    let results = match get_bus_locations_ist_open_data(client, line_code).await {
+    let results = match fetch_bus_locations_opendata(client, line_code).await {
         Ok(response) => BusLocationIst::OpenDataResponse(response),
         Err(error) => {
             warn!("Trying getting locations from open data api has failed, falling back to internal api. {:?}", error);
             BusLocationIst::OtobusumNeredeResponse(
-                get_bus_locations_ist_otobusum_nerede(client, line_code).await?,
+                fetch_bus_locations_otobusumnerede(client, line_code).await?,
             )
         }
     };

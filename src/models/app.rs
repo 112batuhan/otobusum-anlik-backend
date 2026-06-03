@@ -16,15 +16,14 @@ impl AppState {
     }
 }
 
-pub struct AppError(anyhow::Error);
+pub struct AppError {
+    pub status: StatusCode,
+    pub error: anyhow::Error,
+}
 
 impl IntoResponse for AppError {
     fn into_response(self) -> Response {
-        (
-            StatusCode::INTERNAL_SERVER_ERROR,
-            format!("Something went wrong: {}", self.0),
-        )
-            .into_response()
+        (self.status, format!("Something went wrong: {}", self.error)).into_response()
     }
 }
 
@@ -33,6 +32,9 @@ where
     E: Into<anyhow::Error>,
 {
     fn from(err: E) -> Self {
-        Self(err.into())
+        Self {
+            status: StatusCode::INTERNAL_SERVER_ERROR,
+            error: err.into(),
+        }
     }
 }

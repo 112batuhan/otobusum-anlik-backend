@@ -1,9 +1,7 @@
 use serde::{Deserialize, Serialize};
 
-use crate::models::stop::BusStop;
-
 #[derive(Debug, Serialize, Deserialize, Clone)]
-pub struct BusStopV1 {
+pub struct BusStop {
     pub id: i32,
     pub code: i32,
     pub name: String,
@@ -17,8 +15,8 @@ pub struct BusStopV1 {
     pub city: String,
 }
 
-impl From<BusStop> for BusStopV1 {
-    fn from(value: BusStop) -> Self {
+impl From<crate::models::stop::BusStop> for BusStop {
+    fn from(value: crate::models::stop::BusStop) -> Self {
         Self {
             id: value.id,
             code: value.stop_code,

@@ -1,6 +1,6 @@
 use serde::Deserialize;
 
-use crate::{database::city::City, models::routes::Direction};
+use crate::{database::city::City, models::route::Direction};
 
 pub fn default_city() -> City {
     City::istanbul

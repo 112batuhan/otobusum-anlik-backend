@@ -9,6 +9,7 @@ where
         .parse::<f64>()
         .map_err(de::Error::custom)
 }
+
 pub fn deserialize_u32_from_string<'de, D>(deserializer: D) -> Result<u32, D::Error>
 where
     D: Deserializer<'de>,

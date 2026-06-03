@@ -12,8 +12,8 @@ use crate::database::city::City;
 use crate::models::app::{AppError, AppState};
 use crate::models::line::Line;
 use crate::models::stop::BusStop;
-use crate::models::v1::line::LineV1;
-use crate::models::v1::stop::BusStopV1;
+use crate::models::v1::line::Line as LineV1;
+use crate::models::v1::stop::BusStop as BusStopV1;
 use crate::query::default_city;
 
 #[derive(Deserialize, Debug)]

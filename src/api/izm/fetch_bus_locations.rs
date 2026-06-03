@@ -1,6 +1,7 @@
-use crate::models::locations::{izm::BusLocationIzmResponse, BusLocation};
+use crate::models::bus_location::BusLocation;
+use crate::models::izm::bus_location::BusLocationResponse;
 
-pub async fn get_bus_locations_izm(
+pub async fn fetch_bus_locations(
     client: &reqwest::Client,
     line_code: &str,
 ) -> anyhow::Result<Vec<BusLocation>> {
@@ -12,12 +13,12 @@ pub async fn get_bus_locations_izm(
         .send()
         .await?;
 
-    let location_response = response_izmir.json::<BusLocationIzmResponse>().await?;
+    let location_response = response_izmir.json::<BusLocationResponse>().await?;
 
     let bus_locations: Vec<BusLocation> = location_response
         .bus_locations
         .into_iter()
-        .map(|loc| BusLocation::from_bus_location_izm(loc, line_code))
+        .map(|loc| BusLocation::from_izm_bus_location(loc, line_code))
         .collect();
 
     Ok(bus_locations)

@@ -1,12 +1,9 @@
-use izm::BusLocationIzm;
 use serde::{Deserialize, Serialize};
 
-use crate::models::locations::ist::{BusLocationIstOpenData, BusLocationIstOtobusumNerede};
+use crate::models::ist::bus_location::{BusLocationOpenData, BusLocationOtobusumNerede};
+use crate::models::izm::bus_location::BusLocation as BusLocationIzm;
 
-use super::routes::Direction;
-
-pub mod ist;
-pub mod izm;
+use crate::models::route::Direction;
 
 #[derive(Serialize, Deserialize, Clone)]
 pub struct BusLocation {
@@ -17,8 +14,8 @@ pub struct BusLocation {
     pub closest_stop_code: Option<u32>,
 }
 
-impl From<BusLocationIstOpenData> for BusLocation {
-    fn from(value: BusLocationIstOpenData) -> Self {
+impl From<BusLocationOpenData> for BusLocation {
+    fn from(value: BusLocationOpenData) -> Self {
         Self {
             bus_id: value.door_no,
             lat: value.lat,
@@ -29,8 +26,8 @@ impl From<BusLocationIstOpenData> for BusLocation {
     }
 }
 
-impl From<BusLocationIstOtobusumNerede> for BusLocation {
-    fn from(value: BusLocationIstOtobusumNerede) -> Self {
+impl From<BusLocationOtobusumNerede> for BusLocation {
+    fn from(value: BusLocationOtobusumNerede) -> Self {
         Self {
             bus_id: value.bus_id,
             lat: value.lat,
@@ -42,7 +39,7 @@ impl From<BusLocationIstOtobusumNerede> for BusLocation {
 }
 
 impl BusLocation {
-    pub fn from_bus_location_izm(value: BusLocationIzm, line_code: &str) -> Self {
+    pub fn from_izm_bus_location(value: BusLocationIzm, line_code: &str) -> Self {
         let mut dir = Direction::try_from(value.direction as i32).unwrap_or_default();
 
         // For some reason directions are reversed in izmir. Wtf
