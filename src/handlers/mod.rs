@@ -1,3 +1,4 @@
+pub mod bus_info;
 pub mod bus_locations;
 pub mod route_stops;
 pub mod routes;

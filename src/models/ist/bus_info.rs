@@ -24,20 +24,20 @@ pub struct BusInfo {
     pub plate: Option<String>,
 }
 
-#[derive(Serialize, Deserialize)]
-pub struct BusInfoResponseJson {
-    #[serde(alias = "GetFiloAracKonum_jsonResult")]
-    pub content: String,
+#[derive(Serialize, Deserialize, Debug)]
+pub struct BusInfoResponse {
+    #[serde(alias = "Body")]
+    pub content: BusInfoResponseBody,
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Debug)]
 pub struct BusInfoResponseBody {
     #[serde(alias = "GetFiloAracKonum_jsonResponse")]
     pub content: BusInfoResponseJson,
 }
 
-#[derive(Serialize, Deserialize)]
-pub struct BusInfoResponse {
-    #[serde(alias = "Body")]
-    pub content: BusInfoResponseBody,
+#[derive(Serialize, Deserialize, Debug)]
+pub struct BusInfoResponseJson {
+    #[serde(alias = "GetFiloAracKonum_jsonResult")]
+    pub content: String,
 }

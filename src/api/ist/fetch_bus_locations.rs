@@ -6,12 +6,15 @@ use serde::{Deserialize, Serialize};
 use serde_json::json;
 use tracing::{info, warn};
 
-use crate::models::ist::{
-    bus_location::{
-        BusLocation as BusLocationIst, BusLocationOpenData, BusLocationOpenDataResponse,
-        BusLocationOtobusumNerede,
+use crate::{
+    api::ist::get_opendata_xml_body,
+    models::ist::{
+        bus_location::{
+            BusLocation as BusLocationIst, BusLocationOpenData, BusLocationOpenDataResponse,
+            BusLocationOtobusumNerede,
+        },
+        tokens::TokensResponse,
     },
-    tokens::TokensResponse,
 };
 
 use crate::models::bus_location::BusLocation;
@@ -24,27 +27,11 @@ struct IstOtobusumNeredeSearchResponse {
     line_code: String,
 }
 
-fn get_body(key_outer: &str, key: &str, value: &str) -> String {
-    format!(
-        r#"
-        <soap:Envelope
-            xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
-                <soap:Body>
-                    <{key_outer}
-                        xmlns="http://tempuri.org/">
-                        <{key}>{value}</{key}>
-                    </{key_outer}>
-                </soap:Body>
-            </soap:Envelope>
-        "#
-    )
-}
-
 pub async fn fetch_bus_locations_opendata(
     client: &reqwest::Client,
     line_code: &str,
 ) -> anyhow::Result<Vec<BusLocationOpenData>> {
-    let body = get_body("GetHatOtoKonum_json", "HatKodu", line_code);
+    let body = get_opendata_xml_body("GetHatOtoKonum_json", "HatKodu", line_code);
 
     let response = client
         .post("https://api.ibb.gov.tr/iett/FiloDurum/SeferGerceklesme.asmx")
@@ -54,11 +41,9 @@ pub async fn fetch_bus_locations_opendata(
         .send()
         .await?;
 
-    let content = serde_xml_rs::from_str::<BusLocationOpenDataResponse>(&response.text().await?)?;
+    let content = quick_xml::de::from_str::<BusLocationOpenDataResponse>(&response.text().await?)?;
 
-    Ok(serde_json::from_str::<Vec<BusLocationOpenData>>(
-        &content.content.content.content,
-    )?)
+    Ok(serde_json::from_str(&content.content.content.content)?)
 }
 
 #[cached(

@@ -48,6 +48,7 @@ async fn main() {
             "/bus-locations/:line_code",
             get(handlers::bus_locations::bus_locations),
         )
+        .route("/bus-info/:door_no", get(handlers::bus_info::bus_info))
         .route(
             "/route-stops/:line_code",
             get(handlers::route_stops::route_stops),
