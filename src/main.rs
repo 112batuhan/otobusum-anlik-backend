@@ -72,7 +72,7 @@ async fn main() {
         .with_state(state);
 
     let port = std::env::var("PORT").unwrap_or("8000".to_string());
-    let listener = tokio::net::TcpListener::bind(format!("0.0.0.0:{}", &port))
+    let listener = tokio::net::TcpListener::bind(format!("0.0.0.0:{}", port))
         .await
         .unwrap();
 
