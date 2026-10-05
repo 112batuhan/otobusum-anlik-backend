@@ -58,7 +58,7 @@ pub async fn route_stops_cached(
             WHERE
                 line_stops.line_code = $1
                 AND line_stops.city = $3
-                AND line_stops.route_code LIKE $1 || '_' || $2 || '_D0'
+                AND line_stops.route_code = $1 || '_' || $2 || '_D0'
             ORDER BY
                 line_stops.stop_order
         "#,

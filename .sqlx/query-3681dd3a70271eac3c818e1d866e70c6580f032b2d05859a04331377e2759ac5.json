@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n            SELECT\n                stops.id,\n                stops.stop_code,\n                stops.name,\n                stops.lng,\n                stops.lat,\n                stops.province,\n                stops.smart,\n                stops.type,\n                stops.disabled_can_use,\n                stops.physical,\n                stops.city\n            FROM\n                line_stops\n                RIGHT JOIN stops ON stops.stop_code = line_stops.stop_code\n            WHERE\n                line_stops.line_code = $1\n                AND line_stops.city = $3\n                AND line_stops.route_code LIKE $1 || '_' || $2 || '_D0'\n            ORDER BY\n                line_stops.stop_order\n        ",
+  "query": "\n            SELECT\n                stops.id,\n                stops.stop_code,\n                stops.name,\n                stops.lng,\n                stops.lat,\n                stops.province,\n                stops.smart,\n                stops.type,\n                stops.disabled_can_use,\n                stops.physical,\n                stops.city\n            FROM\n                line_stops\n                RIGHT JOIN stops ON stops.stop_code = line_stops.stop_code\n            WHERE\n                line_stops.line_code = $1\n                AND line_stops.city = $3\n                AND line_stops.route_code = $1 || '_' || $2 || '_D0'\n            ORDER BY\n                line_stops.stop_order\n        ",
   "describe": {
     "columns": [
       {
@@ -80,5 +80,5 @@
       false
     ]
   },
-  "hash": "bfb0916f2038eb2a86f555dcf99fbf8c375e6295cdcb2f7d66cf482f6e6318e0"
+  "hash": "3681dd3a70271eac3c818e1d866e70c6580f032b2d05859a04331377e2759ac5"
 }
