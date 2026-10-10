@@ -1,3 +1,4 @@
+use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 
 use crate::models::ist::bus_location::{BusLocationOpenData, BusLocationOtobusumNerede};
@@ -12,6 +13,12 @@ pub struct BusLocation {
     pub lat: f64,
     pub route_code: String,
     pub closest_stop_code: Option<u32>,
+}
+
+#[derive(Serialize, Deserialize, Clone)]
+pub struct BusLocationResponseV1 {
+    pub data: Vec<BusLocation>,
+    pub fetched_at: DateTime<Utc>
 }
 
 impl From<BusLocationOpenData> for BusLocation {
