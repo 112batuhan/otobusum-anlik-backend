@@ -27,7 +27,7 @@ pub struct BusLocationResponseV1 {
 impl cached::Expires for BusLocationResponseV1 {
     fn is_expired(&self) -> bool {
         let now = Utc::now().timestamp();
-        now >= self.next_poll
+        now > (self.next_poll - 5)
     }
 }
 
