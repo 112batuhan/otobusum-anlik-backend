@@ -20,16 +20,16 @@ pub struct BusLocation {
 #[derive(Serialize, Deserialize, Clone)]
 pub struct BusLocationResponseV1 {
     pub data: Vec<BusLocation>,
-    pub polled_at: DateTime<Utc>,
-    pub next_poll: Option<DateTime<Utc>>,
+    pub polled_at: i64,
+    pub next_poll: Option<i64>,
 }
 
 impl cached::Expires for BusLocationResponseV1 {
     fn is_expired(&self) -> bool {
-        let now = Utc::now();
+        let now = Utc::now().timestamp();
 
         let Some(next_poll) = self.next_poll else {
-            return now > (self.polled_at + chrono::Duration::seconds(60));
+            return now > (self.polled_at + 60);
         };
 
         now >= next_poll

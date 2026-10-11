@@ -42,13 +42,14 @@ pub async fn bus_locations_cached(
         .iter()
         .filter_map(|x| x.last_update_time)
         .max()
-        .map(|latest| latest + chrono::Duration::seconds(60 + 5));
+        .map(|latest| latest + chrono::Duration::seconds(60 + 5))
+        .map(|latest| latest.timestamp());
 
     let now = Utc::now();
 
     Ok(BusLocationResponseV1 {
         data: bus_locations,
-        polled_at: now,
+        polled_at: now.timestamp(),
         next_poll,
     })
 }
