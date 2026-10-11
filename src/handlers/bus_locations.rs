@@ -42,8 +42,7 @@ pub async fn bus_locations_cached(
         .iter()
         .filter_map(|x| x.last_update_time)
         .max()
-        .map(|latest| latest + chrono::Duration::seconds(60 + 5))
-        .map(|latest| latest.timestamp());
+        .map(|latest| latest.timestamp() + 65);
 
     let now = Utc::now();
 
