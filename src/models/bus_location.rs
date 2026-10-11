@@ -1,4 +1,5 @@
 use chrono::{DateTime, Utc};
+use chrono_tz::Europe::Istanbul;
 use serde::{Deserialize, Serialize};
 
 use crate::models::ist::bus_location::{BusLocationOpenData, BusLocationOtobusumNerede};
@@ -13,22 +14,43 @@ pub struct BusLocation {
     pub lat: f64,
     pub route_code: String,
     pub closest_stop_code: Option<u32>,
+    pub last_update_time: Option<DateTime<Utc>>,
 }
 
 #[derive(Serialize, Deserialize, Clone)]
 pub struct BusLocationResponseV1 {
     pub data: Vec<BusLocation>,
-    pub fetched_at: DateTime<Utc>
+    pub polled_at: DateTime<Utc>,
+    pub next_poll: Option<DateTime<Utc>>,
+}
+
+impl cached::Expires for BusLocationResponseV1 {
+    fn is_expired(&self) -> bool {
+        let now = Utc::now();
+
+        let Some(next_poll) = self.next_poll else {
+            return now > (self.polled_at + chrono::Duration::seconds(60));
+        };
+
+        now >= next_poll
+    }
 }
 
 impl From<BusLocationOpenData> for BusLocation {
     fn from(value: BusLocationOpenData) -> Self {
+        let last_update_time =
+            chrono::NaiveDateTime::parse_from_str(&value.last_location_update, "%Y-%m-%d %H:%M:%S")
+                .ok()
+                .and_then(|x| x.and_local_timezone(Istanbul).single())
+                .map(|time| time.with_timezone(&Utc));
+
         Self {
             bus_id: value.door_no,
             lat: value.lat,
             lng: value.lng,
             route_code: value.route_code,
             closest_stop_code: Some(value.closest_stop_code),
+            last_update_time,
         }
     }
 }
@@ -41,6 +63,7 @@ impl From<BusLocationOtobusumNerede> for BusLocation {
             lng: value.lng,
             route_code: value.route_code,
             closest_stop_code: Some(value.closest_stop_code),
+            last_update_time: None,
         }
     }
 }
@@ -62,6 +85,7 @@ impl BusLocation {
             lng: value.y_coord,
             route_code: format!("{line_code}_{}_D0", dir),
             closest_stop_code: None,
+            last_update_time: None,
         }
     }
 }

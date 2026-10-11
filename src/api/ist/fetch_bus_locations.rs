@@ -4,6 +4,7 @@ use anyhow::anyhow;
 use cached::macros::cached;
 use serde::{Deserialize, Serialize};
 use serde_json::json;
+use std::time::Duration;
 use tracing::{info, warn};
 
 use crate::{
@@ -47,10 +48,9 @@ pub async fn fetch_bus_locations_opendata(
 }
 
 #[cached(
-    ttl = 3500,
+    ttl = "Duration::from_secs(3500)",
     key = "String",
-    convert = r#"{ "credentials".to_string() }"#,
-    result = true
+    convert = r#"{ "credentials".to_string() }"#
 )]
 pub async fn fetch_otobusumnerede_credentials(
     // pub async fn get_ist_otobusum_nerede_credentials(
@@ -160,6 +160,8 @@ pub async fn fetch_bus_locations(
     client: &reqwest::Client,
     line_code: &str,
 ) -> anyhow::Result<Vec<BusLocation>> {
+    info!("getting {line_code} bus locations using open data");
+
     let results = match fetch_bus_locations_opendata(client, line_code).await {
         Ok(response) => BusLocationIst::OpenDataResponse(response),
         Err(error) => {

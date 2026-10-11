@@ -25,7 +25,8 @@ use crate::{
     ty = "AsyncRedisCache<String, Vec<Route>>",
     convert = r#"{ format!("{}{:?}", line_code, city) }"#,
     create = r##" {
-        AsyncRedisCache::new("routes", Duration::from_secs(600))
+        AsyncRedisCache::builder("routes")
+            .ttl(Duration::from_secs(600))
             .build()
             .await
             .expect("error building redis cache")

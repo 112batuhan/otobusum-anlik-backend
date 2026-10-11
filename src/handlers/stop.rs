@@ -50,7 +50,8 @@ impl From<BussesInStopResponse> for BussesInStopResponseV1 {
     ty = "AsyncRedisCache<String, BussesInStopResponse>",
     convert = r#"{ format!("{}{:?}", stop_id, city) }"#,
     create = r##" {
-        AsyncRedisCache::new("get_stop", Duration::from_secs(600))
+        AsyncRedisCache::builder("get_stop")
+            .ttl(Duration::from_secs(600))
             .build()
             .await
             .expect("error building redis cache")

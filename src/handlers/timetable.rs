@@ -25,7 +25,8 @@ use crate::{
     ty = "AsyncRedisCache<String, Timetable>",
     convert = r#"{ format!("{}{}{}", line_code, city, direction) }"#,
     create = r##" {
-        AsyncRedisCache::new("timetable", Duration::from_secs(600))
+        AsyncRedisCache::builder("timetable")
+            .ttl(Duration::from_secs(600))
             .build()
             .await
             .expect("error building redis cache")

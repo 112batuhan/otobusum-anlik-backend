@@ -49,7 +49,8 @@ impl From<SearchResponse> for SearchResponseV1 {
     ty = "AsyncRedisCache<String, SearchResponse>",
     convert = r#"{ format!("{}{}", query.q, query.city) }"#,
     create = r##" {
-        AsyncRedisCache::new("search", Duration::from_secs(600))
+        AsyncRedisCache::builder("search")
+            .ttl(Duration::from_secs(600))
             .build()
             .await
             .expect("error building redis cache")
