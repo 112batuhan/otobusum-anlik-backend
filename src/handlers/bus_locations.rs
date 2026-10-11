@@ -7,7 +7,7 @@ use axum::Json;
 
 use crate::database::city::City;
 use crate::models::app::{AppError, AppState};
-use crate::models::bus_location::{BusLocation, BusLocationResponseCachedV1, BusLocationResponseV1};
+use crate::models::bus_location::{BusLocation, BusLocationResponseV1};
 use crate::query::CityQuery;
 
 use crate::api::ist::fetch_bus_locations::fetch_bus_locations as fetch_bus_locations_ist;
@@ -32,7 +32,7 @@ pub async fn bus_locations_cached(
     line_code: String,
     city: City,
     state: Arc<AppState>,
-) -> Result<BusLocationResponseCachedV1, AppError> {
+) -> Result<BusLocationResponseV1, AppError> {
     let bus_locations = match city {
         City::istanbul => fetch_bus_locations_ist(&state.reqwest, &line_code).await?,
         City::izmir => fetch_bus_locations_izm(&state.reqwest, &line_code).await?,
@@ -46,15 +46,10 @@ pub async fn bus_locations_cached(
         .max()
         .unwrap_or(now);
 
-    let target_poll_time = next_poll + chrono::Duration::seconds(60 + 5);
-
-    println!("{:?}", target_poll_time);
-
-    Ok(BusLocationResponseCachedV1 {
+    Ok(BusLocationResponseV1 {
         data: bus_locations,
         polled_at: now.timestamp(),
-        next_poll: target_poll_time.timestamp(),
-        // refetch_interval
+        next_poll: next_poll.timestamp() + 70,
     })
 }
 
@@ -74,19 +69,7 @@ pub async fn bus_locations_v1(
     State(state): State<Arc<AppState>>,
     Query(query): Query<CityQuery>,
 ) -> Result<Json<BusLocationResponseV1>, AppError> {
-    let cached = bus_locations_cached(line_code, query.city, state).await?;
-    let now = Utc::now();
-
-    // Convert cached absolute timestamp back to DateTime for calculation
-    let target_poll_time = chrono::DateTime::from_timestamp(cached.next_poll, 0)
-        .unwrap_or(now);
-
-    let refetch_interval = target_poll_time.signed_duration_since(now).num_milliseconds();
-
-    Ok(Json(BusLocationResponseV1 {
-        data: cached.data,
-        polled_at: cached.polled_at,
-        next_poll: cached.next_poll,
-        refetch_interval: std::cmp::max(refetch_interval, 1000), // ensure at least 1s
-    }))
+    bus_locations_cached(line_code, query.city, state)
+        .await
+        .map(Json)
 }

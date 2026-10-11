@@ -18,30 +18,16 @@ pub struct BusLocation {
 }
 
 #[derive(Serialize, Deserialize, Clone)]
-pub struct BusLocationResponseCachedV1 {
-    pub data: Vec<BusLocation>,
-    pub polled_at: i64,
-    pub next_poll: i64,
-    // pub refetch_interval: i64,
-}
-
-#[derive(Serialize, Deserialize, Clone)]
 pub struct BusLocationResponseV1 {
     pub data: Vec<BusLocation>,
     pub polled_at: i64,
     pub next_poll: i64,
-    pub refetch_interval: i64,
 }
 
-impl cached::Expires for BusLocationResponseCachedV1 {
+impl cached::Expires for BusLocationResponseV1 {
     fn is_expired(&self) -> bool {
         let now = Utc::now().timestamp();
-
-        // let Some(next_poll) = self.next_poll else {
-        //     return now > (self.polled_at + 60);
-        // };
-
-        now >= (self.next_poll - 5)
+        now >= self.next_poll
     }
 }
 
