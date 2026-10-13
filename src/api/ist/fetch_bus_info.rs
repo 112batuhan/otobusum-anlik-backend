@@ -6,7 +6,7 @@ use crate::models::ist::bus_info::{BusInfo, BusInfoResponse};
 use crate::api::ist::get_opendata_xml_body;
 
 #[cached(
-    ttl = "Duration::from_secs(3500)",
+    ttl = "Duration::from_secs(60)",
     key = "String",
     convert = r#"{ "bus_infos".to_string() }"#
 )]
