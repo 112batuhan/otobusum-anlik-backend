@@ -40,6 +40,10 @@ async fn main() {
     let cors_layer = CorsLayer::new().allow_origin(allow_origin);
 
     let app = Router::new()
+        .route(
+            "/v1/stop/:stop_id/arrivals",
+            get(handlers::stop_arrivals::get_stop_arrivals),
+        )
         .route("/stop/:stop_id", get(handlers::stop::get_stop))
         .route("/v1/stop/:stop_id", get(handlers::stop::get_stop_v1))
         .route("/routes/:line_code", get(handlers::routes::routes))

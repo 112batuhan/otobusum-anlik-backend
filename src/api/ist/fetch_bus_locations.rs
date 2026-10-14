@@ -1,20 +1,15 @@
 use std::collections::HashMap;
 
 use anyhow::anyhow;
-use cached::macros::cached;
 use serde::{Deserialize, Serialize};
 use serde_json::json;
-use std::time::Duration;
 use tracing::{info, warn};
 
 use crate::{
-    api::ist::get_opendata_xml_body,
-    models::ist::{
-        bus_location::{
-            BusLocation as BusLocationIst, BusLocationOpenData, BusLocationOpenDataResponse,
-            BusLocationOtobusumNerede,
-        },
-        tokens::TokensResponse,
+    api::ist::{get_opendata_xml_body, otobusumnerede},
+    models::ist::bus_location::{
+        BusLocation as BusLocationIst, BusLocationOpenData, BusLocationOpenDataResponse,
+        BusLocationOtobusumNerede,
     },
 };
 
@@ -47,58 +42,10 @@ pub async fn fetch_bus_locations_opendata(
     Ok(serde_json::from_str(&content.content.content.content)?)
 }
 
-#[cached(
-    ttl = "Duration::from_secs(3500)",
-    key = "String",
-    convert = r#"{ "credentials".to_string() }"#
-)]
-pub async fn fetch_otobusumnerede_credentials(
-    // pub async fn get_ist_otobusum_nerede_credentials(
-    client: &reqwest::Client,
-    headers: &reqwest::header::HeaderMap,
-) -> anyhow::Result<TokensResponse> {
-    let mut auth_body = HashMap::new();
-
-    auth_body.insert("client_id", std::env::var("IBB_CLIENT_ID").unwrap());
-    auth_body.insert("client_secret", std::env::var("IBB_CLIENT_SECRET").unwrap());
-    auth_body.insert("grant_type", "client_credentials".to_string());
-    auth_body.insert("scope", std::env::var("IBB_CLIENT_SCOPE").unwrap());
-
-    info!("getting credentials for internal api of otobusum nerede");
-
-    Ok(client
-        .post("https://ntcapi.iett.istanbul/oauth2/v2/auth")
-        .headers(headers.clone())
-        .json(&auth_body)
-        .send()
-        .await?
-        .json()
-        .await?)
-}
-
 pub async fn fetch_bus_locations_otobusumnerede(
-    // pub async fn get_bus_locations_ist_otobusum_nerede(
     client: &reqwest::Client,
     line_code: &str,
 ) -> anyhow::Result<Vec<BusLocationOtobusumNerede>> {
-    let mut headers = reqwest::header::HeaderMap::new();
-
-    headers.append("Host", "ntcapi.iett.istanbul".parse().unwrap());
-    headers.append(
-        "Content-Type",
-        "application/json; charset=UTF-8".parse().unwrap(),
-    );
-    headers.append("Accept-Encoding", "gzip".parse().unwrap());
-
-    let credentials = fetch_otobusumnerede_credentials(client, &headers).await?;
-
-    headers.insert(
-        "Authorization",
-        format!("Bearer {}", credentials.access_token)
-            .parse()
-            .unwrap(),
-    );
-
     let search_body = HashMap::from([
         ("alias", json!("mainGetLine_basic_search")),
         ("data", json!({ "HATYONETIM.HAT.HAT_KODU": line_code })),
@@ -106,14 +53,8 @@ pub async fn fetch_bus_locations_otobusumnerede(
 
     info!("getting search results using otobusum nerede internal api");
 
-    let search_response = client
-        .post("https://ntcapi.iett.istanbul/service")
-        .headers(headers.clone())
-        .json(&search_body)
-        .send()
-        .await?
-        .json::<Vec<IstOtobusumNeredeSearchResponse>>()
-        .await?;
+    let search_response: Vec<IstOtobusumNeredeSearchResponse> =
+        otobusumnerede::fetch_otobusumnerede(client, &search_body).await?;
 
     let id = search_response
         .iter()
@@ -144,16 +85,7 @@ pub async fn fetch_bus_locations_otobusumnerede(
         ),
     ]);
 
-    let location_response = client
-        .post("https://ntcapi.iett.istanbul/service")
-        .headers(headers.clone())
-        .json(&location_body)
-        .send()
-        .await?
-        .json()
-        .await?;
-
-    Ok(location_response)
+    otobusumnerede::fetch_otobusumnerede(client, &location_body).await
 }
 
 pub async fn fetch_bus_locations(
