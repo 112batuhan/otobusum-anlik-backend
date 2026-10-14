@@ -34,8 +34,8 @@ pub async fn bus_locations_cached(
     state: Arc<AppState>,
 ) -> Result<BusLocationResponseV1, AppError> {
     let bus_locations = match city {
-        City::istanbul => fetch_bus_locations_ist(&state.reqwest, &line_code).await?,
-        City::izmir => fetch_bus_locations_izm(&state.reqwest, &line_code).await?,
+        City::istanbul => fetch_bus_locations_ist(&state.http_client, &line_code).await?,
+        City::izmir => fetch_bus_locations_izm(&state.http_client, &line_code).await?,
     };
 
     let now = Utc::now();

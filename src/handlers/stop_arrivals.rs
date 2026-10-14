@@ -18,7 +18,7 @@ pub async fn get_stop_arrivals(
     State(state): State<Arc<AppState>>,
     // Query(query): Query<CityQuery>,
 ) -> Result<Json<Vec<StopArrival>>, AppError> {
-    Ok(fetch_stop_arrivals(&state.reqwest, &stop_id.to_string())
+    Ok(fetch_stop_arrivals(&state.http_client, &stop_id.to_string())
         .await
         .map(Json)?)
 }

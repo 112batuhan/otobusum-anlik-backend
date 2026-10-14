@@ -19,7 +19,7 @@ pub async fn bus_info(
     Path(door_no): Path<String>,
     State(state): State<Arc<AppState>>,
 ) -> Result<Json<BusInfo>, AppError> {
-    let bus_list = fetch_bus_infos(&state.reqwest).await?;
+    let bus_list = fetch_bus_infos(&state.http_client).await?;
 
     let Some(bus_info) = bus_list.into_iter().find(|b| b.door_no == door_no) else {
         return Err(AppError {
