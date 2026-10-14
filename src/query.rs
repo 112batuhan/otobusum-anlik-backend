@@ -25,3 +25,10 @@ pub struct LineStopsQuery {
     pub city: City,
     pub direction: Direction,
 }
+
+#[derive(Deserialize, Debug)]
+pub struct SearchQuery {
+    #[serde(default = "default_city")]
+    pub city: City,
+    pub q: String,
+}

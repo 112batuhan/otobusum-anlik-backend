@@ -6,12 +6,11 @@ use tracing::{info, warn};
 use crate::{
     api::ist::{get_opendata_xml_body, otobusumnerede},
     models::ist::bus_location::{
-        BusLocation as BusLocationIst, BusLocationOpenData, BusLocationOpenDataResponse,
-        BusLocationOtobusumNerede,
+        BusLocationOpenData, BusLocationOpenDataResponse, BusLocationOtobusumNerede,
     },
 };
 
-use crate::models::bus_location::BusLocation;
+use crate::models::bus::BusLocation;
 
 #[derive(Serialize, Deserialize, Clone)]
 struct IstOtobusumNeredeSearchResponse {
@@ -21,7 +20,7 @@ struct IstOtobusumNeredeSearchResponse {
     line_code: String,
 }
 
-pub async fn fetch_bus_locations_opendata(
+async fn fetch_bus_locations_opendata(
     client: &reqwest::Client,
     line_code: &str,
 ) -> Result<Vec<BusLocationOpenData>> {
@@ -40,7 +39,7 @@ pub async fn fetch_bus_locations_opendata(
     Ok(serde_json::from_str(&content.content.content.content)?)
 }
 
-pub async fn fetch_bus_locations_otobusumnerede(
+async fn fetch_bus_locations_otobusumnerede(
     client: &reqwest::Client,
     line_code: &str,
 ) -> Result<Vec<BusLocationOtobusumNerede>> {
@@ -91,24 +90,18 @@ pub async fn fetch_bus_locations(
 ) -> Result<Vec<BusLocation>> {
     info!("getting {line_code} bus locations using open data");
 
-    let results = match fetch_bus_locations_opendata(client, line_code).await {
-        Ok(response) => BusLocationIst::OpenDataResponse(response),
+    let locations = match fetch_bus_locations_opendata(client, line_code).await {
+        Ok(response) => response.into_iter().map(BusLocation::from).collect(),
         Err(error) => {
-            warn!("Trying getting locations from open data api has failed, falling back to internal api. {:?}", error);
-            BusLocationIst::OtobusumNeredeResponse(
-                fetch_bus_locations_otobusumnerede(client, line_code).await?,
-            )
+            warn!("Open Data request failed for {line_code}, falling back to Otobusum Nerede: {error:?}");
+
+            fetch_bus_locations_otobusumnerede(client, line_code)
+                .await?
+                .into_iter()
+                .map(BusLocation::from)
+                .collect()
         }
     };
 
-    Ok(match results {
-        BusLocationIst::OpenDataResponse(op) => op
-            .into_iter()
-            .map(BusLocation::from)
-            .collect::<Vec<BusLocation>>(),
-        BusLocationIst::OtobusumNeredeResponse(on) => on
-            .into_iter()
-            .map(BusLocation::from)
-            .collect::<Vec<BusLocation>>(),
-    })
+    Ok(locations)
 }

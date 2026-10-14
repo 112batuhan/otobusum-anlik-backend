@@ -6,47 +6,14 @@ use axum::Json;
 use cached::macros::concurrent_cached;
 use cached::time::Duration;
 use cached::AsyncRedisCache;
-use serde::{Deserialize, Serialize};
 
+use crate::models;
 use crate::models::app::{AppError, AppState};
-use crate::models::city::City;
-use crate::models::line::Line;
-use crate::models::stop::BusStop;
-use crate::models::v1::line::Line as LineV1;
-use crate::models::v1::stop::BusStop as BusStopV1;
-use crate::query::default_city;
-
-#[derive(Deserialize, Debug)]
-pub struct Search {
-    #[serde(default = "default_city")]
-    city: City,
-    q: String,
-}
-
-#[derive(Serialize, Deserialize, Clone)]
-pub struct SearchResponse {
-    stops: Vec<BusStop>,
-    lines: Vec<Line>,
-}
-
-#[derive(Serialize, Deserialize, Clone)]
-pub struct SearchResponseV1 {
-    stops: Vec<BusStopV1>,
-    lines: Vec<LineV1>,
-}
-
-impl From<SearchResponse> for SearchResponseV1 {
-    fn from(value: SearchResponse) -> Self {
-        Self {
-            lines: value.lines.into_iter().map(LineV1::from).collect(),
-            stops: value.stops.into_iter().map(BusStopV1::from).collect(),
-        }
-    }
-}
+use crate::query::SearchQuery;
 
 #[concurrent_cached(
     map_error = r##"|e| anyhow!("{}", e) "##,
-    ty = "AsyncRedisCache<String, SearchResponse>",
+    ty = "AsyncRedisCache<String, models::search::Search>",
     convert = r#"{ format!("{}{}", query.q, query.city) }"#,
     create = r##" {
         AsyncRedisCache::builder("search")
@@ -57,11 +24,11 @@ impl From<SearchResponse> for SearchResponseV1 {
     } "##
 )]
 pub async fn search_cached(
-    query: Search,
+    query: SearchQuery,
     state: Arc<AppState>,
-) -> Result<SearchResponse, AppError> {
+) -> Result<models::search::Search, AppError> {
     let stops = sqlx::query_as!(
-        BusStop,
+        models::stop::BusStop,
         r#"
             SELECT
                 id,
@@ -88,9 +55,8 @@ pub async fn search_cached(
     .fetch_all(&state.db)
     .await?;
 
-    // COALESCE(NULLIF(ARRAY_AGG((bus_stops)), '{NULL}'), '{}') as "stop_codes: Vec<i32>"
     let lines = sqlx::query_as!(
-        Line,
+        models::line::Line,
         r#"
             SELECT
                 id,
@@ -117,22 +83,12 @@ pub async fn search_cached(
     .fetch_all(&state.db)
     .await?;
 
-    Ok(SearchResponse { stops, lines })
+    Ok(models::search::Search { stops, lines })
 }
 
 pub async fn search(
-    Query(query): Query<Search>,
+    Query(query): Query<SearchQuery>,
     State(state): State<Arc<AppState>>,
-) -> Result<Json<SearchResponse>, AppError> {
+) -> Result<Json<models::search::Search>, AppError> {
     search_cached(query, state).await.map(Json)
-}
-
-pub async fn search_v1(
-    Query(query): Query<Search>,
-    State(state): State<Arc<AppState>>,
-) -> Result<Json<SearchResponseV1>, AppError> {
-    search_cached(query, state)
-        .await
-        .map(SearchResponseV1::from)
-        .map(Json)
 }

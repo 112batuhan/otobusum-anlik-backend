@@ -8,13 +8,22 @@ pub struct Line {
     pub city: String,
 }
 
-impl From<crate::models::line::Line> for Line {
-    fn from(value: crate::models::line::Line) -> Self {
-        Self {
-            id: value.id,
-            city: value.city,
-            code: value.code,
-            name: value.title,
-        }
-    }
+#[derive(Serialize, Deserialize)]
+pub struct LineStop {
+    pub id: i32,
+    pub line_code: String,
+    pub stop_code: i32,
+    pub route_code: String,
+    pub city: String,
 }
+
+// impl From<crate::models::line::Line> for Line {
+//     fn from(value: crate::models::line::Line) -> Self {
+//         Self {
+//             id: value.id,
+//             city: value.city,
+//             code: value.code,
+//             name: value.title,
+//         }
+//     }
+// }

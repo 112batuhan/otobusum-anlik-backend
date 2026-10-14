@@ -1,4 +1,4 @@
-use crate::models::bus_location::BusLocation;
+use crate::models::bus::BusLocation;
 use crate::models::izm::bus_location::BusLocationResponse;
 
 pub async fn fetch_bus_locations(

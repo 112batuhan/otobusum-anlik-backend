@@ -85,7 +85,7 @@ pub async fn timetable_cached(
     Ok(timetable)
 }
 
-pub async fn timetable(
+pub async fn get_timetable(
     Path(line_code): Path<String>,
     State(state): State<Arc<AppState>>,
     Query(query): Query<TimetableQuery>,

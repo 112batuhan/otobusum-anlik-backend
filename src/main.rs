@@ -16,23 +16,26 @@ use crate::models::app::AppState;
 
 fn v1_routes() -> Router<Arc<AppState>> {
     Router::new()
-        .route("/stop/:stop_id", get(handlers::stop::get_stop_v1))
+        .route("/stop/:stop_id", get(handlers::v1::stop::get_stop))
         .route(
             "/stop/:stop_id/arrivals",
             get(handlers::stop_arrivals::get_stop_arrivals),
         )
-        .route("/routes/:line_code", get(handlers::routes::routes_v1))
+        .route("/routes/:line_code", get(handlers::v1::route::get_routes))
         .route(
             "/bus-locations/:line_code",
-            get(handlers::bus_locations::bus_locations_v1),
+            get(handlers::v1::bus::get_bus_locations),
         )
         .route(
             "/route-stops/:line_code",
-            get(handlers::route_stops::route_stops_v1),
+            get(handlers::v1::route::get_route_stops),
         )
-        .route("/timetable/:line_code", get(handlers::timetable::timetable))
-        .route("/search", get(handlers::search::search_v1))
-        .route("/bus-info/:door_no", get(handlers::bus_info::bus_info))
+        .route(
+            "/timetable/:line_code",
+            get(handlers::timetable::get_timetable),
+        )
+        .route("/search", get(handlers::v1::search::get_search))
+        .route("/bus-info/:door_no", get(handlers::v1::bus::get_bus_info))
 }
 
 fn legacy_routes() -> Router<Arc<AppState>> {
@@ -41,15 +44,18 @@ fn legacy_routes() -> Router<Arc<AppState>> {
         .route("/routes/:line_code", get(handlers::routes::routes))
         .route(
             "/bus-locations/:line_code",
-            get(handlers::bus_locations::bus_locations),
+            get(handlers::bus::get_bus_locations),
         )
         .route(
             "/route-stops/:line_code",
-            get(handlers::route_stops::route_stops),
+            get(handlers::route_stops::get_route_stops),
         )
-        .route("/timetable/:line_code", get(handlers::timetable::timetable))
+        .route(
+            "/timetable/:line_code",
+            get(handlers::timetable::get_timetable),
+        )
         .route("/search", get(handlers::search::search))
-        .route("/bus-info/:door_no", get(handlers::bus_info::bus_info))
+        .route("/bus-info/:door_no", get(handlers::v1::bus::get_bus_info))
 }
 
 #[tokio::main]

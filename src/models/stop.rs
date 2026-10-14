@@ -14,3 +14,9 @@ pub struct BusStop {
     pub physical: Option<String>,
     pub city: String,
 }
+
+#[derive(Serialize, Deserialize, Clone)]
+pub struct BusStopDetail {
+    pub stop: BusStop,
+    pub buses: Vec<String>,
+}
