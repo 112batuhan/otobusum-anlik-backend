@@ -1,1 +1,1 @@
-pub mod fetch_bus_locations;
+pub mod bus_locations;

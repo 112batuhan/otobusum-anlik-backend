@@ -1,6 +1,4 @@
-use std::collections::HashMap;
-
-use anyhow::anyhow;
+use anyhow::{anyhow, Result};
 use serde::{Deserialize, Serialize};
 use serde_json::json;
 use tracing::{info, warn};
@@ -26,7 +24,7 @@ struct IstOtobusumNeredeSearchResponse {
 pub async fn fetch_bus_locations_opendata(
     client: &reqwest::Client,
     line_code: &str,
-) -> anyhow::Result<Vec<BusLocationOpenData>> {
+) -> Result<Vec<BusLocationOpenData>> {
     let body = get_opendata_xml_body("GetHatOtoKonum_json", "HatKodu", line_code);
 
     let response = client
@@ -45,11 +43,13 @@ pub async fn fetch_bus_locations_opendata(
 pub async fn fetch_bus_locations_otobusumnerede(
     client: &reqwest::Client,
     line_code: &str,
-) -> anyhow::Result<Vec<BusLocationOtobusumNerede>> {
-    let search_body = HashMap::from([
-        ("alias", json!("mainGetLine_basic_search")),
-        ("data", json!({ "HATYONETIM.HAT.HAT_KODU": line_code })),
-    ]);
+) -> Result<Vec<BusLocationOtobusumNerede>> {
+    let search_body = json!({
+        "alias": "ybs",
+        "data": {
+            "HATYONETIM.HAT.HAT_KODU": line_code
+        }
+    });
 
     info!("getting search results using otobusum nerede internal api");
 
@@ -66,24 +66,21 @@ pub async fn fetch_bus_locations_otobusumnerede(
 
     info!("line id {:?} found in search results", id);
 
-    let location_body = HashMap::from([
-        ("alias", json!("ybs")),
-        (
-            "data",
-            json!({
-                "data": {
-                    "password": "n1!t8c7M1",
-                    "username": "netuce"
-                },
-                "method": "POST",
-                "path": [
-                    "real-time-information",
-                    "point-passing",
-                    id.to_string()
-                ]
-            }),
-        ),
-    ]);
+    let location_body = json!({
+        "alias": "ybs",
+        "data": {
+            "data": {
+                "password": "n1!t8c7M1",
+                "username": "netuce"
+            },
+            "method": "POST",
+            "path": [
+                "real-time-information",
+                "point-passing",
+                id
+            ]
+        }
+    });
 
     otobusumnerede::fetch_otobusumnerede(client, &location_body).await
 }
@@ -91,7 +88,7 @@ pub async fn fetch_bus_locations_otobusumnerede(
 pub async fn fetch_bus_locations(
     client: &reqwest::Client,
     line_code: &str,
-) -> anyhow::Result<Vec<BusLocation>> {
+) -> Result<Vec<BusLocation>> {
     info!("getting {line_code} bus locations using open data");
 
     let results = match fetch_bus_locations_opendata(client, line_code).await {

@@ -6,7 +6,7 @@ use axum::{
 };
 
 use crate::{
-    api::ist::fetch_stop_arrivals::fetch_stop_arrivals,
+    api::ist::stop_arrivals::fetch_stop_arrivals,
     models::{
         app::{AppError, AppState},
         ist::stop_arrival::StopArrival,

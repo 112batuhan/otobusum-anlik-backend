@@ -10,8 +10,8 @@ use crate::models::bus_location::{BusLocation, BusLocationResponseV1};
 use crate::models::city::City;
 use crate::query::CityQuery;
 
-use crate::api::ist::fetch_bus_locations::fetch_bus_locations as fetch_bus_locations_ist;
-use crate::api::izm::fetch_bus_locations::fetch_bus_locations as fetch_bus_locations_izm;
+use crate::api::ist::bus_locations::fetch_bus_locations as fetch_bus_locations_ist;
+use crate::api::izm::bus_locations::fetch_bus_locations as fetch_bus_locations_izm;
 
 #[cached(
     // map_error = r##"|e| anyhow!("{}", e)"##,

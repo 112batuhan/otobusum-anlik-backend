@@ -8,7 +8,7 @@ use axum::{
 use reqwest::StatusCode;
 
 use crate::{
-    api::ist::fetch_bus_info::fetch_bus_infos,
+    api::ist::bus_info::fetch_bus_infos,
     models::{
         app::{AppError, AppState},
         ist::bus_info::BusInfo,

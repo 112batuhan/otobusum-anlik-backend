@@ -7,7 +7,7 @@ pub mod query;
 use std::sync::Arc;
 
 use anyhow::Result;
-use axum::{Router, http::HeaderValue, routing::get};
+use axum::{http::HeaderValue, routing::get, Router};
 use tokio::net::TcpListener;
 use tower_http::{compression::CompressionLayer, cors::CorsLayer, trace::TraceLayer};
 use tracing::info;
