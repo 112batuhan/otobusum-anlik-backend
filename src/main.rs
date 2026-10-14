@@ -1,99 +1,88 @@
 pub mod api;
+pub mod app;
 pub mod handlers;
 pub mod models;
 pub mod query;
 
 use std::sync::Arc;
 
-use crate::models::app::AppState;
-use axum::{http::HeaderValue, routing::get, Router};
+use anyhow::Result;
+use axum::{Router, http::HeaderValue, routing::get};
+use tokio::net::TcpListener;
 use tower_http::{compression::CompressionLayer, cors::CorsLayer, trace::TraceLayer};
 use tracing::info;
-use tracing_subscriber::fmt::format::FmtSpan;
 
-use anyhow::Result;
-use sqlx::PgPool;
+use crate::models::app::AppState;
 
-pub async fn get_db_connection() -> Result<PgPool> {
-    let database_url =
-        std::env::var("DATABASE_URL").expect("DATABASE_URL must be set in .env file");
-    let pool = PgPool::connect(&database_url).await?;
-
-    Ok(pool)
-}
-
-#[tokio::main]
-async fn main() {
-    dotenvy::dotenv().ok();
-
-    tracing_subscriber::fmt()
-        .with_max_level(tracing::Level::DEBUG)
-        .with_span_events(FmtSpan::CLOSE)
-        .init();
-
-    let db_conn = get_db_connection()
-        .await
-        .expect("Failed to initialize DB connection");
-
-    sqlx::migrate!("./migrations").run(&db_conn).await.ok();
-
-    let state = Arc::new(AppState::new(db_conn));
-
-    let allow_origin = if cfg!(debug_assertions) {
-        "*".parse::<HeaderValue>().unwrap()
-    } else {
-        "https://otobusumweb.metkm.win"
-            .parse::<HeaderValue>()
-            .unwrap()
-    };
-
-    let cors_layer = CorsLayer::new().allow_origin(allow_origin);
-
-    let app = Router::new()
+fn v1_routes() -> Router<Arc<AppState>> {
+    Router::new()
+        .route("/stop/:stop_id", get(handlers::stop::get_stop_v1))
         .route(
-            "/v1/stop/:stop_id/arrivals",
+            "/stop/:stop_id/arrivals",
             get(handlers::stop_arrivals::get_stop_arrivals),
         )
+        .route("/routes/:line_code", get(handlers::routes::routes_v1))
+        .route(
+            "/bus-locations/:line_code",
+            get(handlers::bus_locations::bus_locations_v1),
+        )
+        .route(
+            "/route-stops/:line_code",
+            get(handlers::route_stops::route_stops_v1),
+        )
+        .route("/timetable/:line_code", get(handlers::timetable::timetable))
+        .route("/search", get(handlers::search::search_v1))
+        .route("/bus-info/:door_no", get(handlers::bus_info::bus_info))
+}
+
+fn legacy_routes() -> Router<Arc<AppState>> {
+    Router::new()
         .route("/stop/:stop_id", get(handlers::stop::get_stop))
-        .route("/v1/stop/:stop_id", get(handlers::stop::get_stop_v1))
         .route("/routes/:line_code", get(handlers::routes::routes))
-        .route("/v1/routes/:line_code", get(handlers::routes::routes_v1))
         .route(
             "/bus-locations/:line_code",
             get(handlers::bus_locations::bus_locations),
         )
         .route(
-            "/v1/bus-locations/:line_code",
-            get(handlers::bus_locations::bus_locations_v1),
-        )
-        .route("/bus-info/:door_no", get(handlers::bus_info::bus_info))
-        .route(
             "/route-stops/:line_code",
             get(handlers::route_stops::route_stops),
         )
-        .route(
-            "/v1/route-stops/:line_code",
-            get(handlers::route_stops::route_stops_v1),
-        )
         .route("/timetable/:line_code", get(handlers::timetable::timetable))
         .route("/search", get(handlers::search::search))
-        .route("/v1/search", get(handlers::search::search_v1))
+        .route("/bus-info/:door_no", get(handlers::bus_info::bus_info))
+}
+
+#[tokio::main]
+async fn main() -> Result<()> {
+    let app_state = app::create_app().await?;
+
+    let allow_origin = if cfg!(debug_assertions) {
+        HeaderValue::from_static("*")
+    } else {
+        HeaderValue::from_static("https://otobusumweb.metkm.win")
+    };
+
+    let cors_layer = CorsLayer::new().allow_origin(allow_origin);
+
+    let compression_layer = CompressionLayer::new()
+        .gzip(true)
+        .deflate(true)
+        .zstd(true)
+        .br(true);
+
+    let router = Router::new()
+        .nest("/v1", v1_routes())
+        .merge(legacy_routes())
+        .layer(compression_layer)
         .layer(cors_layer)
-        .layer(
-            CompressionLayer::new()
-                .gzip(true)
-                .deflate(true)
-                .zstd(true)
-                .br(true),
-        )
         .layer(TraceLayer::new_for_http())
-        .with_state(state);
+        .with_state(app_state);
 
     let port = std::env::var("PORT").unwrap_or("8000".to_string());
-    let listener = tokio::net::TcpListener::bind(format!("0.0.0.0:{}", port))
-        .await
-        .unwrap();
+    let listener = TcpListener::bind(format!("0.0.0.0:{port}")).await?;
 
-    info!("listening on {}", listener.local_addr().unwrap());
-    axum::serve(listener, app).await.unwrap();
+    info!("listening on {}", listener.local_addr()?);
+    axum::serve(listener, router).await?;
+
+    Ok(())
 }

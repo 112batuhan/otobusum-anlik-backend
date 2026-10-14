@@ -30,8 +30,5 @@ pub async fn fetch_stop_arrivals(
         }
     });
 
-    let result = otobusumnerede::fetch_otobusumnerede(client, &body).await;
-    println!("{:?}", result);
-
-    result
+    otobusumnerede::fetch_otobusumnerede(client, &body).await
 }
