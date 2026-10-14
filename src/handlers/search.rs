@@ -8,8 +8,8 @@ use cached::time::Duration;
 use cached::AsyncRedisCache;
 use serde::{Deserialize, Serialize};
 
-use crate::database::city::City;
 use crate::models::app::{AppError, AppState};
+use crate::models::city::City;
 use crate::models::line::Line;
 use crate::models::stop::BusStop;
 use crate::models::v1::line::Line as LineV1;

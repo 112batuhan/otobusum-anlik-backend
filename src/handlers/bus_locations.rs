@@ -5,9 +5,9 @@ use std::sync::Arc;
 use axum::extract::{Path, Query, State};
 use axum::Json;
 
-use crate::database::city::City;
 use crate::models::app::{AppError, AppState};
 use crate::models::bus_location::{BusLocation, BusLocationResponseV1};
+use crate::models::city::City;
 use crate::query::CityQuery;
 
 use crate::api::ist::fetch_bus_locations::fetch_bus_locations as fetch_bus_locations_ist;

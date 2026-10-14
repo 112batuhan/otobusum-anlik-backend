@@ -10,7 +10,7 @@ use cached::time::Duration;
 use cached::AsyncRedisCache;
 
 use crate::{
-    database::city::City,
+    models::city::City,
     models::{
         app::{AppError, AppState},
         route::Direction,

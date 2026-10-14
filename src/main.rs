@@ -1,16 +1,26 @@
 pub mod api;
-pub mod database;
 pub mod handlers;
 pub mod models;
 pub mod query;
 
 use std::sync::Arc;
 
-use crate::{database::get_db_connection, models::app::AppState};
+use crate::models::app::AppState;
 use axum::{http::HeaderValue, routing::get, Router};
 use tower_http::{compression::CompressionLayer, cors::CorsLayer, trace::TraceLayer};
 use tracing::info;
 use tracing_subscriber::fmt::format::FmtSpan;
+
+use anyhow::Result;
+use sqlx::PgPool;
+
+pub async fn get_db_connection() -> Result<PgPool> {
+    let database_url =
+        std::env::var("DATABASE_URL").expect("DATABASE_URL must be set in .env file");
+    let pool = PgPool::connect(&database_url).await?;
+
+    Ok(pool)
+}
 
 #[tokio::main]
 async fn main() {

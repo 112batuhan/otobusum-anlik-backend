@@ -14,7 +14,7 @@ use serde::{Deserialize, Serialize};
 use tokio::try_join;
 
 use crate::{
-    database::city::City,
+    models::city::City,
     models::v1::stop::BusStop as BusStopV1,
     models::{
         app::{AppError, AppState},

@@ -11,7 +11,7 @@ use axum::{
 };
 
 use crate::{
-    database::city::City,
+    models::city::City,
     models::{
         app::{AppError, AppState},
         route::Direction,

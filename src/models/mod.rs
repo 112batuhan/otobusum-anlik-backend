@@ -1,5 +1,6 @@
 pub mod app;
 pub mod bus_location;
+pub mod city;
 pub mod line;
 pub mod route;
 pub mod serializers;
