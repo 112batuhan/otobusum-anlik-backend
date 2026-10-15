@@ -1,24 +1,18 @@
 use anyhow::{anyhow, Result};
-use serde::{Deserialize, Serialize};
 use serde_json::json;
 use tracing::{info, warn};
 
 use crate::{
     api::ist::{get_opendata_xml_body, otobusumnerede},
-    models::ist::bus_location::{
-        BusLocationOpenData, BusLocationOpenDataResponse, BusLocationOtobusumNerede,
+    models::ist::{
+        self,
+        bus_location::{
+            BusLocationOpenData, BusLocationOpenDataResponse, BusLocationOtobusumNerede,
+        },
     },
 };
 
 use crate::models::bus::BusLocation;
-
-#[derive(Serialize, Deserialize, Clone)]
-struct IstOtobusumNeredeSearchResponse {
-    #[serde(alias = "HAT_ID")]
-    line_id: u32,
-    #[serde(alias = "HAT_HAT_KODU")]
-    line_code: String,
-}
 
 async fn fetch_bus_locations_opendata(
     client: &reqwest::Client,
@@ -52,7 +46,7 @@ async fn fetch_bus_locations_otobusumnerede(
 
     info!("getting search results using otobusum nerede internal api");
 
-    let search_response: Vec<IstOtobusumNeredeSearchResponse> =
+    let search_response: Vec<ist::search::SearchResponseOtobusumNerede> =
         otobusumnerede::fetch_otobusumnerede(client, &search_body).await?;
 
     let id = search_response
