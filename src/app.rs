@@ -13,7 +13,7 @@ pub async fn get_db_connection() -> Result<PgPool> {
 }
 
 pub async fn init() -> Result<()> {
-    dotenvy::dotenv()?;
+    dotenvy::dotenv().ok();
 
     tracing_subscriber::fmt()
         .with_max_level(tracing::Level::DEBUG)
