@@ -8,9 +8,11 @@ pub struct BusStop {
     pub lng: f64,
     pub lat: f64,
     pub province: Option<String>,
-    pub smart: Option<String>,
-    pub r#type: Option<String>,
-    pub disabled_can_use: Option<String>,
-    pub physical: Option<String>,
     pub city: String,
+}
+
+#[derive(Serialize, Deserialize, Clone)]
+pub struct BusStopDetail {
+    pub stop: BusStop,
+    pub buses: Vec<String>,
 }

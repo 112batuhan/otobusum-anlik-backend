@@ -1,4 +1,8 @@
 CREATE TABLE IF NOT EXISTS route_paths(
+  id SERIAL PRIMARY KEY,
   route_code TEXT PRIMARY KEY,
-  route_path JSONB
+  path JSONB NOT NULL,
+  city TEXT NOT NULL
 );
+
+CREATE UNIQUE INDEX IF NOT EXISTS id_code_index_paths ON route_paths (route_code, city);

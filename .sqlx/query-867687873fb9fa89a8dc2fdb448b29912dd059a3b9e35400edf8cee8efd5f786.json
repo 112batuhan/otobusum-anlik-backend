@@ -1,0 +1,59 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n            SELECT\n            *\n             FROM\n                stops\n             WHERE\n                name ILIKE '%' || $1 || '%'\n                AND city = $2\n            LIMIT 10\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "stop_code",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 1,
+        "name": "name",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 2,
+        "name": "lng",
+        "type_info": "Float8"
+      },
+      {
+        "ordinal": 3,
+        "name": "lat",
+        "type_info": "Float8"
+      },
+      {
+        "ordinal": 4,
+        "name": "province",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 5,
+        "name": "id",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 6,
+        "name": "city",
+        "type_info": "Text"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Text",
+        "Text"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      false,
+      true,
+      false,
+      false
+    ]
+  },
+  "hash": "867687873fb9fa89a8dc2fdb448b29912dd059a3b9e35400edf8cee8efd5f786"
+}

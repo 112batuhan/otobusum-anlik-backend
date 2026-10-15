@@ -2,9 +2,7 @@ use chrono::{DateTime, Utc};
 use chrono_tz::Europe::Istanbul;
 use serde::{Deserialize, Serialize};
 
-use crate::models::ist::bus_location::{BusLocationOpenData, BusLocationOtobusumNerede};
-use crate::models::izm::bus_location::BusLocation as BusLocationIzm;
-
+use crate::models;
 use crate::models::route::Direction;
 
 #[derive(Serialize, Deserialize, Clone)]
@@ -17,22 +15,8 @@ pub struct BusLocation {
     pub last_update_time: Option<DateTime<Utc>>,
 }
 
-#[derive(Serialize, Deserialize, Clone)]
-pub struct BusLocationResponseV1 {
-    pub data: Vec<BusLocation>,
-    pub polled_at: i64,
-    pub next_poll: i64,
-}
-
-impl cached::Expires for BusLocationResponseV1 {
-    fn is_expired(&self) -> bool {
-        let now = Utc::now().timestamp();
-        now > (self.next_poll - 5)
-    }
-}
-
-impl From<BusLocationOpenData> for BusLocation {
-    fn from(value: BusLocationOpenData) -> Self {
+impl From<models::ist::bus_location::BusLocationOpenData> for BusLocation {
+    fn from(value: models::ist::bus_location::BusLocationOpenData) -> Self {
         let last_update_time =
             chrono::NaiveDateTime::parse_from_str(&value.last_location_update, "%Y-%m-%d %H:%M:%S")
                 .ok()
@@ -50,8 +34,8 @@ impl From<BusLocationOpenData> for BusLocation {
     }
 }
 
-impl From<BusLocationOtobusumNerede> for BusLocation {
-    fn from(value: BusLocationOtobusumNerede) -> Self {
+impl From<models::ist::bus_location::BusLocationOtobusumNerede> for BusLocation {
+    fn from(value: models::ist::bus_location::BusLocationOtobusumNerede) -> Self {
         Self {
             bus_id: value.bus_id,
             lat: value.lat,
@@ -64,7 +48,10 @@ impl From<BusLocationOtobusumNerede> for BusLocation {
 }
 
 impl BusLocation {
-    pub fn from_izm_bus_location(value: BusLocationIzm, line_code: &str) -> Self {
+    pub fn from_izm_bus_location(
+        value: models::izm::bus_location::BusLocation,
+        line_code: &str,
+    ) -> Self {
         let mut dir = Direction::try_from(value.direction as i32).unwrap_or_default();
 
         // For some reason directions are reversed in izmir. Wtf

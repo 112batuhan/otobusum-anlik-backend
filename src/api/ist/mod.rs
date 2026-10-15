@@ -1,7 +1,7 @@
-pub mod fetch_bus_info;
-pub mod fetch_bus_locations;
-pub mod fetch_stop_arrivals;
+pub mod bus_info;
+pub mod bus_locations;
 pub mod otobusumnerede;
+pub mod stop_arrivals;
 
 pub fn get_opendata_xml_body(key_outer: &str, key: &str, value: &str) -> String {
     format!(

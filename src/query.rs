@@ -1,6 +1,6 @@
 use serde::Deserialize;
 
-use crate::{database::city::City, models::route::Direction};
+use crate::{models::city::City, models::route::Direction};
 
 pub fn default_city() -> City {
     City::istanbul
@@ -24,4 +24,11 @@ pub struct LineStopsQuery {
     #[serde(default = "default_city")]
     pub city: City,
     pub direction: Direction,
+}
+
+#[derive(Deserialize, Debug)]
+pub struct SearchQuery {
+    #[serde(default = "default_city")]
+    pub city: City,
+    pub q: String,
 }

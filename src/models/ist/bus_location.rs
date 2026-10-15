@@ -57,8 +57,3 @@ pub struct BusLocationOpenDataResponse {
     #[serde(alias = "Body")]
     pub content: BusLocationResponseBody,
 }
-
-pub enum BusLocation {
-    OpenDataResponse(Vec<BusLocationOpenData>),
-    OtobusumNeredeResponse(Vec<BusLocationOtobusumNerede>),
-}
