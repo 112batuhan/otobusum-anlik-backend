@@ -1,8 +1,6 @@
-version: '3.9'
-
 services:
   postgres:
-    image: postgres:16
+    image: postgis/postgis:17-3.5
     container_name: postgres_iett
     ports:
       - "5432:5432"
@@ -51,5 +49,3 @@ volumes:
 
 networks:
   server:
-
-
