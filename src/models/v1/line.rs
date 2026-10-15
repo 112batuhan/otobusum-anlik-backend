@@ -16,14 +16,3 @@ pub struct LineStop {
     pub route_code: String,
     pub city: String,
 }
-
-// impl From<crate::models::line::Line> for Line {
-//     fn from(value: crate::models::line::Line) -> Self {
-//         Self {
-//             id: value.id,
-//             city: value.city,
-//             code: value.code,
-//             name: value.title,
-//         }
-//     }
-// }
