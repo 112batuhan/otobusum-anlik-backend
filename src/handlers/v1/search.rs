@@ -22,7 +22,7 @@ pub async fn get_search(
         v1::stop::BusStop,
         r#"
             SELECT
-                id, stop_code AS code, name, lng, lat, physical, province, smart, type AS stop_type, disabled_can_use, city
+                id, stop_code AS code, name, lng, lat, province, city
              FROM
                 stops
              WHERE

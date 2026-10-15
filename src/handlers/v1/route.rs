@@ -28,10 +28,6 @@ pub async fn get_route_stops(
                 stops.lng,
                 stops.lat,
                 stops.province,
-                stops.smart,
-                stops.type AS stop_type,
-                stops.disabled_can_use,
-                stops.physical,
                 stops.city
             FROM
                 line_stops

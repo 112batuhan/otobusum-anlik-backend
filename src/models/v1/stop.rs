@@ -9,10 +9,6 @@ pub struct BusStop {
     pub lng: f64,
     pub lat: f64,
     pub province: Option<String>,
-    pub smart: Option<String>,
-    pub stop_type: Option<String>,
-    pub disabled_can_use: Option<String>,
-    pub physical: Option<String>,
     pub city: String,
 }
 

@@ -47,10 +47,6 @@ pub async fn route_stops_cached(
                 stops.lng,
                 stops.lat,
                 stops.province,
-                stops.smart,
-                stops.type,
-                stops.disabled_can_use,
-                stops.physical,
                 stops.city
             FROM
                 line_stops

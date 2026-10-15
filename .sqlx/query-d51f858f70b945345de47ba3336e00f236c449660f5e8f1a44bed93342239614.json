@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n            SELECT\n                id, stop_code AS code, name, lng, lat, physical, province, smart, type AS stop_type, disabled_can_use, city\n             FROM\n                stops\n             WHERE\n                name ILIKE '%' || $1 || '%'\n                AND city = $2\n            LIMIT 10\n        ",
+  "query": "\n            SELECT\n                stops.id,\n                stops.stop_code AS code,\n                stops.name,\n                stops.lng,\n                stops.lat,\n                stops.province,\n                stops.city\n            FROM\n                line_stops\n                RIGHT JOIN stops ON stops.stop_code = line_stops.stop_code\n            WHERE\n                line_stops.line_code = $1\n                AND line_stops.city = $3\n                AND line_stops.route_code = $1 || '_' || $2 || '_D0'\n            ORDER BY\n                line_stops.stop_order\n        ",
   "describe": {
     "columns": [
       {
@@ -30,37 +30,18 @@
       },
       {
         "ordinal": 5,
-        "name": "physical",
-        "type_info": "Text"
-      },
-      {
-        "ordinal": 6,
         "name": "province",
         "type_info": "Text"
       },
       {
-        "ordinal": 7,
-        "name": "smart",
-        "type_info": "Text"
-      },
-      {
-        "ordinal": 8,
-        "name": "stop_type",
-        "type_info": "Text"
-      },
-      {
-        "ordinal": 9,
-        "name": "disabled_can_use",
-        "type_info": "Text"
-      },
-      {
-        "ordinal": 10,
+        "ordinal": 6,
         "name": "city",
         "type_info": "Text"
       }
     ],
     "parameters": {
       "Left": [
+        "Text",
         "Text",
         "Text"
       ]
@@ -72,12 +53,8 @@
       false,
       false,
       true,
-      true,
-      true,
-      true,
-      true,
       false
     ]
   },
-  "hash": "e44ef3d6ff92c1cf52096a1c19371cf424997ef90920afe6cac30784e990b14d"
+  "hash": "d51f858f70b945345de47ba3336e00f236c449660f5e8f1a44bed93342239614"
 }

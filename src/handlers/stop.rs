@@ -47,11 +47,7 @@ pub async fn cached_get_stop(
                 name,
                 lng,
                 lat,
-                physical,
                 province,
-                smart,
-                type,
-                disabled_can_use,
                 city
             FROM
                 stops
