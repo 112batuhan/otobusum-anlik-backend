@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS route_paths(
   id SERIAL PRIMARY KEY,
-  route_code TEXT PRIMARY KEY,
+  route_code TEXT NOT NULL,
   path JSONB NOT NULL,
   city TEXT NOT NULL
 );

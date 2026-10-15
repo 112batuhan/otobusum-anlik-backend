@@ -5,33 +5,33 @@
     "columns": [
       {
         "ordinal": 0,
-        "name": "stop_code",
+        "name": "id",
         "type_info": "Int4"
       },
       {
         "ordinal": 1,
+        "name": "stop_code",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 2,
         "name": "name",
         "type_info": "Text"
       },
       {
-        "ordinal": 2,
+        "ordinal": 3,
         "name": "lng",
         "type_info": "Float8"
       },
       {
-        "ordinal": 3,
+        "ordinal": 4,
         "name": "lat",
         "type_info": "Float8"
       },
       {
-        "ordinal": 4,
+        "ordinal": 5,
         "name": "province",
         "type_info": "Text"
-      },
-      {
-        "ordinal": 5,
-        "name": "id",
-        "type_info": "Int4"
       },
       {
         "ordinal": 6,
@@ -50,8 +50,8 @@
       false,
       false,
       false,
-      true,
       false,
+      true,
       false
     ]
   },

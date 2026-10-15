@@ -53,12 +53,12 @@
     "nullable": [
       false,
       true,
+      false,
+      false,
       true,
       true,
-      true,
-      true,
-      true,
-      true
+      false,
+      false
     ]
   },
   "hash": "8bd53f263de3b02bbf6cacc935ad7a6be14406f11a9621b7bc23bd3655b89b66"
