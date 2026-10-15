@@ -14,7 +14,9 @@ pub fn deserialize_u32_from_string<'de, D>(deserializer: D) -> Result<u32, D::Er
 where
     D: Deserializer<'de>,
 {
-    u32::deserialize(deserializer)
+    String::deserialize(deserializer)?
+        .parse::<u32>()
+        .map_err(de::Error::custom)
 }
 
 pub fn deserialize_bool_from_int<'de, D>(deserializer: D) -> Result<bool, D::Error>
