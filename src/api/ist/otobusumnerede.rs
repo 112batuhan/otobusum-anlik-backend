@@ -3,17 +3,18 @@ use std::time::Duration;
 
 use anyhow::Result;
 use axum::http::HeaderMap;
-use cached::cached;
+use cached::concurrent_cached;
 use serde::de::DeserializeOwned;
 use serde::Serialize;
 use tracing::info;
 
 use crate::models::ist::tokens::TokensResponse;
 
-#[cached(
+#[concurrent_cached(
     ttl = "Duration::from_secs(3500)",
     key = "String",
-    convert = r#"{ "credentials".to_string() }"#
+    convert = r#"{ "credentials".to_string() }"#,
+    redis = true
 )]
 pub async fn get_credentials(
     client: &reqwest::Client,

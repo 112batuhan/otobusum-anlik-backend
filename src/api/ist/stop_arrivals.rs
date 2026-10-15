@@ -1,14 +1,15 @@
 use anyhow::Result;
-use cached::cached;
+use cached::concurrent_cached;
 use serde_json::json;
 use std::time::Duration;
 
 use crate::{api::ist::otobusumnerede, models::ist::stop_arrival::StopArrival};
 
-#[cached(
+#[concurrent_cached(
     ttl = "Duration::from_secs(60)",
     key = "String",
-    convert = r#"{ format!("{}_stop_arrivals", stop_code) }"#
+    convert = r#"{ format!("{}_stop_arrivals", stop_code) }"#,
+    redis = true
 )]
 pub async fn fetch_stop_arrivals(
     client: &reqwest::Client,

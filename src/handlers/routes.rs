@@ -72,14 +72,3 @@ pub async fn routes(
 ) -> Result<Json<Vec<Route>>, AppError> {
     routes_cached(line_code, query.city, state).await.map(Json)
 }
-
-// pub async fn routes_v1(
-//     Path(line_code): Path<String>,
-//     State(state): State<Arc<AppState>>,
-//     Query(query): Query<CityQuery>,
-// ) -> Result<Json<Vec<RouteV1>>, AppError> {
-//     routes_cached(line_code, query.city, state)
-//         .await
-//         .map(|v| v.into_iter().map(RouteV1::from).collect())
-//         .map(Json)
-// }

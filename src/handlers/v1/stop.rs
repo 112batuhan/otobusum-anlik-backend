@@ -5,9 +5,8 @@ use axum::{
     extract::{Path, Query, State},
     Json,
 };
-use cached::{concurrent_cached, AsyncRedisCache};
 
-use anyhow::anyhow;
+use cached::concurrent_cached;
 use tokio::try_join;
 
 use crate::{
@@ -20,16 +19,10 @@ use crate::{
 };
 
 #[concurrent_cached(
-    map_error = r##"|e| anyhow!("{}", e) "##,
-    ty = "AsyncRedisCache<String, v1::stop::BusStopDetail>",
+    ttl = "Duration::from_secs(3600)",
+    key = "String",
     convert = r#"{ format!("{}{:?}", stop_id, city) }"#,
-    create = r##" {
-        AsyncRedisCache::builder("get_stop")
-            .ttl(Duration::from_secs(600))
-            .build()
-            .await
-            .expect("error building redis cache")
-    } "##
+    redis = true
 )]
 pub async fn _get_stop(
     stop_id: i32,

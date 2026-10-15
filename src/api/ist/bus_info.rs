@@ -1,15 +1,16 @@
 use anyhow::Result;
-use cached::cached;
+use cached::concurrent_cached;
 use std::time::Duration;
 
 use crate::models::ist::bus_info::{BusInfo, BusInfoResponse};
 
 use crate::api::ist::get_opendata_xml_body;
 
-#[cached(
+#[concurrent_cached(
     ttl = "Duration::from_secs(60)",
+    convert = r#"{ "bus_infos".to_string() }"#,
     key = "String",
-    convert = r#"{ "bus_infos".to_string() }"#
+    redis = true
 )]
 pub async fn fetch_bus_infos(client: &reqwest::Client) -> Result<Vec<BusInfo>> {
     let body = get_opendata_xml_body("GetFiloAracKonum_json", "KapiNo", "");
