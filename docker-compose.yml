@@ -1,5 +1,5 @@
 services:
-  postgresgis:
+  postgres:
     image: postgis/postgis:17-3.5
     container_name: postgres_iett
     ports:
