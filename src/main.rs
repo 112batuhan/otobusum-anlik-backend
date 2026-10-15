@@ -19,7 +19,7 @@ fn v1_routes() -> Router<Arc<AppState>> {
         .route("/stop/:stop_id", get(handlers::v1::stop::get_stop))
         .route(
             "/stop/:stop_id/arrivals",
-            get(handlers::stop_arrivals::get_stop_arrivals),
+            get(handlers::v1::stop::get_stop_arrivals),
         )
         .route("/routes/:line_code", get(handlers::v1::route::get_routes))
         .route(

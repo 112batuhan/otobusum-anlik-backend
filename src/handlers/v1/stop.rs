@@ -77,3 +77,17 @@ pub async fn get_stop(
 ) -> Result<Json<v1::stop::BusStopDetail>, AppError> {
     _get_stop(stop_id, state, query.city).await.map(Json)
 }
+
+use crate::api::ist::stop_arrivals::fetch_stop_arrivals;
+
+pub async fn get_stop_arrivals(
+    Path(stop_id): Path<u32>,
+    State(state): State<Arc<AppState>>,
+) -> Result<Json<Vec<v1::stop::StopArrival>>, AppError> {
+    Ok(
+        fetch_stop_arrivals(&state.http_client, &stop_id.to_string())
+            .await
+            .map(|x| x.into_iter().map(v1::stop::StopArrival::from).collect())
+            .map(Json)?,
+    )
+}

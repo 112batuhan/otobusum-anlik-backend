@@ -38,7 +38,7 @@ async fn fetch_bus_locations_otobusumnerede(
     line_code: &str,
 ) -> Result<Vec<BusLocationOtobusumNerede>> {
     let search_body = json!({
-        "alias": "ybs",
+        "alias": "mainGetLine_basic_search",
         "data": {
             "HATYONETIM.HAT.HAT_KODU": line_code
         }
