@@ -1,6 +1,5 @@
 use crate::models;
 
-use geozero::wkb;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -8,9 +7,8 @@ pub struct BusStop {
     pub id: i32,
     pub code: i32,
     pub name: String,
-    pub lng: Option<f64>,
-    pub lat: Option<f64>,
-    // pub location: Option<wkb::Decode<geo_types::Point<f64>>>,
+    pub lng: f64,
+    pub lat: f64,
     pub province: Option<String>,
     pub city: String,
 }
