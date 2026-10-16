@@ -5,8 +5,8 @@ pub struct BusStop {
     pub id: i32,
     pub stop_code: i32,
     pub name: String,
-    pub lng: f64,
-    pub lat: f64,
+    pub lng: Option<f64>,
+    pub lat: Option<f64>,
     pub province: Option<String>,
     pub city: String,
 }

@@ -29,10 +29,12 @@ pub async fn _get_stop(
     state: Arc<AppState>,
     city: City,
 ) -> Result<v1::stop::BusStopDetail, AppError> {
+    // id, stop_code AS code, name, lng, lat, province, city
     let stop_query = sqlx::query_as!(
         v1::stop::BusStop,
         r#"SELECT
-            id, stop_code AS code, name, lng, lat, province, city
+            id, stop_code AS code, name, ST_X(location) AS "lng",
+            ST_Y(location) AS "lat", province, city
         FROM
             stops 
         WHERE
