@@ -14,7 +14,8 @@ use crate::{
         app::{AppError, AppState},
         city::City,
         v1,
-    }, query::{CityQuery, QueryAreaQuery},
+    },
+    query::{CityQuery, QueryAreaQuery},
 };
 
 #[concurrent_cached(

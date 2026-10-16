@@ -1,28 +1,19 @@
-use serde::{Deserialize, Serialize};
+use geo_types::Geometry;
+use geozero::wkb;
 
-#[derive(Debug, Deserialize, Serialize, Clone)]
+use crate::models::serializers::serialize_wkb_geom;
+use serde::Serialize;
+
+#[derive(Debug, Serialize)]
 pub struct Route {
     pub id: i32,
     pub agency_id: Option<i32>,
-    pub line_code: Option<String>,
-    pub name: Option<String>,
+    pub line_code: String,
+    pub name: String,
     pub r#type: Option<i32>,
     pub desc: Option<String>,
-    pub code: Option<String>,
-    pub path: Option<sqlx::types::JsonValue>,
-}
+    pub code: String,
 
-impl From<crate::models::route::Route> for Route {
-    fn from(value: crate::models::route::Route) -> Self {
-        Self {
-            id: value.id,
-            agency_id: value.agency_id,
-            line_code: value.code,
-            name: value.title,
-            r#type: value.r#type,
-            desc: value.description,
-            code: value.route_code,
-            path: value.path,
-        }
-    }
+    #[serde(serialize_with = "serialize_wkb_geom")]
+    pub path: wkb::Decode<Geometry>,
 }

@@ -65,7 +65,7 @@ pub async fn get_routes(
                 type,
                 description AS desc,
                 routes.route_code AS code,
-                route_paths.path
+                route_paths.path as "path!: _" 
             FROM 
                 routes
                 LEFT JOIN route_paths ON route_paths.route_code = routes.route_code

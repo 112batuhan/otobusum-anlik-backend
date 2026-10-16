@@ -1,8 +1,12 @@
 use std::fmt;
 
+use geo_types::Geometry;
+use geozero::wkb;
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Deserialize, Serialize, Clone)]
+use crate::models::serializers::{deserialize_wkb_geom, serialize_wkb_geom};
+
+#[derive(Debug, Serialize, Deserialize)]
 pub struct Route {
     pub id: i32,
     pub agency_id: Option<i32>,
@@ -11,7 +15,12 @@ pub struct Route {
     pub r#type: Option<i32>,
     pub description: Option<String>,
     pub route_code: Option<String>,
-    pub path: Option<sqlx::types::JsonValue>,
+
+    #[serde(
+        serialize_with = "serialize_wkb_geom",
+        deserialize_with = "deserialize_wkb_geom"
+    )]
+    pub path: wkb::Decode<Geometry>,
 }
 
 #[derive(Deserialize, Default, Debug, PartialEq)]
