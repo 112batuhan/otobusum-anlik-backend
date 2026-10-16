@@ -15,7 +15,7 @@ use crate::{
         city::City,
         v1,
     },
-    query::{CityQuery, QueryAreaQuery},
+    query::CityQuery,
 };
 
 #[concurrent_cached(
@@ -29,7 +29,6 @@ pub async fn _get_stop(
     state: Arc<AppState>,
     city: City,
 ) -> Result<v1::stop::BusStopDetail, AppError> {
-    // id, stop_code AS code, name, lng, lat, province, city
     let stop_query = sqlx::query_as!(
         v1::stop::BusStop,
         r#"SELECT
@@ -92,28 +91,4 @@ pub async fn get_stop_arrivals(
             .map(|x| x.into_iter().map(v1::stop::StopArrival::from).collect())
             .map(Json)?,
     )
-}
-
-pub async fn get_stops_nearby(
-    State(state): State<Arc<AppState>>,
-    Query(query): Query<QueryAreaQuery>,
-) -> Result<Json<Vec<v1::stop::BusStop>>, AppError> {
-    let stops = sqlx::query_as!(
-        v1::stop::BusStop,
-        r#"
-            SELECT
-                id, stop_code AS code, name, ST_X(location) AS "lng!",
-                ST_Y(location) AS "lat!", province, city
-            FROM
-                stops
-            WHERE
-                ST_DWithin(location, ST_SetSRID(ST_MakePoint($1, $2), 4326)::geography, 1000)
-        "#,
-        &query.lng,
-        &query.lat
-    )
-    .fetch_all(&state.db)
-    .await?;
-
-    Ok(Json(stops))
 }

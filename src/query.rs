@@ -37,4 +37,6 @@ pub struct SearchQuery {
 pub struct QueryAreaQuery {
     pub lat: f64,
     pub lng: f64,
+    #[serde(default = "default_city")]
+    pub city: City,
 }
