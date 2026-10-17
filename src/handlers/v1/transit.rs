@@ -12,7 +12,7 @@ use crate::AppState;
 pub async fn get_transit_nearby(
     State(state): State<Arc<AppState>>,
     Query(query): Query<QueryAreaQuery>,
-) -> Result<Json<models::v1::nearby::LinesAndStopsNearbyResponse>, AppError> {
+) -> Result<Json<models::v1::nearby::RoutesAndStopsNearbyResponse>, AppError> {
     const STOPS_RADIUS: f64 = 500.0;
     const ROUTES_RADIUS: f64 = 50.0;
 
@@ -36,7 +36,7 @@ pub async fn get_transit_nearby(
     let routes_query = sqlx::query_as!(
         models::v1::route::Route,
         r#"
-            SELECT 
+            SELECT DISTINCT ON (line_code)
                 routes.id,
                 agency_id,
                 code AS line_code,
@@ -45,13 +45,14 @@ pub async fn get_transit_nearby(
                 description AS desc,
                 routes.route_code AS code,
                 route_paths.path as "path!: _" 
-            FROM 
-                routes
-                LEFT JOIN route_paths ON route_paths.route_code = routes.route_code
+            FROM routes
+                LEFT JOIN route_paths
+                    ON route_paths.route_code = routes.route_code
                     AND route_paths.city = $3
+                
             WHERE 
                 ST_DWithin(
-                    path::geography,
+                    route_paths.path::geography,
                     ST_SetSRID(
                         ST_MakePoint($1, $2),
                         4326
@@ -69,7 +70,7 @@ pub async fn get_transit_nearby(
 
     let (stops, routes) = try_join!(stops_query, routes_query)?;
 
-    Ok(Json(models::v1::nearby::LinesAndStopsNearbyResponse {
+    Ok(Json(models::v1::nearby::RoutesAndStopsNearbyResponse {
         stops,
         routes,
         routes_radius: ROUTES_RADIUS,
