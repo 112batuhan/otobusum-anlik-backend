@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "SELECT\n            id, stop_code AS code, name, lng, lat, province, city\n        FROM\n            stops \n        WHERE\n            stop_code = $1 AND city = $2",
+  "query": "SELECT\n            id, stop_code AS code, name, ST_X(location) AS \"lng!\",\n            ST_Y(location) AS \"lat!\", province, city\n        FROM\n            stops \n        WHERE\n            stop_code = $1 AND city = $2",
   "describe": {
     "columns": [
       {
@@ -20,12 +20,12 @@
       },
       {
         "ordinal": 3,
-        "name": "lng",
+        "name": "lng!",
         "type_info": "Float8"
       },
       {
         "ordinal": 4,
-        "name": "lat",
+        "name": "lat!",
         "type_info": "Float8"
       },
       {
@@ -49,11 +49,11 @@
       false,
       false,
       false,
-      false,
-      false,
+      null,
+      null,
       true,
       false
     ]
   },
-  "hash": "0d82a0e9f25ea14a843647c3833f1456a369e1e7a5c44e106d6ce7746b950d15"
+  "hash": "78bc1056eff52c384068cd7cc3a5f65668db06624fe0d1cec65587192253f57c"
 }
