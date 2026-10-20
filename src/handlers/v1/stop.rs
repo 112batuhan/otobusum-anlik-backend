@@ -32,7 +32,8 @@ pub async fn _get_stop(
     let stop_query = sqlx::query_as!(
         v1::stop::BusStop,
         r#"SELECT
-            id, stop_code AS code, name, lng, lat, province, city
+            id, stop_code AS code, name, ST_X(location) AS "lng!",
+            ST_Y(location) AS "lat!", province, city
         FROM
             stops 
         WHERE
@@ -59,6 +60,7 @@ pub async fn _get_stop(
     .fetch_all(&state.db);
 
     let (stop, line_stops) = try_join!(stop_query, line_stops_query)?;
+
     let line_codes = line_stops
         .into_iter()
         .map(|line_stop| line_stop.line_code)

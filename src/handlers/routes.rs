@@ -47,7 +47,7 @@ pub async fn routes_cached(
                 type,
                 description,
                 routes.route_code,
-                route_paths.path
+                route_paths.path as "path!: _" 
             FROM 
                 routes
                 LEFT JOIN route_paths on route_paths.route_code = routes.route_code

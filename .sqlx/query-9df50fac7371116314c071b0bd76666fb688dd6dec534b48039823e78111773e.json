@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n            SELECT \n                routes.id,\n                agency_id,\n                code AS line_code,\n                title AS name,\n                type,\n                description AS desc,\n                routes.route_code AS code,\n                route_paths.path\n            FROM \n                routes\n                LEFT JOIN route_paths ON route_paths.route_code = routes.route_code\n                    AND route_paths.city = $2\n            WHERE\n                code = $1\n                AND routes.city = $2\n        ",
+  "query": "\n            SELECT \n                routes.id,\n                agency_id,\n                code AS line_code,\n                title AS name,\n                type,\n                description AS desc,\n                routes.route_code AS code,\n                route_paths.path as \"path!: _\" \n            FROM \n                routes\n                LEFT JOIN route_paths ON route_paths.route_code = routes.route_code\n                    AND route_paths.city = $2\n            WHERE\n                code = $1\n                AND routes.city = $2\n        ",
   "describe": {
     "columns": [
       {
@@ -40,8 +40,13 @@
       },
       {
         "ordinal": 7,
-        "name": "path",
-        "type_info": "Jsonb"
+        "name": "path!: _",
+        "type_info": {
+          "Custom": {
+            "name": "geometry",
+            "kind": "Simple"
+          }
+        }
       }
     ],
     "parameters": {
@@ -58,8 +63,8 @@
       true,
       true,
       false,
-      false
+      true
     ]
   },
-  "hash": "8bd53f263de3b02bbf6cacc935ad7a6be14406f11a9621b7bc23bd3655b89b66"
+  "hash": "9df50fac7371116314c071b0bd76666fb688dd6dec534b48039823e78111773e"
 }

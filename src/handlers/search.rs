@@ -31,7 +31,8 @@ pub async fn search_cached(
         models::stop::BusStop,
         r#"
             SELECT
-            *
+                id, stop_code, name, ST_X(location) AS "lng",
+                ST_Y(location) AS "lat", province, city
              FROM
                 stops
              WHERE

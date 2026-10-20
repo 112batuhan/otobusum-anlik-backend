@@ -16,6 +16,10 @@ use crate::models::app::AppState;
 
 fn v1_routes() -> Router<Arc<AppState>> {
     Router::new()
+        .route(
+            "/transit/nearby",
+            get(handlers::v1::transit::get_transit_nearby),
+        )
         .route("/stop/:stop_id", get(handlers::v1::stop::get_stop))
         .route(
             "/stop/:stop_id/arrivals",

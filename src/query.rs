@@ -32,3 +32,11 @@ pub struct SearchQuery {
     pub city: City,
     pub q: String,
 }
+
+#[derive(Deserialize, Debug)]
+pub struct QueryAreaQuery {
+    pub lat: f64,
+    pub lng: f64,
+    #[serde(default = "default_city")]
+    pub city: City,
+}
