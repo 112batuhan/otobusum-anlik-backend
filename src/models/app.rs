@@ -1,6 +1,10 @@
-use axum::response::{IntoResponse, Response};
+use axum::{
+    response::{IntoResponse, Response},
+    Json,
+};
 use cached::RedisCacheError;
 use reqwest::StatusCode;
+use serde_json::json;
 use sqlx::{PgPool, Pool, Postgres};
 
 pub struct AppState {
@@ -22,9 +26,18 @@ pub struct AppError {
     pub error: anyhow::Error,
 }
 
+pub struct AppErrorResponse {}
+
 impl IntoResponse for AppError {
     fn into_response(self) -> Response {
-        (self.status, format!("Something went wrong: {}", self.error)).into_response()
+        (
+            self.status,
+            Json(json!({
+                "status": self.status.as_u16(),
+                "message": self.error.to_string()
+            })),
+        )
+            .into_response()
     }
 }
 

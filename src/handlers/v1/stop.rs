@@ -60,6 +60,7 @@ pub async fn _get_stop(
     .fetch_all(&state.db);
 
     let (stop, line_stops) = try_join!(stop_query, line_stops_query)?;
+
     let line_codes = line_stops
         .into_iter()
         .map(|line_stop| line_stop.line_code)
