@@ -22,7 +22,7 @@ use crate::{
 
 #[concurrent_cached(
     map_error = r##"|e| anyhow!("{}", e) "##,
-    ty = "AsyncRedisCache<String, Timetable>",
+    ty = "AsyncRedisCache<String, Option<Timetable>>",
     convert = r#"{ format!("{}{}{}", line_code, city, direction) }"#,
     create = r##" {
         AsyncRedisCache::builder("timetable")
@@ -33,11 +33,11 @@ use crate::{
     } "##
 )]
 pub async fn timetable_cached(
-    line_code: String,
+    line_code: &str,
     city: City,
     direction: Direction,
     state: Arc<AppState>,
-) -> Result<Timetable, AppError> {
+) -> Result<Option<Timetable>, AppError> {
     let timetable = sqlx::query_as!(
         Timetable,
         r#"
@@ -79,7 +79,7 @@ pub async fn timetable_cached(
         city.as_str(),
         direction.as_str()
     )
-    .fetch_one(&state.db)
+    .fetch_optional(&state.db)
     .await?;
 
     Ok(timetable)
@@ -90,7 +90,18 @@ pub async fn get_timetable(
     State(state): State<Arc<AppState>>,
     Query(query): Query<TimetableQuery>,
 ) -> Result<Json<Timetable>, AppError> {
-    timetable_cached(line_code, query.city, query.direction, state)
-        .await
-        .map(Json)
+    let timetable = timetable_cached(&line_code, query.city, query.direction, state)
+        .await?
+        .unwrap_or(Timetable {
+            code: line_code,
+            sunday: Some(Vec::new()),
+            monday: Some(Vec::new()),
+            tuesday: Some(Vec::new()),
+            wednesday: Some(Vec::new()),
+            thursday: Some(Vec::new()),
+            friday: Some(Vec::new()),
+            saturday: Some(Vec::new()),
+        });
+
+    Ok(Json(timetable))
 }
