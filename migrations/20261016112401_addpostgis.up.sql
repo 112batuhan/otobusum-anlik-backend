@@ -37,10 +37,10 @@ DROP COLUMN path;
 ALTER TABLE route_paths
 RENAME COLUMN path_geom TO path;
 
-CREATE INDEX idx_stops_location
+CREATE INDEX IF NOT EXISTS idx_stops_location
 ON stops
 USING GIST (location);
 
-CREATE INDEX idx_route_paths_path_geom
+CREATE INDEX IF NOT EXISTS idx_route_paths_path_geom
 ON route_paths
 USING GIST (path);
