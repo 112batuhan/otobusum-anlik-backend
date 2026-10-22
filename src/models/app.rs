@@ -23,7 +23,7 @@ impl AppState {
 
         Self {
             db: conn,
-            http_client: client
+            http_client: client,
         }
     }
 }
