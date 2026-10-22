@@ -1,3 +1,5 @@
+use std::time::Duration;
+
 use axum::{
     response::{IntoResponse, Response},
     Json,
@@ -14,9 +16,14 @@ pub struct AppState {
 
 impl AppState {
     pub fn new(conn: Pool<Postgres>) -> Self {
+        let client = reqwest::Client::builder()
+            .connect_timeout(Duration::from_secs(10))
+            .build()
+            .unwrap();
+
         Self {
             db: conn,
-            http_client: reqwest::Client::new(),
+            http_client: client
         }
     }
 }
