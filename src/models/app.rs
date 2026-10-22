@@ -17,7 +17,7 @@ pub struct AppState {
 impl AppState {
     pub fn new(conn: Pool<Postgres>) -> Self {
         let client = reqwest::Client::builder()
-            .connect_timeout(Duration::from_secs(10))
+            .connect_timeout(Duration::from_secs(3))
             .build()
             .unwrap();
 
