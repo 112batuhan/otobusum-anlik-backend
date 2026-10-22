@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS routes(
   type INTEGER,
   description TEXT,
   route_code TEXT NOT NULL,
-  city TEXT NOT NULL
+  city TEXT NOT NULL DEFAULT 'istanbul'
 );
 
 CREATE UNIQUE INDEX IF NOT EXISTS id_code_index_routes ON routes (route_code, city);
