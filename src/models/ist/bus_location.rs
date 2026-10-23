@@ -11,6 +11,8 @@ pub struct BusLocationOtobusumNerede {
     pub lat: f64,
     #[serde(alias = "K_GUZERGAH_GUZERGAHKODU")]
     pub route_code: String,
+    #[serde(alias = "H_GOREV_D_G_KAYITZAMANI")]
+    pub last_location_update: String,
     #[serde(alias = "H_GOREV_DURAK_GECIS_DURAKID")]
     pub closest_stop_code: u32,
 }

@@ -36,13 +36,19 @@ impl From<models::ist::bus_location::BusLocationOpenData> for BusLocation {
 
 impl From<models::ist::bus_location::BusLocationOtobusumNerede> for BusLocation {
     fn from(value: models::ist::bus_location::BusLocationOtobusumNerede) -> Self {
+        let last_update_time =
+            chrono::NaiveDateTime::parse_from_str(&value.last_location_update, "%Y-%m-%d %H:%M:%S")
+                .ok()
+                .and_then(|x| x.and_local_timezone(Istanbul).single())
+                .map(|time| time.with_timezone(&Utc));
+
         Self {
             bus_id: value.bus_id,
             lat: value.lat,
             lng: value.lng,
             route_code: value.route_code,
             closest_stop_code: Some(value.closest_stop_code),
-            last_update_time: None,
+            last_update_time,
         }
     }
 }
