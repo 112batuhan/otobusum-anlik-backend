@@ -1,0 +1,72 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n            SELECT DISTINCT ON (line_code)\n                routes.id,\n                agency_id,\n                code AS line_code,\n                name,\n                type,\n                description,\n                routes.route_code AS code,\n                route_paths.path as \"path!: _\" \n            FROM routes\n                LEFT JOIN route_paths\n                    ON route_paths.route_code = routes.route_code\n                    AND route_paths.city = $3\n                \n            WHERE \n                ST_DWithin(\n                    route_paths.path::geography,\n                    ST_SetSRID(\n                        ST_MakePoint($1, $2),\n                        4326\n                    )::geography,\n                    $4\n                )\n                AND routes.city = $3\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 1,
+        "name": "agency_id",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 2,
+        "name": "line_code",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 3,
+        "name": "name",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 4,
+        "name": "type",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 5,
+        "name": "description",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 6,
+        "name": "code",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 7,
+        "name": "path!: _",
+        "type_info": {
+          "Custom": {
+            "name": "geometry",
+            "kind": "Simple"
+          }
+        }
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Float8",
+        "Float8",
+        "Text",
+        "Float8"
+      ]
+    },
+    "nullable": [
+      false,
+      true,
+      false,
+      false,
+      true,
+      true,
+      false,
+      true
+    ]
+  },
+  "hash": "c187ea5c6b5f0dee2fa5b820538568d1f4344a0503e70655f18befc20db3b0b4"
+}

@@ -1,0 +1,59 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n            SELECT \n                id,\n                stop_code,\n                name,\n                lng,\n                lat,\n                province,\n                city\n            FROM\n                stops\n            WHERE\n                stop_code = $1\n                AND city = $2\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 1,
+        "name": "stop_code",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 2,
+        "name": "name",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 3,
+        "name": "lng",
+        "type_info": "Float8"
+      },
+      {
+        "ordinal": 4,
+        "name": "lat",
+        "type_info": "Float8"
+      },
+      {
+        "ordinal": 5,
+        "name": "province",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 6,
+        "name": "city",
+        "type_info": "Text"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int4",
+        "Text"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      false,
+      false,
+      true,
+      false
+    ]
+  },
+  "hash": "e9bf90353b2079c3a02c308a16b7a5589009c0ed89c1829d1dc3f01727218307"
+}

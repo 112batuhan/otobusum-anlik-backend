@@ -1,0 +1,41 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n            SELECT id, code, name, city FROM lines\n            WHERE\n                (\n                    code ILIKE '%' || $1 || '%'\n                    OR TO_TSVECTOR( name ) @@ websearch_to_tsquery('' || $1 || ':*')\n                )\n                AND city = $2\n            GROUP BY\n                code, name, city, id\n            ORDER BY\n                code\n            LIMIT 40\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 1,
+        "name": "code",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 2,
+        "name": "name",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 3,
+        "name": "city",
+        "type_info": "Text"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Text",
+        "Text"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      false
+    ]
+  },
+  "hash": "ccc15109f6700aff385ecd7ea42e460ea3f6c38720eb8cc3031750995404bd26"
+}

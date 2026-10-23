@@ -1,0 +1,70 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n            SELECT \n                routes.id,\n                agency_id,\n                code AS line_code,\n                name,\n                type,\n                description,\n                routes.route_code AS code,\n                route_paths.path as \"path!: _\" \n            FROM \n                routes\n                LEFT JOIN route_paths ON route_paths.route_code = routes.route_code\n                    AND route_paths.city = $2\n            WHERE\n                code = $1\n                AND routes.city = $2\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 1,
+        "name": "agency_id",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 2,
+        "name": "line_code",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 3,
+        "name": "name",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 4,
+        "name": "type",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 5,
+        "name": "description",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 6,
+        "name": "code",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 7,
+        "name": "path!: _",
+        "type_info": {
+          "Custom": {
+            "name": "geometry",
+            "kind": "Simple"
+          }
+        }
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Text",
+        "Text"
+      ]
+    },
+    "nullable": [
+      false,
+      true,
+      false,
+      false,
+      true,
+      true,
+      false,
+      true
+    ]
+  },
+  "hash": "c960d7baf2cfe54a91bda696d8932727cffaa374d50fc40de9ded52215126239"
+}
