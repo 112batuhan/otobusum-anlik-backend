@@ -43,7 +43,7 @@ pub async fn routes_cached(
                 routes.id,
                 agency_id,
                 code,
-                title,
+                name as title,
                 type,
                 description,
                 routes.route_code,

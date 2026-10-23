@@ -11,7 +11,7 @@ pub struct Route {
     pub line_code: String,
     pub name: String,
     pub r#type: Option<i32>,
-    pub desc: Option<String>,
+    pub description: Option<String>,
     pub code: String,
 
     #[serde(serialize_with = "serialize_wkb_geom")]

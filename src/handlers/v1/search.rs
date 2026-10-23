@@ -38,15 +38,15 @@ pub async fn get_search(
     let lines_query = sqlx::query_as!(
         v1::line::Line,
         r#"
-            SELECT id, code, title AS name, city FROM lines
+            SELECT id, code, name, city FROM lines
             WHERE
                 (
                     code ILIKE '%' || $1 || '%'
-                    OR TO_TSVECTOR( title ) @@ websearch_to_tsquery('' || $1 || ':*')
+                    OR TO_TSVECTOR( name ) @@ websearch_to_tsquery('' || $1 || ':*')
                 )
                 AND city = $2
             GROUP BY
-                code, title, city, id
+                code, name, city, id
             ORDER BY
                 code
             LIMIT 40

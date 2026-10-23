@@ -61,9 +61,9 @@ pub async fn get_routes(
                 routes.id,
                 agency_id,
                 code AS line_code,
-                title AS name,
+                name,
                 type,
-                description AS desc,
+                description,
                 routes.route_code AS code,
                 route_paths.path as "path!: _" 
             FROM 

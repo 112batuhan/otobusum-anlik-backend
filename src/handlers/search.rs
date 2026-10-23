@@ -52,18 +52,18 @@ pub async fn search_cached(
             SELECT
                 id,
                 code,
-                title,
+                name as title,
                 city
             FROM
                 lines
             WHERE
                 (
                     code ILIKE '%' || $1 || '%'
-                    OR TO_TSVECTOR( title ) @@ websearch_to_tsquery('' || $1 || ':*')
+                    OR TO_TSVECTOR( name ) @@ websearch_to_tsquery('' || $1 || ':*')
                 )
                 AND city = $2
             GROUP BY
-                code, title, city, id
+                code, name, city, id
             ORDER BY
                 code
             LIMIT 40
