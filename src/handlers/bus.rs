@@ -4,7 +4,7 @@ use axum::extract::{Path, Query, State};
 use axum::Json;
 
 use crate::models::app::{AppError, AppState};
-use crate::models::bus::BusLocation;
+use crate::models::v1::bus::BusLocation;
 use crate::query::CityQuery;
 
 pub async fn get_bus_locations(

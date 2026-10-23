@@ -12,7 +12,7 @@ use crate::{
     },
 };
 
-use crate::models::bus::BusLocation;
+use crate::models::v1::bus::BusLocation;
 
 async fn fetch_bus_locations_opendata(
     client: &reqwest::Client,

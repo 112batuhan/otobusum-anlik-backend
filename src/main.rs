@@ -36,7 +36,7 @@ fn v1_routes() -> Router<Arc<AppState>> {
         )
         .route(
             "/timetable/:line_code",
-            get(handlers::timetable::get_timetable),
+            get(handlers::v1::timetable::get_timetable),
         )
         .route("/search", get(handlers::v1::search::get_search))
         .route("/bus-info/:door_no", get(handlers::v1::bus::get_bus_info))
@@ -44,21 +44,21 @@ fn v1_routes() -> Router<Arc<AppState>> {
 
 fn legacy_routes() -> Router<Arc<AppState>> {
     Router::new()
-        .route("/stop/:stop_id", get(handlers::stop::get_stop))
-        .route("/routes/:line_code", get(handlers::routes::routes))
+        // .route("/stop/:stop_id", get(handlers::stop::get_stop))
+        // .route("/routes/:line_code", get(handlers::routes::routes))
         .route(
             "/bus-locations/:line_code",
             get(handlers::bus::get_bus_locations),
         )
-        .route(
-            "/route-stops/:line_code",
-            get(handlers::route_stops::get_route_stops),
-        )
+        // .route(
+        //     "/route-stops/:line_code",
+        //     get(handlers::route_stops::get_route_stops),
+        // )
         .route(
             "/timetable/:line_code",
-            get(handlers::timetable::get_timetable),
+            get(handlers::v1::timetable::get_timetable),
         )
-        .route("/search", get(handlers::search::search))
+        // .route("/search", get(handlers::search::search))
         .route("/bus-info/:door_no", get(handlers::v1::bus::get_bus_info))
 }
 

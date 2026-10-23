@@ -1,11 +1,6 @@
 pub mod app;
-pub mod bus;
 pub mod city;
-pub mod line;
-pub mod route;
-pub mod search;
 pub mod serializers;
-pub mod stop;
 pub mod timetable;
 
 pub mod v1;

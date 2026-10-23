@@ -33,8 +33,6 @@ pub struct AppError {
     pub error: anyhow::Error,
 }
 
-pub struct AppErrorResponse {}
-
 impl IntoResponse for AppError {
     fn into_response(self) -> Response {
         (
