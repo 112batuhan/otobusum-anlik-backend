@@ -1,6 +1,7 @@
 use anyhow::Result;
 use cached::concurrent_cached;
 use serde_json::json;
+use tracing::warn;
 use std::time::Duration;
 
 use crate::models::ist::bus_info::{
@@ -12,6 +13,7 @@ use crate::models::v1::bus::BusInfo;
 
 pub async fn fetch_bus_infos_opendata(client: &reqwest::Client) -> Result<Vec<BusInfoOpenData>> {
     let body = get_opendata_xml_body("GetFiloAracKonum_json", "KapiNo", "");
+    println!("test");
 
     let response = client
         .post("https://api.ibb.gov.tr/iett/FiloDurum/SeferGerceklesme.asmx")
@@ -23,6 +25,8 @@ pub async fn fetch_bus_infos_opendata(client: &reqwest::Client) -> Result<Vec<Bu
         .body(body)
         .send()
         .await?;
+
+    println!("test1");
 
     let content = quick_xml::de::from_str::<BusInfoOpenDataResponse>(&response.text().await?)?;
 
@@ -55,11 +59,15 @@ pub async fn fetch_bus_info(client: &reqwest::Client, door_no: &str) -> Result<O
             .into_iter()
             .find(|b| b.door_no == door_no)
             .map(BusInfo::from),
-        Err(_) => fetch_bus_info_otobusumnerede(client, door_no)
+        Err(error) => {
+            warn!("Open Data request to fetch bus infos failed for bus {door_no}, falling back to Otobusum Nerede: {error:?}");
+
+            fetch_bus_info_otobusumnerede(client, door_no)
             .await?
             .into_iter()
             .find(|b| b.door_no == door_no)
-            .map(BusInfo::from),
+            .map(BusInfo::from)
+        }
     };
 
     Ok(info)

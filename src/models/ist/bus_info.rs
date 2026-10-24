@@ -51,9 +51,7 @@ pub struct BusInfoOtobusumNerede {
     #[serde(alias = "H_OTOBUSKONUM_HIZ")]
     pub speed: u32,
     #[serde(alias = "H_OTOBUSKONUM_BOYLAM")]
-    #[serde(deserialize_with = "deserialize_f64_from_string")]
     pub lng: f64,
     #[serde(alias = "H_OTOBUSKONUM_ENLEM")]
-    #[serde(deserialize_with = "deserialize_f64_from_string")]
     pub lat: f64,
 }
