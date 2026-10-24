@@ -90,3 +90,36 @@ impl BusLocation {
         }
     }
 }
+
+#[derive(Serialize, Deserialize)]
+pub struct BusInfo {
+    pub door_no: String,
+    pub lng: f64,
+    pub lat: f64,
+    pub plate: Option<String>,
+    pub speed: u32,
+}
+
+impl From<models::ist::bus_info::BusInfoOpenData> for BusInfo {
+    fn from(value: models::ist::bus_info::BusInfoOpenData) -> Self {
+        Self {
+            door_no: value.door_no,
+            lat: value.lat,
+            lng: value.lng,
+            plate: value.plate,
+            speed: value.speed,
+        }
+    }
+}
+
+impl From<models::ist::bus_info::BusInfoOtobusumNerede> for BusInfo {
+    fn from(value: models::ist::bus_info::BusInfoOtobusumNerede) -> Self {
+        Self {
+            door_no: value.door_no,
+            lat: value.lat,
+            lng: value.lng,
+            plate: value.plate,
+            speed: value.speed,
+        }
+    }
+}

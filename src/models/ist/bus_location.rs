@@ -43,19 +43,19 @@ pub struct BusLocationOpenData {
 }
 
 #[derive(Serialize, Deserialize)]
-pub struct BusLocationResponseJson {
+pub struct BusLocationOpenDataResponseJson {
     #[serde(alias = "GetHatOtoKonum_jsonResult")]
     pub content: String,
 }
 
 #[derive(Serialize, Deserialize)]
-pub struct BusLocationResponseBody {
+pub struct BusLocationOpenDataResponseBody {
     #[serde(alias = "GetHatOtoKonum_jsonResponse")]
-    pub content: BusLocationResponseJson,
+    pub content: BusLocationOpenDataResponseJson,
 }
 
 #[derive(Serialize, Deserialize)]
 pub struct BusLocationOpenDataResponse {
     #[serde(alias = "Body")]
-    pub content: BusLocationResponseBody,
+    pub content: BusLocationOpenDataResponseBody,
 }

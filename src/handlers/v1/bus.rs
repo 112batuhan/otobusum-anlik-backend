@@ -11,14 +11,13 @@ use reqwest::StatusCode;
 
 use crate::{
     api::{
-        ist::{self, bus_info::fetch_bus_infos},
+        ist::{self, bus_info::fetch_bus_info},
         izm,
     },
     models::{
         app::{AppError, AppState},
         city::City,
-        ist::bus_info::BusInfo,
-        v1,
+        v1::{self, bus::BusInfo},
     },
     query::CityQuery,
 };
@@ -70,7 +69,7 @@ pub async fn get_bus_info(
     Path(door_no): Path<String>,
     State(state): State<Arc<AppState>>,
 ) -> Result<Json<BusInfo>, AppError> {
-    let bus_list = fetch_bus_infos(&state.http_client).await?;
+    let bus_list = fetch_bus_info(&state.http_client, &door_no).await?;
 
     let Some(bus_info) = bus_list.into_iter().find(|b| b.door_no == door_no) else {
         return Err(AppError {

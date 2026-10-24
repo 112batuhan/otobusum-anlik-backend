@@ -2,7 +2,7 @@ use crate::models::serializers::{deserialize_f64_from_string, deserialize_u32_fr
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Clone)]
-pub struct BusInfo {
+pub struct BusInfoOpenData {
     #[serde(alias = "Operator")]
     pub operator: String,
     #[serde(alias = "Garaj")]
@@ -25,19 +25,35 @@ pub struct BusInfo {
 }
 
 #[derive(Serialize, Deserialize, Debug)]
-pub struct BusInfoResponse {
+pub struct BusInfoOpenDataResponse {
     #[serde(alias = "Body")]
-    pub content: BusInfoResponseBody,
+    pub content: BusInfoOpenDataResponseBody,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
-pub struct BusInfoResponseBody {
+pub struct BusInfoOpenDataResponseBody {
     #[serde(alias = "GetFiloAracKonum_jsonResponse")]
-    pub content: BusInfoResponseJson,
+    pub content: BusInfoOpenDataResponseJson,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
-pub struct BusInfoResponseJson {
+pub struct BusInfoOpenDataResponseJson {
     #[serde(alias = "GetFiloAracKonum_jsonResult")]
     pub content: String,
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct BusInfoOtobusumNerede {
+    #[serde(alias = "K_ARAC_KAPINUMARASI")]
+    pub door_no: String,
+    #[serde(alias = "K_ARAC_PLAKA")]
+    pub plate: Option<String>,
+    #[serde(alias = "H_OTOBUSKONUM_HIZ")]
+    pub speed: u32,
+    #[serde(alias = "H_OTOBUSKONUM_BOYLAM")]
+    #[serde(deserialize_with = "deserialize_f64_from_string")]
+    pub lng: f64,
+    #[serde(alias = "H_OTOBUSKONUM_ENLEM")]
+    #[serde(deserialize_with = "deserialize_f64_from_string")]
+    pub lat: f64,
 }
