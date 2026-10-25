@@ -6,7 +6,7 @@ pub struct StopArrival {
     #[serde(alias = "stopOrder")]
     pub stop_order: u32,
     #[serde(alias = "connections")]
-    pub connections: Option<String>,
+    pub connections: Option<Vec<u32>>,
     #[serde(alias = "kod")]
     pub stop_code: String,
     #[serde(alias = "kapino")]
