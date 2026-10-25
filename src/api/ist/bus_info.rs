@@ -1,8 +1,8 @@
 use anyhow::Result;
 use cached::concurrent_cached;
 use serde_json::json;
-use tracing::warn;
 use std::time::Duration;
+use tracing::warn;
 
 use crate::models::ist::bus_info::{
     BusInfoOpenData, BusInfoOpenDataResponse, BusInfoOtobusumNerede,
@@ -63,10 +63,10 @@ pub async fn fetch_bus_info(client: &reqwest::Client, door_no: &str) -> Result<O
             warn!("Open Data request to fetch bus infos failed for bus {door_no}, falling back to Otobusum Nerede: {error:?}");
 
             fetch_bus_info_otobusumnerede(client, door_no)
-            .await?
-            .into_iter()
-            .find(|b| b.door_no == door_no)
-            .map(BusInfo::from)
+                .await?
+                .into_iter()
+                .find(|b| b.door_no == door_no)
+                .map(BusInfo::from)
         }
     };
 
