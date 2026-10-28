@@ -14,7 +14,7 @@ pub async fn get_transit_nearby(
     Query(query): Query<QueryAreaQuery>,
 ) -> Result<Json<models::v1::nearby::RoutesAndStopsNearbyResponse>, AppError> {
     const STOPS_RADIUS: f64 = 500.0;
-    const ROUTES_RADIUS: f64 = 50.0;
+    const ROUTES_RADIUS: f64 = 250.0;
 
     let stops_query = sqlx::query_as!(
         models::v1::stop::BusStop,
